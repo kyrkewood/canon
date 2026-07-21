@@ -1,6 +1,6 @@
-# Cursor Project Rules (v1)
+# Project Engineering Rules (v1)
 
-A portable, opinionated rulebook for all Cursor projects.  
+A portable, opinionated rulebook for projects scaffolded from this repository.  
 These rules bias every project toward **security, compliance, accessibility, testability, and AI-first integration** from day one.
 
 ---
@@ -21,13 +21,24 @@ These rules bias every project toward **security, compliance, accessibility, tes
 
 ---
 
-## 1. Encryption & Key Management (BYOK-Ready)
+## 1. Code Structure & Typing
+
+### Rules
+- Avoid deeply nested functions; extract small, named units with clear responsibilities.
+- In typed languages, avoid wildcard types, `any`, and equivalent type-system escape hatches.
+- Never use global variables; pass state and dependencies explicitly.
+
+---
+
+## 2. Encryption & Key Management (BYOK-Ready)
 
 ### Rules
 - All sensitive data **must be encryptable at rest**.
 - Encryption logic must be **decoupled from any specific cloud KMS**.
 - Keys must be **rotatable without data migration**.
 - Encryption boundaries must align with **customer isolation**.
+- **Never put keys in version control.**
+- **Always use a secrets manager.**
 
 ### Required Design Patterns
 - Introduce a `KeyProvider` abstraction even if only env-based keys are used initially.
@@ -46,7 +57,7 @@ If not, redesign.
 
 ---
 
-## 2. Logging, Telemetry & GDPR Compliance
+## 3. Logging, Telemetry & GDPR Compliance
 
 ### Rules
 - Logs are **diagnostic**, not archival.
@@ -77,7 +88,7 @@ If not, redesign.
 
 ---
 
-## 3. AI-First Integration Strategy
+## 4. AI-First Integration Strategy
 
 ### North Star
 The product should be the **obvious choice for an AI agent** to integrate with—no human glue code required.
@@ -115,7 +126,7 @@ Goal: an LLM can understand the product in <30 tokens and predict outcomes befor
 
 ---
 
-## 4. Accessibility (AAA by Default)
+## 5. Accessibility (AAA by Default)
 
 ### Rules
 - Target **WCAG AAA** by default.
@@ -139,7 +150,7 @@ Bonus: AI agents navigating the UI will also work better.
 
 ---
 
-## 5. Testing Philosophy
+## 6. Testing Philosophy
 
 ### Rules
 - Tests describe **behavior**, not implementation.
@@ -165,7 +176,7 @@ Never:
 
 ---
 
-## 6. Repo-Level Enforcement
+## 7. Repo-Level Enforcement
 
 ### Required Files
 - `PROJECT_RULES.md`
@@ -185,7 +196,7 @@ The goal is to turn Cursor into a **staff-level engineer with opinions**.
 
 ---
 
-## 7. Regular Smell Tests
+## 8. Regular Smell Tests
 
 Ask frequently:
 - Could we support BYOK tomorrow?
