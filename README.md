@@ -114,6 +114,16 @@ Printed again in `CANON_NEXT_STEPS.md`:
 
 Longer optional checklist: `CANON_CHECKLIST.md` (from `scaffold/PROJECT_CREATION.md`).
 
+### Credit (optional)
+
+If you’re willing, link back from your project README — it helps others find Canon:
+
+```markdown
+Baseline from [Canon](https://github.com/kyrkewood/canon).
+```
+
+Or apply with `--credit` to append that line. Not required; skip for private/internal repos.
+
 ---
 
 ## Apply script options
@@ -127,6 +137,7 @@ Longer optional checklist: `CANON_CHECKLIST.md` (from `scaffold/PROJECT_CREATION
 | `--stack=node\|python\|none` | Prefill `quality.yml` (default: auto-detect) |
 | `--with-ui` | Accessibility workflow active (you still wire axe) |
 | `--force` | Overwrite existing canon files |
+| `--credit` | Append the Canon credit line to `README.md` |
 
 ---
 

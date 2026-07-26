@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # Apply the canon baseline into a new or existing project.
-# Usage: ./scaffold/apply.sh /path/to/project [--force] [--stack=node|python|none] [--with-ui]
+# Usage: ./scaffold/apply.sh /path/to/project [--force] [--stack=node|python|none] [--with-ui] [--credit]
 set -euo pipefail
+
+CANON_CREDIT_LINE='Baseline from [Canon](https://github.com/kyrkewood/canon).'
 
 usage() {
   cat <<'EOF'
@@ -15,18 +17,20 @@ Options:
   --stack=node|python|none
                        Prefill quality.yml for that stack (default: auto-detect)
   --with-ui            Include accessibility CI as active (default: copy, keep dormant)
+  --credit             Append a short Canon credit line to the target README.md
   -h, --help           Show this help
 
 Examples:
   ./scaffold/apply.sh ~/projects/my-app
   ./scaffold/apply.sh . --stack=node --with-ui
-  ./scaffold/apply.sh ../new-thing --force
+  ./scaffold/apply.sh ../new-thing --force --credit
 
 What it does:
   1. Creates the target folder if needed
   2. Copies AGENTS.md, PROJECT_RULES.md, and domain docs
   3. Copies GitHub Actions workflows into .github/workflows/
   4. Writes CANON_NEXT_STEPS.md with the few things only you can finish
+  5. With --credit, appends a one-line README credit (never rewrites your docs by default)
 EOF
 }
 
@@ -37,12 +41,14 @@ TARGET=""
 FORCE=0
 STACK="auto"
 WITH_UI=0
+CREDIT=0
 
 for arg in "$@"; do
   case "$arg" in
     -h|--help) usage; exit 0 ;;
     --force) FORCE=1 ;;
     --with-ui) WITH_UI=1 ;;
+    --credit) CREDIT=1 ;;
     --stack=*) STACK="${arg#*=}" ;;
     -*)
       echo "Unknown option: $arg" >&2
@@ -338,7 +344,17 @@ Standing instruction: “Follow AGENTS.md and PROJECT_RULES.md.”
 Many tools auto-read AGENTS.md; if not, paste that line once as a project rule.
 Plain-language setup help: see Canon’s ADOPT.md.
 
-## 5. Delete this file
+## 5. Credit Canon in your README (optional, appreciated)
+
+If it fits, add this line near the bottom of `README.md`:
+
+```markdown
+Baseline from [Canon](https://github.com/kyrkewood/canon).
+```
+
+Or re-run apply with `--credit` to append it for you. Skip freely for private/internal repos.
+
+## 6. Delete this file
 
 When the checklist above is done, delete `CANON_NEXT_STEPS.md`.  
 Keep `CANON_CHECKLIST.md` only if you still want the long-form checklist; otherwise delete it too.
@@ -347,6 +363,20 @@ Full detail: see the original canon repo’s `scaffold/PROJECT_CREATION.md`.
 EOF
 
 echo "  wrote: CANON_NEXT_STEPS.md"
+
+if [[ "$CREDIT" -eq 1 ]]; then
+  README_DEST="$TARGET/README.md"
+  if [[ -f "$README_DEST" ]] && grep -q 'github.com/kyrkewood/canon' "$README_DEST"; then
+    echo "  skip (already credited): README.md"
+  elif [[ -f "$README_DEST" ]]; then
+    printf '\n%s\n' "$CANON_CREDIT_LINE" >> "$README_DEST"
+    echo "  wrote: README.md credit line"
+  else
+    printf '%s\n' "$CANON_CREDIT_LINE" > "$README_DEST"
+    echo "  wrote: README.md (credit only — add your own project docs)"
+  fi
+fi
+
 echo
 echo "Done."
 echo

@@ -5,10 +5,12 @@
 ```bash
 # from a clone of this canon repo
 ./scaffold/apply.sh /path/to/your-project
-# optional: --stack=node|python|none  --with-ui  --force
+# optional: --stack=node|python|none  --with-ui  --force  --credit
 ```
 
 Prompt-only (no terminal): open [`../ADOPT.md`](../ADOPT.md) and paste **Fetch & apply** into your coding agent.
+
+Optional README credit (ask before adding): `Baseline from [Canon](https://github.com/kyrkewood/canon).`
 
 A repo is not created until CI gates exist and can block merge. The script installs the files; you still finish the short next-steps list (toolchain, GitHub protection, product blanks).
 
@@ -63,7 +65,11 @@ Do not allow bypasses for the implementing bot/user except break-glass accounts 
 - [ ] CI secrets only via GitHub Actions secrets / OIDC to a secrets manager
 - [ ] Document rotation in `SECURITY.md`
 
-## 6. Definition of done for “project created”
+## 6. Credit Canon (optional)
+
+- [ ] README links back: `Baseline from [Canon](https://github.com/kyrkewood/canon).` (or `apply.sh --credit`)
+
+## 7. Definition of done for “project created”
 
 - [ ] `CANON_NEXT_STEPS.md` completed and deleted
 - [ ] Empty/smoke pipeline is green on `main` (after quality.yml is wired)
