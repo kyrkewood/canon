@@ -1,6 +1,12 @@
 # Canon
 
+<p align="center">
+  <img src="docs/canon-logo.png" alt="Canon logo — a cannon with a book cutout" width="160" />
+</p>
+
 **A starter kit for building products with AI coding agents — rules, standards, and safety checks you can apply in one step.**
+
+**Why “Canon”?** It’s the *canonical* baseline you apply once and reuse — the agreed source of truth for how agents and humans build. The little cannon is a wink: standards with a bit of firepower (CI that actually enforces them).
 
 Canon works with **Cursor, Claude Code, Codex, Lovable**, and anything else that can edit a project and follow Markdown instructions. It is not tied to one vendor.
 
@@ -132,6 +138,7 @@ Longer optional checklist: `CANON_CHECKLIST.md` (from `scaffold/PROJECT_CREATION
 ADOPT.md                  ← start here if you only use AI chat
 README.md                 This file
 LICENSE                   MIT
+docs/canon-logo.png       Logo (cannon + book)
 AGENTS.md                 Agent workflow
 PROJECT_RULES.md          Engineering index
 SECURITY.md               Security & privacy
