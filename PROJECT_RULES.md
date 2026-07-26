@@ -111,6 +111,7 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 - Prefer clarity over cleverness.
 - Ask before violating a rule.
 - Treat missing CI or missing domain docs as a scaffolding defect.
+- Produce PRs for **understanding to participate** (see `AGENTS.md`) — short bodies by default; literate explainers and check questions only when the change is non-trivial.
 
 ---
 
