@@ -1,0 +1,39 @@
+# Accessibility — required when the product has user-facing UI
+# Enable by removing the paths-ignore (or narrowing it) once UI exists.
+name: Accessibility
+
+on:
+  push:
+    branches: [main, master]
+    paths-ignore:
+      # Remove this ignore block when UI ships — gate must become merge-blocking.
+      - "**"
+  pull_request:
+    paths-ignore:
+      - "**"
+
+permissions:
+  contents: read
+
+jobs:
+  axe:
+    name: axe accessibility
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # TODO: build or start the app, then run axe (or pa11y/playwright-axe)
+      # against a real URL or static export. Example sketch:
+      #
+      # - run: npm ci && npm run build
+      # - run: npx --yes @axe-core/cli http://localhost:3000 --exit
+      #
+      # Target WCAG 2.2 AA in CI; AAA remains the design default for critical flows
+      # (see ACCESSIBILITY.md).
+
+      - name: Refuse empty accessibility gate
+        run: |
+          echo "::error::Wire a real axe/pa11y run (or delete this workflow if there is no UI)."
+          echo "See scaffold/PROJECT_CREATION.md and ACCESSIBILITY.md."
+          exit 1

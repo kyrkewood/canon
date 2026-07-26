@@ -1,0 +1,46 @@
+# Quality — lint, typecheck, unit tests (required)
+# Replace every TODO with the product’s real toolchain in the creation PR.
+name: Quality
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Lint, types, tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # --- TODO: install toolchain (pick one stack and delete the rest) ---
+      # Node example:
+      # - uses: actions/setup-node@v4
+      #   with:
+      #     node-version: "22"
+      #     cache: npm
+      # - run: npm ci
+      # - run: npm run lint
+      # - run: npm run typecheck
+      # - run: npm test -- --ci
+
+      # Python example:
+      # - uses: actions/setup-python@v5
+      #   with:
+      #     python-version: "3.12"
+      #     cache: pip
+      # - run: pip install -r requirements.txt -r requirements-dev.txt
+      # - run: ruff check .
+      # - run: mypy .
+      # - run: pytest
+
+      - name: Refuse empty quality gate
+        run: |
+          echo "::error::Wire install/lint/typecheck/test commands before merging scaffold."
+          echo "See scaffold/PROJECT_CREATION.md — quality.yml must not ship as a no-op."
+          exit 1

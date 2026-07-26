@@ -4,9 +4,12 @@ Standing instructions for coding agents. Follow these every session, on every ta
 
 ## Rules hierarchy
 
-- Read and follow [`PROJECT_RULES.md`](PROJECT_RULES.md) before planning or changing code.
-- `AGENTS.md` governs agent workflow and delivery.
-- `PROJECT_RULES.md` governs engineering, security, accessibility, testing, and architecture.
+- Always read [`AGENTS.md`](AGENTS.md) (this file) and [`PROJECT_RULES.md`](PROJECT_RULES.md).
+- `PROJECT_RULES.md` is the index; load domain rulebooks when the work touches that domain:
+  - [`SECURITY.md`](SECURITY.md) — secrets, encryption, OWASP, privacy/logging
+  - [`ACCESSIBILITY.md`](ACCESSIBILITY.md) — UI / WCAG
+  - [`AI_INTEGRATION.md`](AI_INTEGRATION.md) — APIs, MCP, agent UX
+  - [`ARCHITECTURE.md`](ARCHITECTURE.md) — system shape
 - When rules conflict, follow the stricter rule and call out the conflict before proceeding.
 
 ## Verify delivery against spec
@@ -33,12 +36,39 @@ Every task includes explicit cleanup: remove dead code, unused imports/variables
 
 Commit incrementally as work progresses, not in one giant commit at the end. Each logical step (a working feature slice, a passing test, a refactor) gets its own commit with a clear message, so history is reviewable and any step can be rolled back independently.
 
-## Prepare work for review, not just for merging
+## Pull requests: understand to participate
 
-- When finishing a task, produce a short explainer before the diff: state the goal, give relevant background, then walk through the changes in a sensible order (not a raw alphabetical diff).
-- For non-trivial or unfamiliar changes, offer 3–5 quick check questions so the reviewer can confirm they actually understood the change, not just skimmed it.
-- For changes that are hard to review by reading alone (framework migrations, algorithm changes, unfamiliar libraries), consider building a small step-through tool or visualization so the reviewer can watch the change happen rather than take it on faith.
+Understanding—not generation—is the bottleneck. Review exists so humans can **steer the next loop**, not only thumbs-up the last one. Avoid cognitive debt: shipping code nobody can fluently evolve.
+
+### PR body — less is more
+- Default: **1–3 bullets** (what / why). Add risk or test notes only when non-obvious.
+- Do **not** restate the diff, pad with template sections, or write an essay in the PR description.
+- Size the artifact to the change: a one-line fix gets a one-line PR.
+
+### Literate walkthrough (when non-trivial)
+Before asking for review on a non-obvious change, produce a short explainer (comment, linked doc, or PR appendix—whichever stays readable):
+1. **Background** — what already existed
+2. **Intuition** — goal and essence, before code
+3. **Literate diff** — walk changes in teaching order (not file-alpha), with small snippets only where they teach
+
+Skip this for trivial PRs. Bloat is a failure mode equal to under-explaining.
+
+### Check questions (speed regulator)
+For non-trivial PRs, end the explainer with **3–5** questions the author can answer cold before requesting review. Same bar when reviewing others. Omit quizzes on trivial changes.
+
+### Micro-worlds (rare)
+Only when reading cannot build intuition (e.g. migrations, unfamiliar engines, tricky algorithms): a tiny step-through or visualization the reviewer can operate—not a second product.
 
 ## Trust but verify, always
 
 "It works" is not the finish line. Re-check completed work against the original ask, re-read implementation details, and re-run relevant tests/tools yourself rather than accepting a summary of success at face value. Assume the AI defaults to the minimum viable version of any task unless explicitly pushed further.
+
+## Scaffolding new products
+
+When creating a new product from this baseline:
+
+- Follow [`scaffold/PROJECT_CREATION.md`](scaffold/PROJECT_CREATION.md) end-to-end before feature work.
+- Copy the full doc set (`AGENTS.md`, `PROJECT_RULES.md`, `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, `ARCHITECTURE.md`) — not empty stubs.
+- Install CI from [`scaffold/ci/`](scaffold/ci/) in the creation PR; wire real lint/typecheck/test commands — do not leave placeholder jobs that `exit 0`.
+- Treat missing merge-blocking gates (secrets, deps, SAST, quality, and accessibility when UI exists) as a failed scaffold, not a follow-up task.
+- Specialist security or accessibility reviews may run on later PRs; they complement CI and never replace it.

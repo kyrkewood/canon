@@ -1,0 +1,25 @@
+# SAST — OWASP-oriented static analysis (required)
+# Start with Semgrep defaults; add project rules under .semgrep/ as the app grows.
+name: SAST
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  semgrep:
+    name: Semgrep
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep
+        run: semgrep scan --config auto --error --metrics=off
