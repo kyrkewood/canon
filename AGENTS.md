@@ -67,8 +67,8 @@ Only when reading cannot build intuition (e.g. migrations, unfamiliar engines, t
 
 When creating a new product from this baseline:
 
-- Follow [`scaffold/PROJECT_CREATION.md`](scaffold/PROJECT_CREATION.md) end-to-end before feature work.
-- Copy the full doc set (`AGENTS.md`, `PROJECT_RULES.md`, `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, `ARCHITECTURE.md`) — not empty stubs.
-- Install CI from [`scaffold/ci/`](scaffold/ci/) in the creation PR; wire real lint/typecheck/test commands — do not leave placeholder jobs that `exit 0`.
+- **Preferred:** from a canon clone, run `./scaffold/apply.sh /path/to/project` (see [`README.md`](README.md)), then finish `CANON_NEXT_STEPS.md` in the target.
+- Do not hand-copy files unless the script cannot run; if you must, follow [`scaffold/PROJECT_CREATION.md`](scaffold/PROJECT_CREATION.md).
+- Wire real lint/typecheck/test commands — do not leave placeholder jobs that `exit 0` (or the refuse-empty stubs).
 - Treat missing merge-blocking gates (secrets, deps, SAST, quality, and accessibility when UI exists) as a failed scaffold, not a follow-up task.
 - Specialist security or accessibility reviews may run on later PRs; they complement CI and never replace it.

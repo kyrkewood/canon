@@ -12,6 +12,7 @@ Detailed standards live in:
 | [`AI_INTEGRATION.md`](AI_INTEGRATION.md) | APIs, schemas, MCP, agent-friendly UX |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Evolving system shape (fill per product) |
 | [`scaffold/PROJECT_CREATION.md`](scaffold/PROJECT_CREATION.md) | Day-one checklist including CI |
+| [`README.md`](README.md) | How to use this repo — start with `scaffold/apply.sh` |
 
 ---
 
@@ -68,10 +69,11 @@ Never modify tests just to make CI pass, or silence failing tests without explan
 ## 3. Continuous Integration (Required at Project Creation)
 
 Full checklist: [`scaffold/PROJECT_CREATION.md`](scaffold/PROJECT_CREATION.md).  
+Apply tool: [`scaffold/apply.sh`](scaffold/apply.sh) (see [`README.md`](README.md)).  
 Workflows: [`scaffold/ci/`](scaffold/ci/).
 
 ### Non-Negotiables
-- Install scaffold CI on day one — before feature work.
+- Install scaffold CI on day one — before feature work (prefer `apply.sh`).
 - Required checks are **merge-blocking** on the default branch.
 - Exceptions are explicit, time-bounded, and recorded in [`SECURITY.md`](SECURITY.md).
 - Wire real lint / typecheck / test commands in the creation PR — no no-op jobs.
@@ -82,10 +84,11 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 **Specialist reviewers** (OWASP, a11y, privacy) complement CI; they never replace it.
 
 ### Creation Definition of Done
-1. `AGENTS.md` + this file + domain docs below  
-2. CI workflows installed and green on a smoke baseline  
-3. Branch protection requiring the gates  
-4. Secrets outside git, documented in `SECURITY.md`
+1. Docs + workflows applied via [`scaffold/apply.sh`](scaffold/apply.sh) (or equivalent hand copy)
+2. `CANON_NEXT_STEPS.md` completed and removed
+3. CI green on a smoke baseline after quality commands are real
+4. Default-branch protection requiring the gate checks
+5. Secrets managed outside git — documented in `SECURITY.md`
 
 ---
 

@@ -1,31 +1,37 @@
 # Project Creation Checklist
 
-Use this when spinning up any product from the canon baseline.  
-**A repo is not created until CI gates exist and can block merge.**
+**Preferred path:** run the apply script, then finish `CANON_NEXT_STEPS.md`.
+
+```bash
+# from a clone of this canon repo
+./scaffold/apply.sh /path/to/your-project
+# optional: --stack=node|python|none  --with-ui  --force
+```
+
+A repo is not created until CI gates exist and can block merge. The script installs the files; you still finish the short next-steps list (toolchain, GitHub protection, product blanks).
+
+Use this longer checklist when you need detail, or when applying by hand.
+
+---
 
 ## 1. Bootstrap docs
 
-- [ ] Copy into the new repo root (or submodule/subtree this baseline):
-  - `AGENTS.md`
-  - `PROJECT_RULES.md`
-  - `SECURITY.md`
-  - `ACCESSIBILITY.md`
-  - `AI_INTEGRATION.md`
-  - `ARCHITECTURE.md`
-- [ ] Fill product-specific sections in `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, and `ARCHITECTURE.md` (do not leave creation placeholders blank forever).
+- [ ] Prefer `./scaffold/apply.sh <target>` over hand-copying.
+- [ ] Or copy into the new repo root: `AGENTS.md`, `PROJECT_RULES.md`, `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, `ARCHITECTURE.md`.
+- [ ] Fill product-specific sections in `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, and `ARCHITECTURE.md`.
 - [ ] In `SECURITY.md`, record: secrets manager choice, who owns key rotation, and any temporary CI exceptions.
 
 ## 2. Install CI (same PR as first commit of app skeleton)
 
-Copy workflows from [`ci/`](ci/) into `.github/workflows/`:
+Copied automatically by `apply.sh` into `.github/workflows/`:
 
 | File | Required? | Action |
 |------|-----------|--------|
 | `secrets-scan.yml` | Always | Copy as-is |
 | `dependency-review.yml` | Always (GitHub) | Copy as-is; enable Dependency graph |
 | `sast.yml` | Always | Copy as-is; add project-specific Semgrep rules over time |
-| `quality.yml` | Always | Fill in install / lint / typecheck / test for the stack |
-| `accessibility.yml` | If UI | Enable and point at the real app URL or static build |
+| `quality.yml` | Always | Prefills for node/python via apply.sh; otherwise fill by hand |
+| `accessibility.yml` | If UI | Use `apply.sh --with-ui` and wire axe |
 
 ## 3. Wire stack commands
 
@@ -57,7 +63,8 @@ Do not allow bypasses for the implementing bot/user except break-glass accounts 
 
 ## 6. Definition of done for “project created”
 
-- [ ] Empty/smoke pipeline is green on `main`
+- [ ] `CANON_NEXT_STEPS.md` completed and deleted
+- [ ] Empty/smoke pipeline is green on `main` (after quality.yml is wired)
 - [ ] A deliberate failing check (e.g. planted secret in a branch) is blocked
 - [ ] Docs + CI + protection are merged before feature delivery starts
 
