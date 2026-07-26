@@ -154,7 +154,10 @@ Or apply with `--credit` to append that line. Not required; skip for private/int
 ADOPT.md                  ← start here if you only use AI chat
 README.md                 This file
 LICENSE                   MIT
-docs/canon-logo.png       Logo (cannon + book)
+docs/canon-logo.png       Logo (source mark)
+docs/canon-logo.svg       Same mark (SVG wrapper)
+docs/canon-social.png     Social preview 1280×640
+docs/canon-social.svg     Social preview SVG
 AGENTS.md                 Agent workflow
 PROJECT_RULES.md          Engineering index
 SECURITY.md               Security & privacy
