@@ -67,7 +67,8 @@ Only when reading cannot build intuition (e.g. migrations, unfamiliar engines, t
 
 When creating a new product from this baseline:
 
-- **Preferred:** from a canon clone, run `./scaffold/apply.sh /path/to/project` (see [`README.md`](README.md)), then finish `CANON_NEXT_STEPS.md` in the target.
+- **Prompt-only users:** point them at [`ADOPT.md`](ADOPT.md) (fetch & apply prompt).
+- **Preferred (terminal):** from a canon clone, run `./scaffold/apply.sh /path/to/project` (see [`README.md`](README.md)), then finish `CANON_NEXT_STEPS.md` in the target.
 - Do not hand-copy files unless the script cannot run; if you must, follow [`scaffold/PROJECT_CREATION.md`](scaffold/PROJECT_CREATION.md).
 - Wire real lint/typecheck/test commands — do not leave placeholder jobs that `exit 0` (or the refuse-empty stubs).
 - Treat missing merge-blocking gates (secrets, deps, SAST, quality, and accessibility when UI exists) as a failed scaffold, not a follow-up task.

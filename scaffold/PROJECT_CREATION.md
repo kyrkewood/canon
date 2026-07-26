@@ -1,12 +1,14 @@
 # Project Creation Checklist
 
-**Preferred path:** run the apply script, then finish `CANON_NEXT_STEPS.md`.
+**Preferred path:** run the apply script *or* paste the fetch & apply prompt in [`../ADOPT.md`](../ADOPT.md), then finish `CANON_NEXT_STEPS.md`.
 
 ```bash
 # from a clone of this canon repo
 ./scaffold/apply.sh /path/to/your-project
 # optional: --stack=node|python|none  --with-ui  --force
 ```
+
+Prompt-only (no terminal): open [`../ADOPT.md`](../ADOPT.md) and paste **Fetch & apply** into your coding agent.
 
 A repo is not created until CI gates exist and can block merge. The script installs the files; you still finish the short next-steps list (toolchain, GitHub protection, product blanks).
 

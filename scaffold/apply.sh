@@ -333,8 +333,10 @@ In the GitHub repo:
 
 ## 4. Point your coding agent here
 
-In Cursor (or similar), open this project. Agents should read `AGENTS.md` automatically.  
-If not, tell the agent: “Follow AGENTS.md and PROJECT_RULES.md.”
+Open this project in Cursor, Claude Code, Codex, Lovable, or similar.
+Standing instruction: “Follow AGENTS.md and PROJECT_RULES.md.”
+Many tools auto-read AGENTS.md; if not, paste that line once as a project rule.
+Plain-language setup help: see Canon’s ADOPT.md.
 
 ## 5. Delete this file
 
