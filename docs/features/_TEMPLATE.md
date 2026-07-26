@@ -1,13 +1,5 @@
 # Feature: Name
 
-| | |
-|---|---|
-| Status | `draft` / `active` / `deprecated` |
-| Owner | |
-| Last updated | YYYY-MM-DD |
-| Related code | _paths or packages_ |
-| Related PRs | _links_ |
-
 ## Purpose
 
 _Why this exists. One short paragraph._
