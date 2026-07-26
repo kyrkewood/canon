@@ -12,7 +12,8 @@ Detailed standards live in:
 | [`AI_INTEGRATION.md`](AI_INTEGRATION.md) | APIs, schemas, MCP, agent-friendly UX |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Evolving system shape (fill per product) |
 | [`scaffold/PROJECT_CREATION.md`](scaffold/PROJECT_CREATION.md) | Day-one checklist including CI |
-| [`README.md`](README.md) | How to use this repo — start with `scaffold/apply.sh` |
+| [`README.md`](README.md) | How to use this repo — terminal apply via `scaffold/apply.sh` |
+| [`ADOPT.md`](ADOPT.md) | Prompt-only / beginner path (Cursor, Claude Code, Codex, Lovable, …) |
 
 ---
 
@@ -110,11 +111,12 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 - When touching APIs, tools, or agent surfaces → `AI_INTEGRATION.md`
 - When changing system shape → `ARCHITECTURE.md`
 
-### Cursor Usage
+### Agent usage
 - Prefer clarity over cleverness.
 - Ask before violating a rule.
 - Treat missing CI or missing domain docs as a scaffolding defect.
-- Produce PRs for **understanding to participate** (see `AGENTS.md`) — short bodies by default; literate explainers and check questions only when the change is non-trivial.
+- Produce changes for **understanding to participate** (see `AGENTS.md`) — short summaries by default; literate explainers and check questions only when the change is non-trivial.
+- Canon is tool-agnostic: any agent that can read these Markdown files can follow them (see [`ADOPT.md`](ADOPT.md)).
 
 ---
 
