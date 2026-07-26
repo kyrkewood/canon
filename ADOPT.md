@@ -48,13 +48,15 @@ Do this:
    - Use --with-ui if this project has a user-facing UI.
    - Detect Node vs Python if possible; otherwise leave quality.yml for us to wire.
    - Ask me before using --credit (README link back to Canon).
+   - Prefer --github and --open-pr when I want you to create the remote and open the baseline PR.
 3. If you cannot run the script, copy into this project root:
    AGENTS.md, PROJECT_RULES.md, SECURITY.md, ACCESSIBILITY.md,
    AI_INTEGRATION.md, ARCHITECTURE.md
    and copy scaffold/ci/*.yml into .github/workflows/
-4. Create or update CANON_NEXT_STEPS.md with only what I still must do.
-5. Summarize in 5 bullets what you installed and what I should do next.
-6. Do not invent secrets. Do not disable CI gates. Keep explanations short.
+4. After apply, create or link a GitHub remote and open a PR to main; do not stop at local commits.
+5. Create or update CANON_NEXT_STEPS.md with only what I still must do.
+6. Summarize in 5 bullets what you installed and what I should do next.
+7. Do not invent secrets. Do not disable CI gates. Do not auto-merge. Keep explanations short.
 
 When done, wait for me — then walk me through CANON_NEXT_STEPS.md step by step
 in plain language (assume I don’t know GitHub jargon).
@@ -64,8 +66,9 @@ in plain language (assume I don’t know GitHub jargon).
 
 ```text
 Apply https://github.com/kyrkewood/canon to this project (run scaffold/apply.sh
-if possible, else copy docs + .github/workflows). Then explain CANON_NEXT_STEPS.md
-to me like I’m new. Keep it short.
+if possible, else copy docs + .github/workflows). After apply, create/link a
+GitHub remote and open a PR to main — do not stop at local commits. Then explain
+CANON_NEXT_STEPS.md to me like I’m new. Keep it short.
 ```
 
 ---

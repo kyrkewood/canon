@@ -107,10 +107,12 @@ You mostly **don’t edit Canon itself** for each product. You apply it, fill pr
 
 Printed again in `CANON_NEXT_STEPS.md`:
 
-1. **Match CI to your toolchain** — e.g. `npm run lint` / `typecheck` / `test` exist, or edit `quality.yml`.  
-2. **Fill product blanks** in `SECURITY.md` and `ARCHITECTURE.md` (others if relevant).  
-3. **Push to GitHub** (if you use it) and enable Dependency graph + required status checks on `main`.  
-4. **Delete** `CANON_NEXT_STEPS.md` when finished.
+1. **GitHub remote** — `gh repo create … --source=. --remote=origin` (or `apply.sh --github`)  
+2. **Baseline PR to `main`** — branch → push → `gh pr create` (or `--open-pr`); do not stop at local commits; do not auto-merge  
+3. **Match CI to your toolchain** — e.g. `npm run lint` / `typecheck` / `test`, or edit `quality.yml`  
+4. **Fill product blanks** in `SECURITY.md` and `ARCHITECTURE.md` (others if relevant)  
+5. **Protect `main`** — Dependency graph + required status checks  
+6. **Delete** `CANON_NEXT_STEPS.md` after the baseline PR is merged  
 
 Longer optional checklist: `CANON_CHECKLIST.md` (from `scaffold/PROJECT_CREATION.md`).
 
@@ -138,6 +140,9 @@ Or apply with `--credit` to append that line. Not required; skip for private/int
 | `--with-ui` | Accessibility workflow active (you still wire axe) |
 | `--force` | Overwrite existing canon files |
 | `--credit` | Append the Canon credit line to `README.md` |
+| `--github[=owner/name]` | Ensure git repo + GitHub `origin` (`gh repo create` if needed) |
+| `--public` | With `--github`, create a public repo (default private) |
+| `--open-pr` | Branch, commit, push, and open the baseline PR to `main` |
 
 ---
 

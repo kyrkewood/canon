@@ -6,13 +6,12 @@
 # from a clone of this canon repo
 ./scaffold/apply.sh /path/to/your-project
 # optional: --stack=node|python|none  --with-ui  --force  --credit
+#            --github[=owner/name]  --public  --open-pr
 ```
 
 Prompt-only (no terminal): open [`../ADOPT.md`](../ADOPT.md) and paste **Fetch & apply** into your coding agent.
 
-Optional README credit (ask before adding): `Baseline from [Canon](https://github.com/kyrkewood/canon).`
-
-A repo is not created until CI gates exist and can block merge. The script installs the files; you still finish the short next-steps list (toolchain, GitHub protection, product blanks).
+A repo is not created until CI gates exist **and** the baseline is **merged via PR to `main`**. Local commits alone are not done.
 
 Use this longer checklist when you need detail, or when applying by hand.
 
@@ -37,7 +36,15 @@ Copied automatically by `apply.sh` into `.github/workflows/`:
 | `quality.yml` | Always | Prefills for node/python via apply.sh; otherwise fill by hand |
 | `accessibility.yml` | If UI | Use `apply.sh --with-ui` and wire axe |
 
-## 3. Wire stack commands
+## 3. GitHub remote + baseline PR
+
+- [ ] Git repo initialized
+- [ ] GitHub remote `origin` exists (`gh repo create … --source=. --remote=origin` or `apply.sh --github`)
+- [ ] Baseline committed on a branch (e.g. `chore/canon-baseline`), not treated as finished on local `main`
+- [ ] PR opened to `main` (`gh pr create` or `apply.sh --open-pr`)
+- [ ] PR merged after checks (do not auto-merge from Canon)
+
+## 4. Wire stack commands
 
 In `quality.yml` (and package scripts / Makefile):
 
@@ -47,7 +54,7 @@ In `quality.yml` (and package scripts / Makefile):
 - [ ] Unit tests
 - [ ] (Optional) build
 
-## 4. Branch protection
+## 5. Branch protection (before feature PRs)
 
 On the default branch, require:
 
@@ -59,22 +66,25 @@ On the default branch, require:
 
 Do not allow bypasses for the implementing bot/user except break-glass accounts documented in `SECURITY.md`.
 
-## 5. Secrets
+## 6. Secrets
 
 - [ ] No `.env` with real secrets committed
 - [ ] CI secrets only via GitHub Actions secrets / OIDC to a secrets manager
 - [ ] Document rotation in `SECURITY.md`
 
-## 6. Credit Canon (optional)
+## 7. Credit Canon (optional)
 
 - [ ] README links back: `Baseline from [Canon](https://github.com/kyrkewood/canon).` (or `apply.sh --credit`)
 
-## 7. Definition of done for “project created”
+## 8. Definition of done for “project created”
 
+- [ ] GitHub remote exists
+- [ ] Baseline landed via **PR merged to `main`**
+- [ ] Branch protection enabled on `main` before feature PRs
 - [ ] `CANON_NEXT_STEPS.md` completed and deleted
-- [ ] Empty/smoke pipeline is green on `main` (after quality.yml is wired)
+- [ ] Smoke pipeline green on `main` (after quality.yml is wired)
 - [ ] A deliberate failing check (e.g. planted secret in a branch) is blocked
-- [ ] Docs + CI + protection are merged before feature delivery starts
+- [ ] Docs + CI + protection are in place before feature delivery starts
 
 ## Specialist reviewers (optional, after CI)
 

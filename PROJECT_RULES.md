@@ -86,10 +86,11 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 
 ### Creation Definition of Done
 1. Docs + workflows applied via [`scaffold/apply.sh`](scaffold/apply.sh) (or equivalent hand copy)
-2. `CANON_NEXT_STEPS.md` completed and removed
-3. CI green on a smoke baseline after quality commands are real
-4. Default-branch protection requiring the gate checks
-5. Secrets managed outside git — documented in `SECURITY.md`
+2. GitHub remote exists; baseline landed via **PR merged to `main`** (not local-only commits)
+3. Branch protection enabled on `main` before feature work
+4. `CANON_NEXT_STEPS.md` completed and removed
+5. CI green on a smoke baseline after quality commands are real
+6. Secrets managed outside git — documented in `SECURITY.md`
 
 ---
 
