@@ -1,28 +1,43 @@
 # Canon
 
-**The starter kit for building products with coding agents — without reinventing the rules every time.**
+**A starter kit for building products with AI coding agents — rules, standards, and safety checks you can apply in one step.**
 
-Canon gives you:
+Canon works with **Cursor, Claude Code, Codex, Lovable**, and anything else that can edit a project and follow Markdown instructions. It is not tied to one vendor.
 
-1. **Agent instructions** so Cursor (or similar) behaves like a careful engineer  
-2. **Clear engineering standards** (security, accessibility, AI integration, architecture)  
-3. **CI gates from day one** so those standards are enforced, not just written down  
+You get:
 
-If you only do one thing: run the apply script on your project, open `CANON_NEXT_STEPS.md`, and finish the short list.
+1. **Agent instructions** so the AI behaves like a careful engineer  
+2. **Engineering standards** (security, accessibility, AI integration, architecture)  
+3. **CI gates from day one** (where GitHub Actions is available) so standards are enforced, not just written down  
+
+**New to all this?** Start here → [`ADOPT.md`](ADOPT.md) (includes a copy-paste “fetch and apply” prompt).
+
+**Comfortable in a terminal?** Use the 60-second start below.
+
+License: [MIT](LICENSE).
 
 ---
 
 ## Who this is for
 
 - Starting a **new** product and want a sane baseline  
-- Adding structure to an **existing** repo  
+- Adding structure to an **existing** project  
 - Using **AI coding agents** and wanting them guided, not freestyling  
-
-You do **not** need to be a platform engineer. If you can run one terminal command and click a few GitHub settings, you can use this.
+- People who **don’t know Git** but can paste a prompt into an AI tool  
 
 ---
 
-## 60-second start
+## Fastest start (prompt-only)
+
+1. Open your project in Cursor / Claude Code / Codex / Lovable (or similar).  
+2. Paste the prompt from [`ADOPT.md`](ADOPT.md) (section **Fetch & apply**).  
+3. When it finishes, say: *Walk me through CANON_NEXT_STEPS.md in plain language.*
+
+That’s it for the install. The next-steps file lists the few human clicks (usually GitHub settings).
+
+---
+
+## 60-second start (terminal)
 
 ### 1. Get Canon
 
@@ -33,33 +48,27 @@ cd canon
 
 ### 2. Apply it to your project
 
-**New empty folder:**
-
 ```bash
 ./scaffold/apply.sh ~/projects/my-app
 ```
 
-**Existing project (Node or Python auto-detected):**
+Existing project:
 
 ```bash
 ./scaffold/apply.sh /path/to/your-repo
 ```
 
-**Existing project with a UI (turns on accessibility CI):**
+With a UI (accessibility CI on):
 
 ```bash
 ./scaffold/apply.sh /path/to/your-repo --with-ui
 ```
 
-**Already have some of these files?** Add `--force` only if you intend to overwrite them.
+Already have some of these files? Add `--force` only if you intend to overwrite them.
 
 ### 3. Finish the tiny checklist
 
-```bash
-open ~/projects/my-app/CANON_NEXT_STEPS.md   # or just open the file in your editor
-```
-
-That file tells you exactly what to do next (wire scripts, fill a few blanks, push, turn on branch protection). Delete it when you’re done.
+Open `CANON_NEXT_STEPS.md` in the target project. Delete it when you’re done.
 
 ---
 
@@ -75,16 +84,16 @@ That file tells you exactly what to do next (wire scripts, fill a few blanks, pu
 | `ARCHITECTURE.md` | Short living map of *this* product (you fill it in) |
 | `.github/workflows/*` | Secrets scan, dependency review, SAST, quality (+ a11y if UI) |
 
-**Rules without CI are wishes.** Canon installs merge-blocking workflows so the important bar is mechanical.
+**Rules without CI are wishes.** Canon installs merge-blocking workflows when your host supports them.
 
 ---
 
 ## Using it day to day
 
-1. Open the project in **Cursor** (or your agent of choice).  
-2. Agents should pick up `AGENTS.md`. If not, say: *Follow AGENTS.md and PROJECT_RULES.md.*  
-3. When work touches security, UI, or APIs, the agent should also open the matching domain doc.  
-4. Keep PRs **short** (1–3 bullets). For hard changes, add a short literate walkthrough — not an essay. See `AGENTS.md`.
+1. Open the project in your coding agent.  
+2. Standing instruction: *Follow AGENTS.md and PROJECT_RULES.md.* (Many tools auto-read `AGENTS.md`.)  
+3. When work touches security, UI, or APIs, also load the matching domain doc.  
+4. Keep change summaries **short** (1–3 bullets). For hard changes, a short literate walkthrough — not an essay. See `AGENTS.md`.
 
 You mostly **don’t edit Canon itself** for each product. You apply it, fill product-specific blanks, and ship.
 
@@ -96,10 +105,10 @@ Printed again in `CANON_NEXT_STEPS.md`:
 
 1. **Match CI to your toolchain** — e.g. `npm run lint` / `typecheck` / `test` exist, or edit `quality.yml`.  
 2. **Fill product blanks** in `SECURITY.md` and `ARCHITECTURE.md` (others if relevant).  
-3. **Push to GitHub** and enable Dependency graph + required status checks on `main`.  
+3. **Push to GitHub** (if you use it) and enable Dependency graph + required status checks on `main`.  
 4. **Delete** `CANON_NEXT_STEPS.md` when finished.
 
-Longer optional checklist: `CANON_CHECKLIST.md` (copied from `scaffold/PROJECT_CREATION.md`).
+Longer optional checklist: `CANON_CHECKLIST.md` (from `scaffold/PROJECT_CREATION.md`).
 
 ---
 
@@ -120,6 +129,9 @@ Longer optional checklist: `CANON_CHECKLIST.md` (copied from `scaffold/PROJECT_C
 ## What’s in this repo (map)
 
 ```
+ADOPT.md                  ← start here if you only use AI chat
+README.md                 This file
+LICENSE                   MIT
 AGENTS.md                 Agent workflow
 PROJECT_RULES.md          Engineering index
 SECURITY.md               Security & privacy
@@ -127,7 +139,7 @@ ACCESSIBILITY.md          Accessibility
 AI_INTEGRATION.md         AI / API / MCP
 ARCHITECTURE.md           Product architecture template
 scaffold/
-  apply.sh                ← start here
+  apply.sh                Terminal apply
   PROJECT_CREATION.md     Full creation checklist
   ci/                     Workflow templates
 ```
@@ -140,6 +152,6 @@ This repo is the **source** of the baseline. Change standards here, then re-appl
 
 ---
 
-## License / ownership
+## License
 
-Team baseline for products built from this scaffold. Add a license file if you publish it externally.
+[MIT](LICENSE) — free to use, copy, modify, and ship in your own products. Keep the copyright notice.
