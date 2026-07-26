@@ -88,6 +88,7 @@ Open `CANON_NEXT_STEPS.md` in the target project. Delete it when you’re done.
 | `ACCESSIBILITY.md` | WCAG targets and UI rules |
 | `AI_INTEGRATION.md` | APIs / MCP / agent-friendly design |
 | `ARCHITECTURE.md` | Short living map of *this* product (you fill it in) |
+| `docs/features/` | Living feature docs (purpose, behavior, edge cases, decisions) |
 | `.github/workflows/*` | Secrets scan, dependency review, SAST, quality (+ a11y if UI) |
 
 **Rules without CI are wishes.** Canon installs merge-blocking workflows when your host supports them.
@@ -164,6 +165,7 @@ SECURITY.md               Security & privacy
 ACCESSIBILITY.md          Accessibility
 AI_INTEGRATION.md         AI / API / MCP
 ARCHITECTURE.md           Product architecture template
+docs/features/            Feature docs kit (template + guide)
 scaffold/
   apply.sh                Terminal apply
   PROJECT_CREATION.md     Full creation checklist
