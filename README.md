@@ -4,7 +4,7 @@
   <img src="docs/canon-logo.png" alt="Canon" width="160" />
 </p>
 
-**The canonical baseline for building with AI agents — rules, standards, and CI with enough firepower to enforce them.**
+**Canonical baseline for building with AI agents – rules, standards, and CI with enough firepower to enforce them.**
 
 Works with **Cursor, Claude Code, Codex, Lovable**, and anything else that can edit a project and follow Markdown instructions. Not tied to one vendor.
 
