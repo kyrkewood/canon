@@ -6,13 +6,14 @@
 
 **Canonical baseline for building with AI agents – rules, standards, and CI with enough firepower to enforce them.**
 
-Works with **Cursor, Claude Code, Codex, Lovable**, and anything else that can edit a project and follow Markdown instructions. Not tied to one vendor.
+**Agents:** works with Cursor, Claude Code, Codex, Lovable, or anything that can edit a project and follow Markdown — not tied to one AI vendor.  
+**Hosting / CI:** GitHub is the **default** (Actions + `gh` + PR-to-`main`). Other forges are fine if you keep the same shape: remote → branch → merge request → merge-blocking checks.
 
 You get:
 
 1. **Agent instructions** so the AI behaves like a careful engineer  
 2. **Engineering standards** (security, accessibility, AI integration, architecture)  
-3. **CI gates from day one** (where GitHub Actions is available) so the bar is mechanical, not aspirational  
+3. **CI gates from day one** (GitHub Actions templates; adapt elsewhere if needed)  
 
 **New to all this?** Start here → [`ADOPT.md`](ADOPT.md) (includes a copy-paste “fetch and apply” prompt).
 

@@ -55,7 +55,7 @@ Do this:
    AGENTS.md, PROJECT_RULES.md, SECURITY.md, ACCESSIBILITY.md,
    AI_INTEGRATION.md, ARCHITECTURE.md
    and copy scaffold/ci/*.yml into .github/workflows/
-4. After apply, create or link a GitHub remote and open a PR to main; do not stop at local commits.
+4. After apply, create or link a remote and open a PR to main (GitHub default; same idea on other hosts); do not stop at local commits.
 5. Create or update CANON_NEXT_STEPS.md with only what I still must do.
 6. Summarize in 5 bullets what you installed and what I should do next.
 7. Do not invent secrets. Do not disable CI gates. Do not auto-merge. Keep explanations short.
@@ -69,8 +69,8 @@ in plain language (assume I don’t know GitHub jargon).
 ```text
 Apply https://github.com/kyrkewood/canon to this project (run scaffold/apply.sh
 if possible, else copy docs + .github/workflows). After apply, create/link a
-GitHub remote and open a PR to main — do not stop at local commits. Then explain
-CANON_NEXT_STEPS.md to me like I’m new. Keep it short.
+remote and open a PR to main (GitHub default) — do not stop at local commits.
+Then explain CANON_NEXT_STEPS.md to me like I’m new. Keep it short.
 ```
 
 ---
@@ -85,18 +85,20 @@ CANON_NEXT_STEPS.md to me like I’m new. Keep it short.
 | **Lovable** / browser app builders | Paste Fetch & apply; if there’s no shell, ask it to **create the same Markdown files and GitHub workflow files in the project**. Then connect GitHub and enable checks if the host allows. |
 | **ChatGPT / Claude web (no file access)** | Canon can’t install itself. Use a tool that can edit your project, or have someone run `apply.sh` for you. |
 
-Canon is **not** Cursor-only. Any agent that can read `AGENTS.md` and follow links to the other docs can use it.
+Canon is **not** Cursor-only. Any agent that can read `AGENTS.md` can use it.  
+GitHub is the **default** place for remotes and CI; if you use another host, keep the same delivery loop.
 
 ---
 
 ## What “done” looks like
 
 - Your project has `AGENTS.md` + the other Canon docs  
-- `.github/workflows/` has the CI files (if your host supports GitHub Actions)  
+- CI workflows exist (`.github/workflows/` on GitHub, or equivalent elsewhere)  
+- Baseline landed via **PR/MR to `main`**, not only local commits  
 - You finished / deleted `CANON_NEXT_STEPS.md`  
 - Your agent is told to follow those docs on every task  
 
-If your builder **doesn’t support GitHub Actions**, you still benefit from the docs guiding the agent — add CI when you move to a normal GitHub repo.
+If your builder **doesn’t support GitHub Actions**, you still get the agent docs — add merge-blocking CI when you have a real host.
 
 ---
 
