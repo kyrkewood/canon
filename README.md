@@ -1,20 +1,18 @@
 # Canon
 
 <p align="center">
-  <img src="docs/canon-logo.png" alt="Canon logo — a cannon with a book cutout" width="160" />
+  <img src="docs/canon-logo.png" alt="Canon" width="160" />
 </p>
 
-**A starter kit for building products with AI coding agents — rules, standards, and safety checks you can apply in one step.**
+**The canonical baseline for building with AI agents — rules, standards, and CI with enough firepower to enforce them.**
 
-**Why “Canon”?** It’s the *canonical* baseline you apply once and reuse — the agreed source of truth for how agents and humans build. The little cannon is a wink: standards with a bit of firepower (CI that actually enforces them).
-
-Canon works with **Cursor, Claude Code, Codex, Lovable**, and anything else that can edit a project and follow Markdown instructions. It is not tied to one vendor.
+Works with **Cursor, Claude Code, Codex, Lovable**, and anything else that can edit a project and follow Markdown instructions. Not tied to one vendor.
 
 You get:
 
 1. **Agent instructions** so the AI behaves like a careful engineer  
 2. **Engineering standards** (security, accessibility, AI integration, architecture)  
-3. **CI gates from day one** (where GitHub Actions is available) so standards are enforced, not just written down  
+3. **CI gates from day one** (where GitHub Actions is available) so the bar is mechanical, not aspirational  
 
 **New to all this?** Start here → [`ADOPT.md`](ADOPT.md) (includes a copy-paste “fetch and apply” prompt).
 
