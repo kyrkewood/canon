@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # Apply the canon baseline into a new or existing project.
-# Usage: ./scaffold/apply.sh /path/to/project [--force] [--stack=node|python|none] [--with-ui] [--credit]
+# Usage: ./scaffold/apply.sh /path/to/project [options]
 set -euo pipefail
 
 CANON_CREDIT_LINE='Baseline from [Canon](https://github.com/kyrkewood/canon).'
+CANON_BASELINE_BRANCH='chore/canon-baseline'
 
 usage() {
   cat <<'EOF'
@@ -18,19 +19,23 @@ Options:
                        Prefill quality.yml for that stack (default: auto-detect)
   --with-ui            Include accessibility CI as active (default: copy, keep dormant)
   --credit             Append a short Canon credit line to the target README.md
+  --github[=owner/name]
+                       Ensure git repo + GitHub remote (gh repo create if missing)
+  --public             With --github, create a public repo (default: private)
+  --open-pr            After apply: branch, commit, push, and open a PR to main
   -h, --help           Show this help
 
 Examples:
   ./scaffold/apply.sh ~/projects/my-app
-  ./scaffold/apply.sh . --stack=node --with-ui
-  ./scaffold/apply.sh ../new-thing --force --credit
+  ./scaffold/apply.sh . --stack=node --with-ui --github --open-pr
+  ./scaffold/apply.sh ../new-thing --force --credit --github=acme/new-thing
 
 What it does:
   1. Creates the target folder if needed
   2. Copies AGENTS.md, PROJECT_RULES.md, and domain docs
   3. Copies GitHub Actions workflows into .github/workflows/
-  4. Writes CANON_NEXT_STEPS.md with the few things only you can finish
-  5. With --credit, appends a one-line README credit (never rewrites your docs by default)
+  4. Writes CANON_NEXT_STEPS.md (PR-to-main is required, not optional)
+  5. Optional: --credit, --github, --open-pr
 EOF
 }
 
@@ -42,6 +47,11 @@ FORCE=0
 STACK="auto"
 WITH_UI=0
 CREDIT=0
+DO_GITHUB=0
+GITHUB_REPO=""
+GITHUB_VISIBILITY="private"
+OPEN_PR=0
+GH_BLOCKER=""
 
 for arg in "$@"; do
   case "$arg" in
@@ -49,6 +59,13 @@ for arg in "$@"; do
     --force) FORCE=1 ;;
     --with-ui) WITH_UI=1 ;;
     --credit) CREDIT=1 ;;
+    --public) GITHUB_VISIBILITY="public" ;;
+    --open-pr) OPEN_PR=1 ;;
+    --github) DO_GITHUB=1 ;;
+    --github=*)
+      DO_GITHUB=1
+      GITHUB_REPO="${arg#*=}"
+      ;;
     --stack=*) STACK="${arg#*=}" ;;
     -*)
       echo "Unknown option: $arg" >&2
@@ -275,13 +292,180 @@ fi
 
 copy_file "$CANON_ROOT/scaffold/PROJECT_CREATION.md" "$TARGET/CANON_CHECKLIST.md"
 
+ensure_git_repo() {
+  if [[ ! -d "$TARGET/.git" ]]; then
+    git -C "$TARGET" init -b main >/dev/null
+    echo "  wrote: git init (main)"
+  fi
+}
+
+ensure_github_remote() {
+  ensure_git_repo
+
+  if ! command -v gh >/dev/null 2>&1; then
+    GH_BLOCKER="Install GitHub CLI (gh) and run: gh auth login"
+    echo "  warn: gh not found — remote/PR steps left in CANON_NEXT_STEPS.md"
+    return 1
+  fi
+  if ! gh auth status >/dev/null 2>&1; then
+    GH_BLOCKER="Run: gh auth login"
+    echo "  warn: gh not authenticated — remote/PR steps left in CANON_NEXT_STEPS.md"
+    return 1
+  fi
+
+  if git -C "$TARGET" remote get-url origin >/dev/null 2>&1; then
+    echo "  skip (origin exists): $(git -C "$TARGET" remote get-url origin)"
+    return 0
+  fi
+
+  local vis_flag="--private"
+  [[ "$GITHUB_VISIBILITY" == "public" ]] && vis_flag="--public"
+
+  echo "  creating GitHub repo (${GITHUB_VISIBILITY})…"
+  if [[ -n "$GITHUB_REPO" ]]; then
+    if ! gh repo create "$GITHUB_REPO" "$vis_flag" --source="$TARGET" --remote=origin; then
+      GH_BLOCKER="gh repo create ${GITHUB_REPO} failed — create the remote manually, then: git remote add origin <url>"
+      return 1
+    fi
+  else
+    if ! gh repo create "$vis_flag" --source="$TARGET" --remote=origin; then
+      GH_BLOCKER="gh repo create failed — pass --github=owner/name or create the remote manually"
+      return 1
+    fi
+  fi
+  echo "  wrote: origin → $(git -C "$TARGET" remote get-url origin)"
+  return 0
+}
+
+open_baseline_pr() {
+  ensure_git_repo
+
+  if ! command -v gh >/dev/null 2>&1 || ! gh auth status >/dev/null 2>&1; then
+    GH_BLOCKER="${GH_BLOCKER:-Run: gh auth login}"
+    echo "  warn: cannot open PR without gh auth"
+    return 1
+  fi
+  if ! git -C "$TARGET" remote get-url origin >/dev/null 2>&1; then
+    GH_BLOCKER="No origin remote — use --github or git remote add origin <url>"
+    echo "  warn: $GH_BLOCKER"
+    return 1
+  fi
+
+  # Seed main with an empty commit so the baseline can land as a real PR diff
+  git -C "$TARGET" checkout -B main >/dev/null 2>&1 || true
+  if ! git -C "$TARGET" rev-parse HEAD >/dev/null 2>&1; then
+    git -C "$TARGET" commit --allow-empty -m "chore: init repository"
+    echo "  wrote: empty init commit on main"
+  fi
+  git -C "$TARGET" push -u origin main
+
+  git -C "$TARGET" checkout -B "$CANON_BASELINE_BRANCH"
+  git -C "$TARGET" add -A
+  if ! git -C "$TARGET" diff --cached --quiet || ! git -C "$TARGET" diff --quiet; then
+    git -C "$TARGET" add -A
+    git -C "$TARGET" commit -m "Apply Canon baseline"
+    echo "  wrote: commit on ${CANON_BASELINE_BRANCH}"
+  else
+    echo "  skip: nothing new to commit for baseline PR"
+  fi
+
+  git -C "$TARGET" push -u origin "$CANON_BASELINE_BRANCH"
+
+  (
+    cd "$TARGET"
+    existing="$(gh pr list --head "$CANON_BASELINE_BRANCH" --json url -q '.[0].url' 2>/dev/null || true)"
+    if [[ -n "$existing" && "$existing" != "null" ]]; then
+      echo "  skip (PR exists): $existing"
+      exit 0
+    fi
+    url="$(gh pr create --base main --head "$CANON_BASELINE_BRANCH" --title "Apply Canon baseline" --body "$(cat <<'PRBODY'
+## Summary
+- Apply Canon agent rules, domain docs, and day-one CI workflows
+- Open via PR so merge gates can enforce the baseline
+
+## Test plan
+- [ ] Required checks configured on `main`
+- [ ] Quality workflow wired to real lint/typecheck/test commands
+
+PRBODY
+)")" || true
+    if [[ -n "$url" ]]; then
+      echo "  wrote: PR $url"
+    else
+      echo "  warn: gh pr create failed — see CANON_NEXT_STEPS.md for manual commands"
+      return 1
+    fi
+  )
+}
+
+if [[ "$DO_GITHUB" -eq 1 ]]; then
+  echo
+  echo "GitHub remote"
+  ensure_github_remote || true
+fi
+
 NEXT_STEPS="$TARGET/CANON_NEXT_STEPS.md"
 cat > "$NEXT_STEPS" <<EOF
 # Canon — finish setup (then delete this file)
 
-Canon docs and CI are in this repo. Do these next (order matters):
+**Done ≠ local commits.** Baseline must land via a **PR to \`main\`** on GitHub so CI can gate merges.
 
-## 1. Make scripts match CI (if Node/Python)
+EOF
+
+if [[ -n "$GH_BLOCKER" ]]; then
+  cat >> "$NEXT_STEPS" <<EOF
+## 0. Blocking: GitHub CLI
+
+$GH_BLOCKER
+
+Then re-run from the project folder, or continue the commands below.
+
+EOF
+fi
+
+cat >> "$NEXT_STEPS" <<'EOF'
+## 1. Ensure git + GitHub remote
+
+```bash
+# if needed
+git init -b main
+
+# create remote (private default) — pick a name
+gh auth status   # must succeed
+gh repo create YOUR_ORG_OR_USER/YOUR_REPO --private --source=. --remote=origin
+# or: gh repo create YOUR_ORG_OR_USER/YOUR_REPO --public --source=. --remote=origin
+```
+
+If `origin` already exists, skip create.
+
+## 2. Commit baseline on a branch (not “finished on main”)
+
+```bash
+git checkout -b chore/canon-baseline
+git add .
+git commit -m "Apply Canon baseline"
+git push -u origin chore/canon-baseline
+```
+
+## 3. Open a PR to main
+
+```bash
+gh pr create --base main --head chore/canon-baseline --title "Apply Canon baseline" --body "$(cat <<'PRBODY'
+## Summary
+- Apply Canon agent rules, domain docs, and day-one CI workflows
+- Land via PR so merge gates enforce the baseline
+
+## Test plan
+- [ ] Required checks configured on main
+- [ ] Quality workflow wired to real commands
+
+PRBODY
+)"
+```
+
+Do **not** auto-merge. Wait for green checks (after wiring quality), then merge.
+
+## 4. Make scripts match CI (if Node/Python)
 
 EOF
 
@@ -311,55 +495,43 @@ EOF
 fi
 
 cat >> "$NEXT_STEPS" <<'EOF'
-## 2. Fill the blank product sections
-
-Open and complete the “Product-Specific Notes” (or equivalent) in:
+## 5. Fill product-specific blanks
 
 - `SECURITY.md` — secrets manager, rotation owner
 - `ARCHITECTURE.md` — what this product is
 - `ACCESSIBILITY.md` / `AI_INTEGRATION.md` — if those apply
 
-## 3. Push to GitHub and turn on protection
-
-```bash
-git add .
-git commit -m "Apply canon baseline"
-git push
-```
+## 6. Protect main (before feature work)
 
 In the GitHub repo:
 
-1. Settings → Code security → enable **Dependency graph** (for dependency review)
-2. Settings → Branches / Rules → require these checks on `main`:
+1. Settings → Code security → enable **Dependency graph**
+2. Settings → Branches / Rules → require on `main`:
    - Secrets Scan
    - Dependency Review (PRs)
    - SAST
    - Quality
    - Accessibility (only if you have UI)
 
-## 4. Point your coding agent here
+## 7. Point your coding agent here
 
-Open this project in Cursor, Claude Code, Codex, Lovable, or similar.
 Standing instruction: “Follow AGENTS.md and PROJECT_RULES.md.”
-Many tools auto-read AGENTS.md; if not, paste that line once as a project rule.
-Plain-language setup help: see Canon’s ADOPT.md.
+Many tools auto-read AGENTS.md; if not, paste that once as a project rule.
 
-## 5. Credit Canon in your README (optional, appreciated)
-
-If it fits, add this line near the bottom of `README.md`:
+## 8. Credit Canon in your README (optional)
 
 ```markdown
 Baseline from [Canon](https://github.com/kyrkewood/canon).
 ```
 
-Or re-run apply with `--credit` to append it for you. Skip freely for private/internal repos.
+Or re-run apply with `--credit`. Skip for private/internal repos if you prefer.
 
-## 6. Delete this file
+## 9. Delete this file
 
-When the checklist above is done, delete `CANON_NEXT_STEPS.md`.  
-Keep `CANON_CHECKLIST.md` only if you still want the long-form checklist; otherwise delete it too.
+After the baseline PR is **merged** to `main` and protection is on, delete `CANON_NEXT_STEPS.md`.
+Keep `CANON_CHECKLIST.md` only if you still want the long checklist.
 
-Full detail: see the original canon repo’s `scaffold/PROJECT_CREATION.md`.
+Full detail: Canon’s `scaffold/PROJECT_CREATION.md`.
 EOF
 
 echo "  wrote: CANON_NEXT_STEPS.md"
@@ -377,8 +549,45 @@ if [[ "$CREDIT" -eq 1 ]]; then
   fi
 fi
 
+if [[ "$OPEN_PR" -eq 1 ]]; then
+  echo
+  echo "Open baseline PR"
+  if ! git -C "$TARGET" remote get-url origin >/dev/null 2>&1; then
+    if [[ "$DO_GITHUB" -eq 1 ]]; then
+      ensure_github_remote || true
+    else
+      GH_BLOCKER="No origin remote — re-run with --github[=owner/name], or: git remote add origin <url>"
+      echo "  warn: $GH_BLOCKER"
+    fi
+  fi
+  open_baseline_pr || true
+fi
+
+if [[ -n "$GH_BLOCKER" ]]; then
+  if ! grep -q '## 0. Blocking: GitHub CLI' "$NEXT_STEPS" 2>/dev/null; then
+    tmp="$(mktemp)"
+    {
+      head -n 4 "$NEXT_STEPS"
+      cat <<EOF
+
+## 0. Blocking: GitHub CLI
+
+$GH_BLOCKER
+
+Then continue from step 1 below.
+
+EOF
+      tail -n +5 "$NEXT_STEPS"
+    } > "$tmp"
+    mv "$tmp" "$NEXT_STEPS"
+  fi
+fi
+
 echo
 echo "Done."
 echo
-echo "Next: open $TARGET/CANON_NEXT_STEPS.md and finish the short list."
+echo "Next: open $TARGET/CANON_NEXT_STEPS.md — remote + PR to main is required."
 echo "Deep checklist (optional): $TARGET/CANON_CHECKLIST.md"
+if [[ -n "$GH_BLOCKER" ]]; then
+  echo "Blocked on GitHub: $GH_BLOCKER"
+fi

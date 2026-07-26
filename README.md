@@ -6,13 +6,14 @@
 
 **Canonical baseline for building with AI agents – rules, standards, and CI with enough firepower to enforce them.**
 
-Works with **Cursor, Claude Code, Codex, Lovable**, and anything else that can edit a project and follow Markdown instructions. Not tied to one vendor.
+**Agents:** works with Cursor, Claude Code, Codex, Lovable, or anything that can edit a project and follow Markdown — not tied to one AI vendor.  
+**Hosting / CI:** GitHub is the **default** (Actions + `gh` + PR-to-`main`). Other forges are fine if you keep the same shape: remote → branch → merge request → merge-blocking checks.
 
 You get:
 
 1. **Agent instructions** so the AI behaves like a careful engineer  
 2. **Engineering standards** (security, accessibility, AI integration, architecture)  
-3. **CI gates from day one** (where GitHub Actions is available) so the bar is mechanical, not aspirational  
+3. **CI gates from day one** (GitHub Actions templates; adapt elsewhere if needed)  
 
 **New to all this?** Start here → [`ADOPT.md`](ADOPT.md) (includes a copy-paste “fetch and apply” prompt).
 
@@ -35,7 +36,8 @@ License: [MIT](LICENSE).
 
 1. Open your project in Cursor / Claude Code / Codex / Lovable (or similar).  
 2. Paste the prompt from [`ADOPT.md`](ADOPT.md) (section **Fetch & apply**).  
-3. When it finishes, say: *Walk me through CANON_NEXT_STEPS.md in plain language.*
+3. Answer its short setup questions (or say “use defaults”).  
+4. When it finishes, say: *Walk me through CANON_NEXT_STEPS.md in plain language.*
 
 That’s it for the install. The next-steps file lists the few human clicks (usually GitHub settings).
 
@@ -107,10 +109,12 @@ You mostly **don’t edit Canon itself** for each product. You apply it, fill pr
 
 Printed again in `CANON_NEXT_STEPS.md`:
 
-1. **Match CI to your toolchain** — e.g. `npm run lint` / `typecheck` / `test` exist, or edit `quality.yml`.  
-2. **Fill product blanks** in `SECURITY.md` and `ARCHITECTURE.md` (others if relevant).  
-3. **Push to GitHub** (if you use it) and enable Dependency graph + required status checks on `main`.  
-4. **Delete** `CANON_NEXT_STEPS.md` when finished.
+1. **GitHub remote** — `gh repo create … --source=. --remote=origin` (or `apply.sh --github`)  
+2. **Baseline PR to `main`** — branch → push → `gh pr create` (or `--open-pr`); do not stop at local commits; do not auto-merge  
+3. **Match CI to your toolchain** — e.g. `npm run lint` / `typecheck` / `test`, or edit `quality.yml`  
+4. **Fill product blanks** in `SECURITY.md` and `ARCHITECTURE.md` (others if relevant)  
+5. **Protect `main`** — Dependency graph + required status checks  
+6. **Delete** `CANON_NEXT_STEPS.md` after the baseline PR is merged  
 
 Longer optional checklist: `CANON_CHECKLIST.md` (from `scaffold/PROJECT_CREATION.md`).
 
@@ -138,6 +142,9 @@ Or apply with `--credit` to append that line. Not required; skip for private/int
 | `--with-ui` | Accessibility workflow active (you still wire axe) |
 | `--force` | Overwrite existing canon files |
 | `--credit` | Append the Canon credit line to `README.md` |
+| `--github[=owner/name]` | Ensure git repo + GitHub `origin` (`gh repo create` if needed) |
+| `--public` | With `--github`, create a public repo (default private) |
+| `--open-pr` | Branch, commit, push, and open the baseline PR to `main` |
 
 ---
 
