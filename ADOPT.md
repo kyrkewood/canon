@@ -47,6 +47,7 @@ Do this:
 2. Prefer running: scaffold/apply.sh <this-project-root>
    - Use --with-ui if this project has a user-facing UI.
    - Detect Node vs Python if possible; otherwise leave quality.yml for us to wire.
+   - Ask me before using --credit (README link back to Canon).
 3. If you cannot run the script, copy into this project root:
    AGENTS.md, PROJECT_RULES.md, SECURITY.md, ACCESSIBILITY.md,
    AI_INTEGRATION.md, ARCHITECTURE.md
