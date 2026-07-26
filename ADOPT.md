@@ -9,12 +9,14 @@ You do not need to be a developer to get most of the benefit — you need an AI 
 |------|----------------|
 | **Project / folder** | The place your app’s files live on your computer or in the cloud |
 | **Repo (repository)** | That project, plus history of changes (usually on GitHub) |
-| **GitHub** | A website that stores repos and can run automatic checks |
+| **GitHub** | Default place repos and automated checks live (Canon’s reference host) |
 | **Agent** | The AI that edits files for you (Cursor, Claude Code, Codex, etc.) |
 | **CI** | Robots that run checks on every change (secrets, tests, security) |
 | **Apply Canon** | Copy Canon’s rules and CI into *your* project |
 
 You are not “learning Git.” You are giving your AI a constitution and a seatbelt.
+
+Canon is **not** locked to one AI product. It **does** ship GitHub Actions + `gh` as the default remote/CI path; use another forge if you prefer, as long as baseline still lands via merge request with blocking checks.
 
 ---
 

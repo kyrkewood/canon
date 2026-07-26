@@ -117,7 +117,7 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 - Ask before violating a rule.
 - Treat missing CI or missing domain docs as a scaffolding defect.
 - Produce changes for **understanding to participate** (see `AGENTS.md`) — short summaries by default; literate explainers and check questions only when the change is non-trivial.
-- Canon is tool-agnostic: any agent that can read these Markdown files can follow them (see [`ADOPT.md`](ADOPT.md)).
+- Canon is **agent-agnostic** (any tool that reads these Markdown files). **GitHub is the default forge/CI**; other hosts should mirror remote → MR → merge-blocking checks (see [`ADOPT.md`](ADOPT.md)).
 
 ---
 

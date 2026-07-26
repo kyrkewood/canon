@@ -43,10 +43,11 @@ Those commits live on a **feature branch**. Incremental commits are not a substi
 **Non-negotiable for new products and for non-trivial work** (including applying Canon):
 
 - Never treat local-only `main` (or unpushed commits) as done.
-- Default loop: ensure a GitHub remote exists → work on a branch (`chore/canon-baseline`, `feat/…`, …) → push → open a PR → merge to `main` after checks.
+- Default loop (GitHub reference): ensure a remote exists → work on a branch (`chore/canon-baseline`, `feat/…`, …) → push → open a PR → merge to `main` after checks.
+- GitHub + Actions + `gh` are the **default** implementation. On GitLab/Forgejo/etc., same loop with that host’s MR/CI tools — do not skip the remote or the merge gate.
 - Direct push to `main` only when the human explicitly says so, or for a one-shot bootstrap they explicitly approve.
 - Do **not** auto-merge. Open the PR; require green checks; human (or explicit ask) merges.
-- If `gh` is missing or unauthenticated, stop and put that in `CANON_NEXT_STEPS.md` as a blocking item — do not silently skip the remote/PR.
+- If `gh` is missing or unauthenticated on the GitHub path, stop and put that in `CANON_NEXT_STEPS.md` as a blocking item — do not silently skip the remote/PR.
 
 This scaffolding rule wins over generic “only open a PR when asked” habits when the task is creating or applying a product baseline.
 
@@ -83,7 +84,7 @@ When creating a new product from this baseline:
 
 - **Prompt-only users:** point them at [`ADOPT.md`](ADOPT.md) (fetch & apply prompt).
 - **Preferred (terminal):** from a canon clone, run `./scaffold/apply.sh /path/to/project` (see [`README.md`](README.md)), then finish `CANON_NEXT_STEPS.md` in the target.
-- After apply: create or link a GitHub remote and open a PR to `main` — do not stop at local commits. Use `apply.sh --github` / `--open-pr` when available.
+- After apply: create or link a remote and open a PR/MR to `main` — do not stop at local commits. On GitHub, use `apply.sh --github` / `--open-pr` when available.
 - Do not hand-copy files unless the script cannot run; if you must, follow [`scaffold/PROJECT_CREATION.md`](scaffold/PROJECT_CREATION.md).
 - Wire real lint/typecheck/test commands — do not leave placeholder jobs that `exit 0` (or the refuse-empty stubs).
 - Treat missing merge-blocking gates (secrets, deps, SAST, quality, and accessibility when UI exists) as a failed scaffold, not a follow-up task.

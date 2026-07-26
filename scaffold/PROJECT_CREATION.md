@@ -11,7 +11,7 @@
 
 Prompt-only (no terminal): open [`../ADOPT.md`](../ADOPT.md) and paste **Fetch & apply** into your coding agent.
 
-A repo is not created until CI gates exist **and** the baseline is **merged via PR to `main`**. Local commits alone are not done.
+A repo is not created until CI gates exist **and** the baseline is **merged via PR/MR to `main`**. Local commits alone are not done. GitHub is the default host; map the same steps on other forges.
 
 Use this longer checklist when you need detail, or when applying by hand.
 
