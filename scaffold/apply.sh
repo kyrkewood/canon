@@ -143,6 +143,11 @@ for doc in "${DOCS[@]}"; do
   copy_file "$CANON_ROOT/$doc" "$TARGET/$doc"
 done
 
+# Feature-doc kit (directory)
+mkdir -p "$TARGET/docs/features"
+copy_file "$CANON_ROOT/docs/features/README.md" "$TARGET/docs/features/README.md"
+copy_file "$CANON_ROOT/docs/features/_TEMPLATE.md" "$TARGET/docs/features/_TEMPLATE.md"
+
 echo
 echo "CI workflows"
 WF_DEST="$TARGET/.github/workflows"

@@ -38,7 +38,7 @@ _Major actors, external systems, and trust boundaries. Link to diagrams if any._
 
 ## 5. Key Flows
 
-_List 3–5 core flows (auth, create X, delete user, etc.) with links to deeper docs if needed._
+_List 3–5 core flows (auth, create X, delete user, etc.). Link each to its feature doc under [`docs/features/`](docs/features/) when one exists._
 
 ---
 
@@ -47,6 +47,8 @@ _List 3–5 core flows (auth, create X, delete user, etc.) with links to deeper 
 | Date | Decision | Why | Revisit when |
 |------|----------|-----|--------------|
 | | | | |
+
+Product-wide decisions live here. Capability-level decisions live in the matching feature doc.
 
 ---
 

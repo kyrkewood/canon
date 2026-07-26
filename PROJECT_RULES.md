@@ -11,6 +11,7 @@ Detailed standards live in:
 | [`ACCESSIBILITY.md`](ACCESSIBILITY.md) | WCAG targets, UI non-negotiables, CI vs manual |
 | [`AI_INTEGRATION.md`](AI_INTEGRATION.md) | APIs, schemas, MCP, agent-friendly UX |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Evolving system shape (fill per product) |
+| [`docs/features/`](docs/features/) | Living feature docs (purpose, behavior, edge cases, decisions) |
 | [`scaffold/PROJECT_CREATION.md`](scaffold/PROJECT_CREATION.md) | Day-one checklist including CI |
 | [`README.md`](README.md) | How to use this repo — terminal apply via `scaffold/apply.sh` |
 | [`ADOPT.md`](ADOPT.md) | Prompt-only / beginner path (Cursor, Claude Code, Codex, Lovable, …) |
@@ -103,6 +104,7 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 - `SECURITY.md`
 - `AI_INTEGRATION.md`
 - `ACCESSIBILITY.md`
+- `docs/features/` (README + `_TEMPLATE.md`; feature files as capabilities ship)
 - `.github/workflows/` from `scaffold/ci/`
 
 ### How Agents Should Load Rules
@@ -111,6 +113,7 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 - When touching UI → `ACCESSIBILITY.md`
 - When touching APIs, tools, or agent surfaces → `AI_INTEGRATION.md`
 - When changing system shape → `ARCHITECTURE.md`
+- When adding or changing a capability → matching `docs/features/<capability>.md` (create/update in the same PR)
 
 ### Agent usage
 - Prefer clarity over cleverness.

@@ -10,6 +10,7 @@ Standing instructions for coding agents. Follow these every session, on every ta
   - [`ACCESSIBILITY.md`](ACCESSIBILITY.md) — UI / WCAG
   - [`AI_INTEGRATION.md`](AI_INTEGRATION.md) — APIs, MCP, agent UX
   - [`ARCHITECTURE.md`](ARCHITECTURE.md) — system shape
+  - [`docs/features/`](docs/features/) — living notes for shipped capabilities
 - When rules conflict, follow the stricter rule and call out the conflict before proceeding.
 
 ## Verify delivery against spec
@@ -73,6 +74,15 @@ For non-trivial PRs, end the explainer with **3–5** questions the author can a
 
 ### Micro-worlds (rare)
 Only when reading cannot build intuition (e.g. migrations, unfamiliar engines, tricky algorithms): a tiny step-through or visualization the reviewer can operate—not a second product.
+
+## Feature docs (living decision records)
+
+For each meaningful capability you add or change:
+
+- Create or update `docs/features/<capability>.md` from [`docs/features/_TEMPLATE.md`](docs/features/_TEMPLATE.md).
+- Cover purpose, expected behavior, non-goals, edge cases, and decisions worth remembering.
+- Do it in the **same PR** as the behavior change. Skip for trivial fixes with no behavior change.
+- See [`docs/features/README.md`](docs/features/README.md).
 
 ## Trust but verify, always
 
