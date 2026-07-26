@@ -1,10 +1,10 @@
 # Canon
 
 <p align="center">
-  <img src="docs/canon-logo.png" alt="Canon" width="160" />
+  <img src="docs/canon-logo.svg" alt="Canon" width="160" />
 </p>
 
-**The canonical baseline for building with AI agents — rules, standards, and CI with enough firepower to enforce them.**
+**Canonical baseline for building with AI agents – rules, standards, and CI with enough firepower to enforce them.**
 
 Works with **Cursor, Claude Code, Codex, Lovable**, and anything else that can edit a project and follow Markdown instructions. Not tied to one vendor.
 
@@ -114,6 +114,16 @@ Printed again in `CANON_NEXT_STEPS.md`:
 
 Longer optional checklist: `CANON_CHECKLIST.md` (from `scaffold/PROJECT_CREATION.md`).
 
+### Credit (optional)
+
+If you’re willing, link back from your project README — it helps others find Canon:
+
+```markdown
+Baseline from [Canon](https://github.com/kyrkewood/canon).
+```
+
+Or apply with `--credit` to append that line. Not required; skip for private/internal repos.
+
 ---
 
 ## Apply script options
@@ -127,6 +137,7 @@ Longer optional checklist: `CANON_CHECKLIST.md` (from `scaffold/PROJECT_CREATION
 | `--stack=node\|python\|none` | Prefill `quality.yml` (default: auto-detect) |
 | `--with-ui` | Accessibility workflow active (you still wire axe) |
 | `--force` | Overwrite existing canon files |
+| `--credit` | Append the Canon credit line to `README.md` |
 
 ---
 
@@ -136,7 +147,10 @@ Longer optional checklist: `CANON_CHECKLIST.md` (from `scaffold/PROJECT_CREATION
 ADOPT.md                  ← start here if you only use AI chat
 README.md                 This file
 LICENSE                   MIT
-docs/canon-logo.png       Logo (cannon + book)
+docs/canon-logo.svg       Logo source (vector)
+docs/canon-logo.png       Raster export
+docs/canon-social.svg     Social preview source (1280×640)
+docs/canon-social.png     Social preview export
 AGENTS.md                 Agent workflow
 PROJECT_RULES.md          Engineering index
 SECURITY.md               Security & privacy
