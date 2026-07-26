@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="Canon">
+  <title>Canon</title>
+  <rect width="512" height="512" fill="#FAF9F7"/>
+
+  <g transform="translate(236 242) rotate(-30)">
+    <!-- Barrel: rounded tapered tube -->
+    <path fill="#1A1A1A" d="
+      M -165 -42
+      C -165 -62 -148 -76 -128 -76
+      L 155 -42
+      C 178 -40 192 -24 192 0
+      C 192 24 178 40 155 42
+      L -128 76
+      C -148 76 -165 62 -165 42
+      Z
+    "/>
+
+    <!-- Cascable knob -->
+    <circle cx="-165" cy="18" r="28" fill="#1A1A1A"/>
+    <circle cx="-172" cy="24" r="7" fill="#FAF9F7"/>
+
+    <!-- Open book cutout -->
+    <path fill="#FAF9F7" d="
+      M -5 -4
+      C -18 -26 -52 -38 -78 -22
+      C -92 -12 -90 10 -72 20
+      C -50 32 -22 18 -5 2
+      Z
+    "/>
+    <path fill="#FAF9F7" d="
+      M -5 -4
+      C 8 -26 42 -38 68 -22
+      C 82 -12 80 10 62 20
+      C 40 32 12 18 -5 2
+      Z
+    "/>
+
+    <!-- Brass muzzle tip flush with barrel -->
+    <ellipse cx="192" cy="0" rx="30" ry="38" fill="#8B7355"/>
+    <ellipse cx="184" cy="0" rx="14" ry="24" fill="#FAF9F7"/>
+    <ellipse cx="186" cy="0" rx="8" ry="14" fill="#1A1A1A"/>
+  </g>
+
+  <!-- Wheel -->
+  <g transform="translate(305 305)">
+    <circle cx="0" cy="0" r="62" fill="#FAF9F7"/>
+    <circle cx="0" cy="0" r="55" fill="none" stroke="#8B7355" stroke-width="14"/>
+    <g stroke="#8B7355" stroke-width="9" stroke-linecap="round">
+      <line x1="0" y1="-48" x2="0" y2="48"/>
+      <line x1="-48" y1="0" x2="48" y2="0"/>
+      <line x1="-33.9" y1="-33.9" x2="33.9" y2="33.9"/>
+      <line x1="33.9" y1="-33.9" x2="-33.9" y2="33.9"/>
+    </g>
+    <circle cx="0" cy="0" r="11" fill="#8B7355"/>
+  </g>
+</svg>

@@ -1,7 +1,7 @@
 # Canon
 
 <p align="center">
-  <img src="docs/canon-logo.png" alt="Canon" width="160" />
+  <img src="docs/canon-logo.svg" alt="Canon" width="160" />
 </p>
 
 **Canonical baseline for building with AI agents – rules, standards, and CI with enough firepower to enforce them.**
@@ -147,7 +147,10 @@ Or apply with `--credit` to append that line. Not required; skip for private/int
 ADOPT.md                  ← start here if you only use AI chat
 README.md                 This file
 LICENSE                   MIT
-docs/canon-logo.png       Logo (cannon + book)
+docs/canon-logo.svg       Logo source (vector)
+docs/canon-logo.png       Raster export
+docs/canon-social.svg     Social preview source (1280×640)
+docs/canon-social.png     Social preview export
 AGENTS.md                 Agent workflow
 PROJECT_RULES.md          Engineering index
 SECURITY.md               Security & privacy
