@@ -83,6 +83,7 @@ Only when reading cannot build intuition (e.g. migrations, unfamiliar engines, t
 When creating a new product from this baseline:
 
 - **Prompt-only users:** point them at [`ADOPT.md`](ADOPT.md) (fetch & apply prompt).
+- **Chat/apply path:** before running `apply.sh` or copying files, **ask** for the apply choices (UI, stack, `--github` / `--open-pr`, visibility, repo name, `--credit`). Do not guess org/repo names or silently skip the remote/PR unless the human opts out.
 - **Preferred (terminal):** from a canon clone, run `./scaffold/apply.sh /path/to/project` (see [`README.md`](README.md)), then finish `CANON_NEXT_STEPS.md` in the target.
 - After apply: create or link a remote and open a PR/MR to `main` — do not stop at local commits. On GitHub, use `apply.sh --github` / `--open-pr` when available.
 - Do not hand-copy files unless the script cannot run; if you must, follow [`scaffold/PROJECT_CREATION.md`](scaffold/PROJECT_CREATION.md).

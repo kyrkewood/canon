@@ -36,7 +36,8 @@ License: [MIT](LICENSE).
 
 1. Open your project in Cursor / Claude Code / Codex / Lovable (or similar).  
 2. Paste the prompt from [`ADOPT.md`](ADOPT.md) (section **Fetch & apply**).  
-3. When it finishes, say: *Walk me through CANON_NEXT_STEPS.md in plain language.*
+3. Answer its short setup questions (or say “use defaults”).  
+4. When it finishes, say: *Walk me through CANON_NEXT_STEPS.md in plain language.*
 
 That’s it for the install. The next-steps file lists the few human clicks (usually GitHub settings).
 

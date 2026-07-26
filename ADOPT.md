@@ -26,8 +26,9 @@ Canon is **not** locked to one AI product. It **does** ship GitHub Actions + `gh
 
 1. Open your app project in your tool (or start a new one).
 2. Paste the **Fetch & apply** prompt below.
-3. When it finishes, say: **“Walk me through CANON_NEXT_STEPS.md in plain language.”**
-4. Do the few clicks it asks for (usually on GitHub).
+3. Answer the short questions it asks (UI, GitHub remote/PR, visibility, credit) — or say “use defaults.”
+4. When it finishes, say: **“Walk me through CANON_NEXT_STEPS.md in plain language.”**
+5. Do the few clicks it asks for (usually GitHub settings).
 
 ### B) I can run a terminal command
 
@@ -44,21 +45,24 @@ Fetch and apply Canon to this project.
 
 Canon source: https://github.com/kyrkewood/canon
 
-Do this:
+Before changing files, ask me these (one short message; defaults in parentheses):
+1. User-facing UI? → --with-ui (no)
+2. Stack if unclear: node / python / leave quality.yml for me (auto-detect)
+3. Create/link GitHub remote + open baseline PR to main? → --github / --open-pr (yes, unless I say local-only)
+4. Repo visibility if creating: private / public (private)
+5. GitHub owner/name if creating (ask; don’t invent an org)
+6. Add README credit line? → --credit (ask; default no)
+
+Do this after I answer (or after I say “use defaults”):
 1. Get the Canon files (clone, sparse checkout, or download — your choice).
-2. Prefer running: scaffold/apply.sh <this-project-root>
-   - Use --with-ui if this project has a user-facing UI.
-   - Detect Node vs Python if possible; otherwise leave quality.yml for us to wire.
-   - Ask me before using --credit (README link back to Canon).
-   - Prefer --github and --open-pr when I want you to create the remote and open the baseline PR.
-3. If you cannot run the script, copy into this project root:
-   AGENTS.md, PROJECT_RULES.md, SECURITY.md, ACCESSIBILITY.md,
-   AI_INTEGRATION.md, ARCHITECTURE.md
-   and copy scaffold/ci/*.yml into .github/workflows/
-4. After apply, create or link a remote and open a PR to main (GitHub default; same idea on other hosts); do not stop at local commits.
-5. Create or update CANON_NEXT_STEPS.md with only what I still must do.
-6. Summarize in 5 bullets what you installed and what I should do next.
-7. Do not invent secrets. Do not disable CI gates. Do not auto-merge. Keep explanations short.
+2. Prefer running: scaffold/apply.sh <this-project-root> with the flags we agreed.
+   If you cannot run the script, copy the docs + scaffold/ci/*.yml into .github/workflows/
+   and follow CANON_NEXT_STEPS / PROJECT_CREATION manually with the same choices.
+3. After apply, create or link a remote and open a PR to main (GitHub default) unless I opted out;
+   do not stop at local commits; do not auto-merge.
+4. Create or update CANON_NEXT_STEPS.md with only what I still must do.
+5. Summarize in 5 bullets what you installed and what I should do next.
+6. Do not invent secrets. Do not disable CI gates. Keep explanations short.
 
 When done, wait for me — then walk me through CANON_NEXT_STEPS.md step by step
 in plain language (assume I don’t know GitHub jargon).
@@ -67,10 +71,11 @@ in plain language (assume I don’t know GitHub jargon).
 ### Shorter variant (if the tool hates long prompts)
 
 ```text
-Apply https://github.com/kyrkewood/canon to this project (run scaffold/apply.sh
-if possible, else copy docs + .github/workflows). After apply, create/link a
-remote and open a PR to main (GitHub default) — do not stop at local commits.
-Then explain CANON_NEXT_STEPS.md to me like I’m new. Keep it short.
+Apply https://github.com/kyrkewood/canon to this project. First ask me about:
+UI (--with-ui), GitHub remote+PR (--github/--open-pr), private vs public,
+repo name, and README credit (--credit). Then run apply.sh (or copy docs/CI)
+with those choices. Do not stop at local commits unless I say so. Explain
+CANON_NEXT_STEPS.md simply when done.
 ```
 
 ---
