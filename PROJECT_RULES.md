@@ -132,6 +132,7 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 - Could we fully delete a user within an hour? → `SECURITY.md` (privacy)
 - Would we trust these logs during a breach disclosure? → `SECURITY.md`
 - Would a violating PR be blocked by CI today? → `scaffold/ci/`
+- Did the last capability land as its own branch + PR, or as uncommitted pile-on? → `AGENTS.md` (Delivery default)
 
 If any answer is “probably not” → stop and fix it.
 
