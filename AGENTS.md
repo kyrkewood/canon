@@ -61,9 +61,9 @@ Those commits live on a **feature branch**. Incremental commits are not a substi
 
 ### Conflict with “don’t commit / don’t PR unless asked”
 
-Cursor (and similar) user rules often say not to commit or open PRs unless the human asks. **For non-trivial delivery in a Canon product, this file wins** — branch + PR is the default, not an optional extra.
+Host or user rules often say not to commit or open PRs unless the human asks. **For non-trivial delivery in a Canon product, this file wins** — branch + PR is the default, not an optional extra.
 
-If those user rules seem to forbid the delivery loop:
+If those rules seem to forbid the delivery loop:
 
 1. **Stop** before finishing as local-only work.
 2. **Call out the conflict** in one short message.
