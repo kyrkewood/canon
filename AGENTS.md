@@ -17,6 +17,8 @@ Standing instructions for coding agents. Follow these every session, on every ta
 
 After any task, check that every component requested was actually delivered — not just the headline feature. If you asked for five things, confirm five things exist. Don't let partial delivery pass as "done."
 
+For non-trivial work, delivery includes the **git loop** (branch + PR to `main`), not only code in the working tree. See **Delivery default** below.
+
 ## Distrust green checkmarks
 
 Passing tests and green CI are not proof of correctness. Before declaring something complete:
@@ -41,16 +43,35 @@ Those commits live on a **feature branch**. Incremental commits are not a substi
 
 ## Delivery default: remote → branch → PR → main
 
-**Non-negotiable for new products and for non-trivial work** (including applying Canon):
+**Non-negotiable for new products and for non-trivial work** (including applying Canon **and** shipping product capabilities):
 
-- Never treat local-only `main` (or unpushed commits) as done.
+- Never treat local-only `main`, unpushed commits, or “tests pass in the working tree” as done.
+- Asking for a capability means **ship it**: branch → commits → push → PR to `main` (unless the human explicitly opts out of git delivery for that task).
 - Default loop (GitHub reference): ensure a remote exists → work on a branch (`chore/canon-baseline`, `feat/…`, …) → push → open a PR → merge to `main` after checks.
 - GitHub + Actions + `gh` are the **default** implementation. On GitLab/Forgejo/etc., same loop with that host’s MR/CI tools — do not skip the remote or the merge gate.
 - Direct push to `main` only when the human explicitly says so, or for a one-shot bootstrap they explicitly approve.
 - Do **not** auto-merge. Open the PR; require green checks; human (or explicit ask) merges.
-- If `gh` is missing or unauthenticated on the GitHub path, stop and put that in `CANON_NEXT_STEPS.md` as a blocking item — do not silently skip the remote/PR.
+- If `gh` is missing or unauthenticated on the GitHub path, stop and put that in `CANON_NEXT_STEPS.md` (or the chat) as a blocking item — do not silently skip the remote/PR.
 
-This scaffolding rule wins over generic “only open a PR when asked” habits when the task is creating or applying a product baseline.
+### One capability → one branch → one PR
+
+- Separate reviewable capabilities get **separate** branches and PRs to `main` (e.g. `feat/editor-step-timing`, `feat/routine-chat-edit`) — not one pile of uncommitted work.
+- Do **not** stack unrelated capabilities onto an already-open PR (e.g. keep piling onto `chore/initial-product`). Finish or leave that PR; start a new branch from current `main` (or the agreed base) for the next capability.
+- Prefer smaller PRs a human can understand over a mega-PR. If unsure where to split, split by user-visible capability or by independently mergeable risk.
+
+### Conflict with “don’t commit / don’t PR unless asked”
+
+Host or user rules often say not to commit or open PRs unless the human asks. **For non-trivial delivery in a Canon product, this file wins** — branch + PR is the default, not an optional extra.
+
+If those rules seem to forbid the delivery loop:
+
+1. **Stop** before finishing as local-only work.
+2. **Call out the conflict** in one short message.
+3. Ask which wins for this task — or proceed with branch + PR after stating that you are following Canon unless they say otherwise.
+
+Do not silently prefer “code only, no git.” Implementing a capability without the delivery loop is incomplete under this baseline.
+
+This delivery rule applies to day-one scaffolding **and** ongoing feature work, not only `apply.sh`.
 
 ## Pull requests: understand to participate
 
