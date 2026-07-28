@@ -166,6 +166,7 @@ ACCESSIBILITY.md          Accessibility
 AI_INTEGRATION.md         AI / API / MCP
 ARCHITECTURE.md           Product architecture template
 docs/features/            Feature docs kit (template + guide)
+evals/                    Light value checks (scenarios + scorecard; smoke/CI next)
 scaffold/
   apply.sh                Terminal apply
   PROJECT_CREATION.md     Full creation checklist
@@ -177,6 +178,8 @@ scaffold/
 ## Improving Canon
 
 This repo is the **source** of the baseline. Change standards here, then re-apply to products with `--force` when you intentionally want updates (review diffs first — force overwrites).
+
+Light evals (scenarios + scorecard; apply smoke + CI in a follow-up): [`evals/`](evals/).
 
 ---
 
