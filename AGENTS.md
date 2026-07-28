@@ -35,6 +35,18 @@ State what the code should do, how it should be structured, and what standard it
 
 Every task includes explicit cleanup: remove dead code, unused imports/variables, leftover debug prints, temp files, and scaffolding created along the way. Don't leave the codebase messier than before the task started.
 
+After the behavior works, tighten for conciseness and clarity **in the same task** before you call it done — not a later cleanup PR by default.
+
+## Minimal change (no sprawl)
+
+Prefer the smallest diff that correctly solves the ask.
+
+- **Justify new files and dependencies.** Default to extending what exists (stdlib, current modules, current patterns). Do **not** add a library, framework, or new package without explicit human approval. Do not add a new file when an existing one can hold the behavior cleanly.
+- **Stay in bounds.** Touch only modules needed for the task. If the human names allowed/forbidden paths, treat that as hard scope. Do not “while I’m here” unrelated refactors.
+- **Interfaces are sacrosanct.** Do not change existing public APIs, types, or module contracts unless the human explicitly asks for that change (or approves it after you propose it).
+- **Surgical commits and PRs.** Reject your own solutions that wander across unrelated paths. If the diff spreads wider than the problem requires, narrow it before requesting review.
+- **Budgets when useful.** When the human sets a line/file budget or “minimal change” constraint, treat it as a hard requirement and say if you cannot meet it.
+
 ## Commit every change/step
 
 Commit incrementally as work progresses, not in one giant commit at the end. Each logical step (a working feature slice, a passing test, a refactor) gets its own commit with a clear message, so history is reviewable and any step can be rolled back independently.
