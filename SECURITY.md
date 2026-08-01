@@ -35,6 +35,10 @@ CI gates: [`scaffold/ci/`](scaffold/ci/) (`secrets-scan`, `dependency-review`, `
 
 If not, redesign.
 
+### Tests (not only design)
+- Rules above are incomplete without tests: wrong-tenant decrypt fails, rotation still reads old envelopes, plaintext never lands in the persistence path you claim is encrypted.
+- Canon does **not** ship a crypto implementation — products do. The baseline requires the abstraction **and** behavior coverage.
+
 ---
 
 ## 3. OWASP-Oriented Application Security
@@ -54,6 +58,11 @@ Apply these on every feature that handles input, auth, or data. Prefer CI (Semgr
 | Broken access control | Object-level authz (IDOR) tested for core resources |
 | Supply chain | Lockfiles committed; high/critical vulnerable deps fail CI |
 | Security misconfiguration | No debug modes or default creds in production |
+
+### App-level security tests
+- SAST and dependency review are necessary but not sufficient.
+- Keep a dedicated security behavior suite (folder or script, e.g. `*.security.test.*` / `test:security`) covering at least: access control / IDOR, injection boundaries you own, auth session mistakes, and integrity of sensitive writes.
+- Naming and runner are product choice; the convention is **security behavior is tested in-repo** and runs in CI (or the local verify umbrella).
 
 ### Review trigger
 Run a security / OWASP specialist review (human or agent **with tools**) when a PR touches authentication, authorization, cryptography, multi-tenant data, file/URL fetching, or public APIs. Review complements `sast.yml`; it does not replace it.
@@ -88,6 +97,9 @@ Run a security / OWASP specialist review (human or agent **with tools**) when a 
 
 ### Privacy review trigger
 When touching logging, analytics, retention, or export/delete flows, run a privacy pass against this section.
+
+### Logger tests
+- Structured logging rules need tests that raw PII / secrets do not appear in emitted fields (allowlist + redaction). Design-only loggers are incomplete.
 
 ---
 

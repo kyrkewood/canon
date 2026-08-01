@@ -33,12 +33,15 @@ _Major actors, external systems, and trust boundaries. Link to diagrams if any._
 - Tenancy model:
 - Sensitive data classes (see [`SECURITY.md`](SECURITY.md)):
 - Encryption boundaries:
+- Schema / persistence docs (see [`AI_INTEGRATION.md`](AI_INTEGRATION.md) — versioned contracts, `SCHEMA.md` when durable data exists):
 
 ---
 
 ## 5. Key Flows
 
 _List 3–5 core flows (auth, create X, delete user, etc.). Link each to its feature doc under [`docs/features/`](docs/features/) when one exists._
+
+When the same contract is executed in more than one runtime, note the shared source of truth (see dual-runtime contracts in [`AI_INTEGRATION.md`](AI_INTEGRATION.md)).
 
 ---
 
