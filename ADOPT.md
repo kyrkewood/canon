@@ -84,7 +84,7 @@ CANON_NEXT_STEPS.md simply when done.
 
 | Tool | How to use Canon |
 |------|------------------|
-| **Cursor** | Open the project → Agent chat → paste Fetch & apply. `AGENTS.md` is usually auto-read later. |
+| **Cursor** | Open the project → Agent chat → paste Fetch & apply. `AGENTS.md` is usually auto-read later. If a user rule says “don’t commit unless asked,” add a project rule that restates Canon’s delivery loop (see this repo’s `.cursor/rules/canon-delivery.mdc`) so the editor matches `AGENTS.md`. |
 | **Claude Code** | In the project directory → paste Fetch & apply. Say “follow AGENTS.md and PROJECT_RULES.md” if needed. |
 | **Codex** (or similar CLI agents) | Same as Claude Code — paste Fetch & apply in the project workspace. |
 | **Lovable** / browser app builders | Paste Fetch & apply; if there’s no shell, ask it to **create the same Markdown files and GitHub workflow files in the project**. Then connect GitHub and enable checks if the host allows. |

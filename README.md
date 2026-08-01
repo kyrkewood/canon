@@ -166,7 +166,9 @@ ACCESSIBILITY.md          Accessibility
 AI_INTEGRATION.md         AI / API / MCP
 ARCHITECTURE.md           Product architecture template
 docs/features/            Feature docs kit (template + guide)
-evals/                    Light value checks (scenarios + scorecard; smoke/CI next)
+evals/                    Light value checks (scenarios + scorecard + apply smoke)
+scripts/verify.sh         Local verify umbrella (also CI)
+.cursor/rules/            Optional Cursor reinforcement of AGENTS delivery
 scaffold/
   apply.sh                Terminal apply
   PROJECT_CREATION.md     Full creation checklist
@@ -175,11 +177,35 @@ scaffold/
 
 ---
 
+## Plan
+
+**Done**
+- Agent rules + domain rulebooks + apply/CI scaffold
+- Delivery loop, minimal-change, thin-slice / stuck handling
+- Feature docs kit; light evals (scenarios + scorecard)
+- Field conventions (OpenAPI CI expectation, security/a11y test homes, flags, README plan pattern)
+
+**Next**
+- Keep evals RESULTS current as we change AGENTS / apply
+- Optional: richer scenario runs against a scratch product
+
+**Later**
+- Optional example layouts under `scaffold/examples/` (still not default apply)
+- Docs-site / MCP package scaffolds only if many products need the same shape
+
+---
+
 ## Improving Canon
 
 This repo is the **source** of the baseline. Change standards here, then re-apply to products with `--force` when you intentionally want updates (review diffs first — force overwrites).
 
-Light evals (scenarios + scorecard; apply smoke + CI in a follow-up): [`evals/`](evals/).
+Before opening or merging a Canon PR:
+
+```bash
+./scripts/verify.sh
+```
+
+Evals: [`evals/`](evals/). Cursor users: `.cursor/rules/canon-delivery.mdc` aligns the editor with `AGENTS.md` delivery (other agents rely on `AGENTS.md` alone).
 
 ---
 

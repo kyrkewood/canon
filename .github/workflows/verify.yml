@@ -1,0 +1,21 @@
+# Canon verify (local umbrella)
+
+name: Verify
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: scripts/verify.sh
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run local verify umbrella
+        run: ./scripts/verify.sh
