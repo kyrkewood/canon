@@ -44,6 +44,7 @@ Detailed standards live in:
 - Never use global variables; pass state and dependencies explicitly.
 - Prefer extending existing modules over new files; no new third-party dependencies without explicit approval (see `AGENTS.md` — Minimal change).
 - Existing public interfaces stay unchanged unless the change is explicitly requested.
+- Gate incomplete capabilities behind **feature flags / env** documented in `.env.example` (or equivalent) — do not leave half-shipped paths reachable in production builds without an explicit off switch.
 
 ---
 
@@ -52,6 +53,7 @@ Detailed standards live in:
 - Tests describe **behavior**, not implementation.
 - Tests are written in **separate commits** from features.
 - Tests are immutable unless behavior or requirements change.
+- Security and accessibility behavior have first-class homes — see [`SECURITY.md`](SECURITY.md) and [`ACCESSIBILITY.md`](ACCESSIBILITY.md) — not only SAST / URL axe.
 
 ### Commit Discipline
 1. Feature commit  
@@ -81,10 +83,12 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 - Required checks are **merge-blocking** on the default branch.
 - Exceptions are explicit, time-bounded, and recorded in [`SECURITY.md`](SECURITY.md).
 - Wire real lint / typecheck / test commands in the creation PR — no no-op jobs.
+- Provide a **local verify umbrella** (script or Make target) that mirrors merge gates as closely as practical — so “green locally” means the same family of checks as CI, not a random subset.
 
 ### Required Gates
 **Always:** secrets scan, dependency review, SAST, quality (lint/types/tests).  
 **When UI exists:** accessibility.  
+**When a public API exists:** OpenAPI (or equivalent) lint in CI — see [`AI_INTEGRATION.md`](AI_INTEGRATION.md).  
 **Specialist reviewers** (OWASP, a11y, privacy) complement CI; they never replace it.
 
 ### Creation Definition of Done
@@ -94,6 +98,8 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 4. `CANON_NEXT_STEPS.md` completed and removed
 5. CI green on a smoke baseline after quality commands are real
 6. Secrets managed outside git — documented in `SECURITY.md`
+7. Product-specific blanks filled in `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, `ARCHITECTURE.md` (templates are not done)
+8. Local verify umbrella documented (README or package scripts / Makefile)
 
 ---
 
@@ -109,13 +115,17 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 - `docs/features/` (README + `_TEMPLATE.md`; feature files as capabilities ship)
 - `.github/workflows/` from `scaffold/ci/`
 
+### Living plan + feature docs
+- **`docs/features/<capability>.md`** — decision/behavior record per capability.
+- **README (or `PLAN.md`) Done / Next / Later** — living backlog surface. Update in the same PR as capability ships. Both are useful; neither replaces the other.
+
 ### How Agents Should Load Rules
 - Always: `AGENTS.md` + `PROJECT_RULES.md`
 - When touching auth, data, crypto, deps, or public APIs → `SECURITY.md`
 - When touching UI → `ACCESSIBILITY.md`
 - When touching APIs, tools, or agent surfaces → `AI_INTEGRATION.md`
 - When changing system shape → `ARCHITECTURE.md`
-- When adding or changing a capability → matching `docs/features/<capability>.md` (create/update in the same PR)
+- When adding or changing a capability → matching `docs/features/<capability>.md` (create/update in the same PR); refresh Done / Next / Later if you keep that surface
 
 ### Agent usage
 - Prefer clarity over cleverness.
@@ -138,6 +148,9 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 - Did the last change stay local to the problem, or sprawl / add unasked deps? → `AGENTS.md` (Minimal change)
 - Did the last relevant eval smoke/scenario still pass? → `evals/`
 - Did the last stuck agent hand back the wheel (or roll back a bad slice) instead of thrashing? → `AGENTS.md` (When stuck / when wrong)
+- If we publish an API, is OpenAPI (or equivalent) linted in CI? → `AI_INTEGRATION.md`
+- Is there a local command that mirrors merge gates? → `PROJECT_RULES.md` (CI)
+- Are Done / Next / Later and feature docs both current for recent ships? → README / `docs/features/`
 
 If any answer is “probably not” → stop and fix it.
 

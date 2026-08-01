@@ -23,6 +23,8 @@ docs/features/
 
 Link important features from [`ARCHITECTURE.md`](../../ARCHITECTURE.md) (Key Flows / Building Blocks).
 
+Keep a short **Done / Next / Later** list in the product README (or `PLAN.md`) as the living backlog. Feature docs here are the decision/behavior record; the plan is the queue. Update both when a capability ships.
+
 ## Rules of thumb
 
 - Prefer **decisions and behavior** over implementation tour.

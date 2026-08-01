@@ -53,7 +53,14 @@ In `quality.yml` (and package scripts / Makefile):
 - [ ] Typecheck (typed languages)
 - [ ] Unit tests
 - [ ] (Optional) build
-
+- [ ] **Local verify umbrella** documented and runnable (mirrors the gates above as closely as practical)
+- [ ] **If public API:** OpenAPI (or equivalent) lint in CI — see [`AI_INTEGRATION.md`](../AI_INTEGRATION.md)
+- [ ] **If MCP:** MCP package/tests included in CI / local verify
+- [ ] **If UI:** component a11y tests in the unit/UI suite **and** `accessibility.yml` wired — see [`ACCESSIBILITY.md`](../ACCESSIBILITY.md)
+- [ ] **If durable data / client state:** `SCHEMA.md` (or equivalent) + versioned contracts as needed
+- [ ] Feature flags / env gates documented in `.env.example` (or equivalent)
+- [ ] README (or `PLAN.md`) Done / Next / Later started; update as capabilities ship
+- [ ] Fill product blanks in `SECURITY.md`, `AI_INTEGRATION.md`, `ACCESSIBILITY.md`, `ARCHITECTURE.md`
 ## 5. Branch protection (before feature PRs)
 
 On the default branch, require:

@@ -34,6 +34,12 @@ CI gate: [`scaffold/ci/accessibility.yml`](scaffold/ci/accessibility.yml) (merge
   - Manual keyboard walkthrough of changed flows
 - Prefer an accessibility specialist review (human or agent **driving axe/playwright**) on large UI changes — complementary to CI.
 
+### Two complementary layers
+1. **URL / CI axe** (`accessibility.yml`) — catch page-level regressions against a running or exported surface (AA floor).
+2. **In-suite component tests** — interactive components get accessibility assertions in the main unit/UI test run (e.g. `*.a11y.test.*` or equivalent). Prefer meaningful roles/names/keyboard paths over screenshot theater.
+
+Neither replaces the other. Naming and harness (Vitest, Playwright, …) are product choice.
+
 Bonus: agents navigating the UI also work better when these rules hold.
 
 ---

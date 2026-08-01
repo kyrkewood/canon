@@ -28,6 +28,12 @@ jobs:
       # - run: npm run lint
       # - run: npm run typecheck
       # - run: npm test -- --ci
+      #
+      # Optional when applicable (wire as real steps, not comments-only):
+      # - OpenAPI / schema lint (see AI_INTEGRATION.md)
+      # - Security behavior tests (see SECURITY.md)
+      # - MCP package CI (if MCP exists)
+      # Prefer also documenting a local verify umbrella that mirrors these gates.
 
       # Python example:
       # - uses: actions/setup-python@v5
