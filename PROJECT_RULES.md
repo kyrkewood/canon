@@ -42,6 +42,8 @@ Detailed standards live in:
 - Avoid deeply nested functions; extract small, named units with clear responsibilities.
 - In typed languages, avoid wildcard types, `any`, and equivalent type-system escape hatches.
 - Never use global variables; pass state and dependencies explicitly.
+- Prefer extending existing modules over new files; no new third-party dependencies without explicit approval (see `AGENTS.md` — Minimal change).
+- Existing public interfaces stay unchanged unless the change is explicitly requested.
 
 ---
 
@@ -133,6 +135,7 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 - Would we trust these logs during a breach disclosure? → `SECURITY.md`
 - Would a violating PR be blocked by CI today? → `scaffold/ci/`
 - Did the last capability land as its own branch + PR, or as uncommitted pile-on? → `AGENTS.md` (Delivery default)
+- Did the last change stay local to the problem, or sprawl / add unasked deps? → `AGENTS.md` (Minimal change)
 
 If any answer is “probably not” → stop and fix it.
 
