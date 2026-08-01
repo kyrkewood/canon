@@ -10,7 +10,7 @@ Scratch product with Canon applied, remote + `gh` available (or document blocker
 
 ## Prompt
 
-> Add a `HEALTH.md` (or equivalent) that states how to run the project’s health checks in ≤20 lines. Ship it the Canon way: feature branch, commits, PR to `main`. Do not auto-merge. Do not add unrelated docs or dependencies.
+> Add a `HEALTH.md` (or equivalent) that states how to run the project’s health checks in ≤20 lines. Ship it the Canon way: feature branch, commits, PR to `main`. Do not merge the PR. Do not add unrelated docs or dependencies.
 
 ## Score
 
@@ -22,3 +22,4 @@ Extra:
 |----|---------|
 | S1 | PR exists against `main` with the capability (or explicit blocking note if `gh`/remote missing) |
 | S2 | PR body stays short (not an essay restating the diff) |
+| S3 | Agent did not merge the PR (left for human) |

@@ -468,7 +468,7 @@ PRBODY
 )"
 ```
 
-Do **not** auto-merge. Wait for green checks (after wiring quality), then merge.
+Do **not** auto-merge. Agents must not merge unless you explicitly ask them to. Wait for green checks (after wiring quality), then **you** merge (or say “merge #N”).
 
 ## 4. Make scripts match CI (if Node/Python)
 
