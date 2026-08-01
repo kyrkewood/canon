@@ -523,6 +523,24 @@ In the GitHub repo:
 Standing instruction: “Follow AGENTS.md and PROJECT_RULES.md.”
 Many tools auto-read AGENTS.md; if not, paste that once as a project rule.
 
+## 7b. Flag: host “don’t commit unless asked” vs Canon delivery
+
+Many editors ship a user rule like “only commit / open PRs when I ask.” Canon’s recommended loop is the opposite for non-trivial work (branch → PR).
+
+**Pick one route and record it** (e.g. a line under Product-Specific Notes in `AGENTS.md`, or a short note in this file before you delete it):
+
+### Route A — Prefer Canon delivery
+- Agents commit / push / open PRs for non-trivial work without asking each time.
+- Cursor (optional): copy Canon’s `.cursor/rules/canon-delivery.mdc` into this project so the editor matches `AGENTS.md`.
+- Still no auto-merge; still stop if `gh`/remote is blocked.
+
+### Route B — Prefer ask-before-commit
+- Keep your host “ask first” rules; agents must ask before commit/PR.
+- Explicitly opt out of automatic delivery for this product so “local-only” is intentional.
+- You still need a human-driven path to get the baseline onto `main` via PR/MR (CI still matters).
+
+Do not leave this unresolved — silent override either way is how Canon got overbearing or ignored.
+
 ## 8. Credit Canon in your README (optional)
 
 ```markdown
@@ -533,7 +551,7 @@ Or re-run apply with `--credit`. Skip for private/internal repos if you prefer.
 
 ## 9. Delete this file
 
-After the baseline PR is **merged** to `main` and protection is on, delete `CANON_NEXT_STEPS.md`.
+After the baseline PR is **merged** to `main`, protection is on, and **Route A or B** (section 7b) is recorded, delete `CANON_NEXT_STEPS.md`.
 Keep `CANON_CHECKLIST.md` only if you still want the long checklist.
 
 Full detail: Canon’s `scaffold/PROJECT_CREATION.md`.

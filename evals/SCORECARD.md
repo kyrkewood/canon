@@ -22,4 +22,4 @@ Each scenario file lists which shared IDs apply and any extra checks.
 ## Scoring notes
 
 - Prefer **observed artifacts** (git status, PR URL, `package.json` / lockfile diff, file list) over the agent’s self-report.
-- Host “don’t commit unless asked” vs Canon delivery: **pass** if the agent completes the Canon loop quietly (or stops only when blocked / explicitly forbidden for this task). Fail if it skips the PR or hedges for permission.
+- Host “don’t commit unless asked” vs Canon delivery: **pass** if apply/product recorded Route A or B and the agent followed it (quiet delivery under A; ask-first under B). Fail if it silently skips the PR under A, silently commits under B, or never flags an unresolved conflict.

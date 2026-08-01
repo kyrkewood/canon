@@ -67,15 +67,15 @@ Those commits live on a **feature branch**. Incremental commits are not a substi
 
 ## Delivery default: remote → branch → PR → main
 
-**Non-negotiable for new products and for non-trivial work** (including applying Canon **and** shipping product capabilities):
+**Recommended default (Route A)** for new products and for non-trivial work (including applying Canon **and** shipping product capabilities). Record Route B at apply if you prefer ask-before-commit — see **Conflict** below.
 
-- Never treat local-only `main`, unpushed commits, or “tests pass in the working tree” as done.
-- Asking for a capability means **ship it**: branch → commits → push → PR to `main` (unless the human explicitly opts out of git delivery for that task).
+- Never treat local-only `main`, unpushed commits, or “tests pass in the working tree” as done **unless Route B is recorded** and the human deferred git for this task.
+- Asking for a capability means **ship it**: branch → commits → push → PR to `main` (unless Route B or the human explicitly opts out of git delivery for that task).
 - Default loop (GitHub reference): ensure a remote exists → work on a branch (`chore/canon-baseline`, `feat/…`, …) → push → open a PR → merge to `main` after checks.
-- GitHub + Actions + `gh` are the **default** implementation. On GitLab/Forgejo/etc., same loop with that host’s MR/CI tools — do not skip the remote or the merge gate.
+- GitHub + Actions + `gh` are the **default** implementation. On GitLab/Forgejo/etc., same loop with that host’s MR/CI tools — do not skip the remote or the merge gate under Route A.
 - Direct push to `main` only when the human explicitly says so, or for a one-shot bootstrap they explicitly approve.
 - Do **not** auto-merge. Open the PR; require green checks; human (or explicit ask) merges.
-- If `gh` is missing or unauthenticated on the GitHub path, stop and put that in `CANON_NEXT_STEPS.md` (or the chat) as a blocking item — do not silently skip the remote/PR.
+- If `gh` is missing or unauthenticated on the GitHub path, stop and put that in `CANON_NEXT_STEPS.md` (or the chat) as a blocking item — do not silently skip the remote/PR under Route A.
 
 ### One capability → one branch → one PR
 
@@ -85,20 +85,18 @@ Those commits live on a **feature branch**. Incremental commits are not a substi
 
 ### Conflict with “don’t commit / don’t PR unless asked”
 
-Host or user rules often say not to commit or open PRs unless the human asks. **For non-trivial delivery in a Canon product, this file wins** — branch + PR is the default, not an optional extra.
+Host or user rules often say not to commit or open PRs unless the human asks. That conflicts with Canon’s **recommended** delivery loop (branch → PR).
 
-**Just do the loop.** Do not narrate the rule clash, apologize for committing, or ask permission to follow Canon. That reads as resistance and recreates the failure mode (hesitation → local-only “done”).
+**Resolve at apply time** (see `CANON_NEXT_STEPS.md`), not by silently overriding either side mid-task.
 
-Only speak up when:
+| Route | Meaning |
+|-------|---------|
+| **A — Prefer Canon delivery** | Non-trivial work → branch → PR without asking each time. Optional: add a Cursor project rule from Canon’s `.cursor/rules/canon-delivery.mdc` template. |
+| **B — Prefer ask-before-commit** | Keep host “ask first” rules. Agents must ask before commit/PR. Record this opt-out so local-only work is intentional, not accidental. |
 
-- The human **explicitly** forbade commit/PR **for this task** → stop and confirm before shipping git artifacts.
-- You are **blocked** (no remote, `gh` missing/unauthed, etc.) → short blocker note; do not pretend local-only is complete.
+If no route is recorded yet: **flag once**, offer A/B, wait. Do not narrate the clash on every commit afterward, and do not quietly skip the PR under Route A or quietly commit under Route B.
 
-Do not silently prefer “code only, no git.” Implementing a capability without the delivery loop is incomplete under this baseline.
-
-This delivery rule applies to day-one scaffolding **and** ongoing feature work, not only `apply.sh`.
-
-Optional reinforcement for Cursor users: a project rule under `.cursor/rules/` that restates this section (see this repo’s `canon-delivery` rule). It does not replace `AGENTS.md`; other agents ignore it.
+This delivery rule applies to day-one scaffolding **and** ongoing feature work, not only `apply.sh` — once Route A or B is chosen.
 
 ## Pull requests: understand to participate
 
@@ -141,7 +139,7 @@ For each meaningful capability you add or change:
 When creating a new product from this baseline:
 
 - **Prompt-only users:** point them at [`ADOPT.md`](ADOPT.md) (fetch & apply prompt).
-- **Chat/apply path:** before running `apply.sh` or copying files, **ask** for the apply choices (UI, stack, `--github` / `--open-pr`, visibility, repo name, `--credit`). Do not guess org/repo names or silently skip the remote/PR unless the human opts out.
+- **Chat/apply path:** before running `apply.sh` or copying files, **ask** for the apply choices (UI, stack, `--github` / `--open-pr`, visibility, repo name, `--credit`, and **delivery vs ask-before-commit** — Route A/B). Do not guess org/repo names or silently skip the remote/PR unless the human opts out (Route B or explicit local-only).
 - **Preferred (terminal):** from a canon clone, run `./scaffold/apply.sh /path/to/project` (see [`README.md`](README.md)), then finish `CANON_NEXT_STEPS.md` in the target.
 - After apply: create or link a remote and open a PR/MR to `main` — do not stop at local commits. On GitHub, use `apply.sh --github` / `--open-pr` when available.
 - Do not hand-copy files unless the script cannot run; if you must, follow [`scaffold/PROJECT_CREATION.md`](scaffold/PROJECT_CREATION.md).

@@ -45,4 +45,9 @@ if ! grep -q 'PR' "$TMP/CANON_NEXT_STEPS.md"; then
   exit 1
 fi
 
+if ! grep -q 'Route A' "$TMP/CANON_NEXT_STEPS.md" || ! grep -q 'Route B' "$TMP/CANON_NEXT_STEPS.md"; then
+  echo "smoke-apply: CANON_NEXT_STEPS.md should flag delivery Route A/B" >&2
+  exit 1
+fi
+
 echo "smoke-apply: PASS"

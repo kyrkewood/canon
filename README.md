@@ -181,9 +181,10 @@ scaffold/
 
 **Done**
 - Agent rules + domain rulebooks + apply/CI scaffold
-- Delivery loop, minimal-change, thin-slice / stuck handling
-- Feature docs kit; light evals (scenarios + scorecard)
+- Delivery loop (Route A for this repo), minimal-change, thin-slice / stuck handling
+- Feature docs kit; light evals (scenarios + scorecard + apply smoke)
 - Field conventions (OpenAPI CI expectation, security/a11y test homes, flags, README plan pattern)
+- Apply-time Route A/B flag for host “don’t commit” vs delivery (no silent override)
 
 **Next**
 - Keep evals RESULTS current as we change AGENTS / apply
@@ -205,7 +206,7 @@ Before opening or merging a Canon PR:
 ./scripts/verify.sh
 ```
 
-Evals: [`evals/`](evals/). Cursor users: `.cursor/rules/canon-delivery.mdc` aligns the editor with `AGENTS.md` delivery (other agents rely on `AGENTS.md` alone).
+Evals: [`evals/`](evals/). Cursor: `.cursor/rules/canon-delivery.mdc` is this repo’s **Route A** choice (prefer delivery). Products pick A or B at apply — see `CANON_NEXT_STEPS` §7b.
 
 ---
 
