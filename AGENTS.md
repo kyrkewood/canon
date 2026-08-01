@@ -47,6 +47,18 @@ Prefer the smallest diff that correctly solves the ask.
 - **Surgical commits and PRs.** Reject your own solutions that wander across unrelated paths. If the diff spreads wider than the problem requires, narrow it before requesting review.
 - **Budgets when useful.** When the human sets a line/file budget or “minimal change” constraint, treat it as a hard requirement and say if you cannot meet it.
 
+## Thin slice first
+
+For non-trivial work, land one end-to-end path that works (a tracer bullet) before broadening. Prefer a narrow vertical slice over scaffolding many unfinished layers.
+
+When scope is ambiguous (which modules, files, or interfaces are in play), ask once for bounds before a large edit — allowed/forbidden paths, and whether public interfaces may change.
+
+## When stuck / when wrong
+
+- **Hand back the wheel.** After a few failed attempts at the same approach, or when confidence is low, stop and ask. Do not keep “fixing” in circles or silently widen scope to escape the problem.
+- **Fix forward or roll back.** If the last slice is clearly wrong, prefer reverting that commit/branch tip and retrying cleanly over stacking compensatory patches. Fix forward when the mistake is small and local; roll back when the branch has become a tangle.
+- **Don’t torch bridges.** No force-push to `main`/shared default branches, no rewriting history others may rely on, no deleting others’ branches or work without an explicit ask.
+
 ## Commit every change/step
 
 Commit incrementally as work progresses, not in one giant commit at the end. Each logical step (a working feature slice, a passing test, a refactor) gets its own commit with a clear message, so history is reviewable and any step can be rolled back independently.

@@ -137,6 +137,7 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 - Did the last capability land as its own branch + PR, or as uncommitted pile-on? → `AGENTS.md` (Delivery default)
 - Did the last change stay local to the problem, or sprawl / add unasked deps? → `AGENTS.md` (Minimal change)
 - Did the last relevant eval smoke/scenario still pass? → `evals/`
+- Did the last stuck agent hand back the wheel (or roll back a bad slice) instead of thrashing? → `AGENTS.md` (When stuck / when wrong)
 
 If any answer is “probably not” → stop and fix it.
 
