@@ -98,6 +98,8 @@ Do not silently prefer “code only, no git.” Implementing a capability withou
 
 This delivery rule applies to day-one scaffolding **and** ongoing feature work, not only `apply.sh`.
 
+Optional reinforcement for Cursor users: a project rule under `.cursor/rules/` that restates this section (see this repo’s `canon-delivery` rule). It does not replace `AGENTS.md`; other agents ignore it.
+
 ## Pull requests: understand to participate
 
 Understanding—not generation—is the bottleneck. Review exists so humans can **steer the next loop**, not only thumbs-up the last one. Avoid cognitive debt: shipping code nobody can fluently evolve.
