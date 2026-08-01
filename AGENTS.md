@@ -70,11 +70,12 @@ Those commits live on a **feature branch**. Incremental commits are not a substi
 **Recommended default (Route A)** for new products and for non-trivial work (including applying Canon **and** shipping product capabilities). Record Route B at apply if you prefer ask-before-commit — see **Conflict** below.
 
 - Never treat local-only `main`, unpushed commits, or “tests pass in the working tree” as done **unless Route B is recorded** and the human deferred git for this task.
-- Asking for a capability means **ship it**: branch → commits → push → PR to `main` (unless Route B or the human explicitly opts out of git delivery for that task).
-- Default loop (GitHub reference): ensure a remote exists → work on a branch (`chore/canon-baseline`, `feat/…`, …) → push → open a PR → merge to `main` after checks.
+- Asking for a capability means **ship it**: branch → commits → push → **open a PR** to `main` (unless Route B or the human explicitly opts out of git delivery for that task). “Ship” / “land” / “fix the pile” means the PR is ready for review — **not** that the agent merges it.
+- Default loop (GitHub reference): ensure a remote exists → work on a branch (`chore/canon-baseline`, `feat/…`, …) → push → open a PR → **human** merges to `main` after checks.
 - GitHub + Actions + `gh` are the **default** implementation. On GitLab/Forgejo/etc., same loop with that host’s MR/CI tools — do not skip the remote or the merge gate under Route A.
 - Direct push to `main` only when the human explicitly says so, or for a one-shot bootstrap they explicitly approve.
-- Do **not** auto-merge. Open the PR; require green checks; human (or explicit ask) merges.
+- **Never merge a PR/MR unless the human explicitly asks to merge** (e.g. “merge it”, “merge #12”, “please merge”). Words like fix, land, ship, resolve, clear the pile, dogfood, or “get it on main” are **not** merge permission — open or update the PR and stop.
+- Do **not** auto-merge, enable auto-merge, or merge because CI is green. Green checks ready a PR for a human; they do not authorize the agent to merge.
 - If `gh` is missing or unauthenticated on the GitHub path, stop and put that in `CANON_NEXT_STEPS.md` (or the chat) as a blocking item — do not silently skip the remote/PR under Route A.
 
 ### One capability → one branch → one PR

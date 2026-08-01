@@ -151,6 +151,7 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 - If we publish an API, is OpenAPI (or equivalent) linted in CI? → `AI_INTEGRATION.md`
 - Is there a local command that mirrors merge gates? → `PROJECT_RULES.md` (CI)
 - Are Done / Next / Later and feature docs both current for recent ships? → README / `docs/features/`
+- Did the agent merge a PR without an explicit “merge …” ask? → `AGENTS.md` (Delivery — never merge unless asked)
 
 If any answer is “probably not” → stop and fix it.
 
