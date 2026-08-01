@@ -468,7 +468,7 @@ PRBODY
 )"
 ```
 
-Do **not** auto-merge. Agents must not merge unless you explicitly ask them to. Wait for green checks (after wiring quality), then **you** merge (or say “merge #N”).
+Do **not** auto-merge. Agents merge only if you say “merge …”. After green checks, **you** merge.
 
 ## 4. Make scripts match CI (if Node/Python)
 
@@ -523,23 +523,14 @@ In the GitHub repo:
 Standing instruction: “Follow AGENTS.md and PROJECT_RULES.md.”
 Many tools auto-read AGENTS.md; if not, paste that once as a project rule.
 
-## 7b. Flag: host “don’t commit unless asked” vs Canon delivery
+## 7b. Delivery route (pick one)
 
-Many editors ship a user rule like “only commit / open PRs when I ask.” Canon’s recommended loop is the opposite for non-trivial work (branch → PR).
+Host “don’t commit unless asked” conflicts with Canon’s default (open PRs for non-trivial work). **Record Route A or Route B** before deleting this file:
 
-**Pick one route and record it** (e.g. a line under Product-Specific Notes in `AGENTS.md`, or a short note in this file before you delete it):
+- **Route A — Prefer delivery:** agents open PRs without asking each time. Optional: copy `.cursor/rules/canon-delivery.mdc`. Never merge unless you say “merge …”.
+- **Route B — Prefer ask-before-commit:** agents ask before commit/PR; you still land baseline on `main` via a human-driven PR/MR for CI.
 
-### Route A — Prefer Canon delivery
-- Agents commit / push / open PRs for non-trivial work without asking each time.
-- Cursor (optional): copy Canon’s `.cursor/rules/canon-delivery.mdc` into this project so the editor matches `AGENTS.md`.
-- Still no auto-merge; still stop if `gh`/remote is blocked.
-
-### Route B — Prefer ask-before-commit
-- Keep your host “ask first” rules; agents must ask before commit/PR.
-- Explicitly opt out of automatic delivery for this product so “local-only” is intentional.
-- You still need a human-driven path to get the baseline onto `main` via PR/MR (CI still matters).
-
-Do not leave this unresolved — silent override either way is how Canon got overbearing or ignored.
+Do not leave this unresolved.
 
 ## 8. Credit Canon in your README (optional)
 

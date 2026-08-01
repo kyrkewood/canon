@@ -138,20 +138,15 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 
 ## 5. Regular Smell Tests
 
-- Could we support BYOK tomorrow? → `SECURITY.md`
-- Could an LLM understand this system in one page? → `AI_INTEGRATION.md` / `ARCHITECTURE.md`
-- Could a blind user complete the core flow? → `ACCESSIBILITY.md`
-- Could we fully delete a user within an hour? → `SECURITY.md` (privacy)
-- Would we trust these logs during a breach disclosure? → `SECURITY.md`
-- Would a violating PR be blocked by CI today? → `scaffold/ci/`
-- Did the last capability land as its own branch + PR, or as uncommitted pile-on? → `AGENTS.md` (Delivery default)
-- Did the last change stay local to the problem, or sprawl / add unasked deps? → `AGENTS.md` (Minimal change)
-- Did the last relevant eval smoke/scenario still pass? → `evals/`
-- Did the last stuck agent hand back the wheel (or roll back a bad slice) instead of thrashing? → `AGENTS.md` (When stuck / when wrong)
-- If we publish an API, is OpenAPI (or equivalent) linted in CI? → `AI_INTEGRATION.md`
-- Is there a local command that mirrors merge gates? → `PROJECT_RULES.md` (CI)
-- Are Done / Next / Later and feature docs both current for recent ships? → README / `docs/features/`
-- Did the agent merge a PR without an explicit “merge …” ask? → `AGENTS.md` (Delivery — never merge unless asked)
+- BYOK / delete-user / trusted logs / no raw PII? → `SECURITY.md`
+- LLM can orient in one page? → `AI_INTEGRATION.md` / `ARCHITECTURE.md`
+- Blind user can complete core flow? → `ACCESSIBILITY.md`
+- Violating PR blocked by CI today? Local verify mirrors gates? → `scaffold/ci/` / `scripts/verify.sh` (or product umbrella)
+- Last capability: own branch + open PR (not pile-on); agent did not merge without “merge …”? → `AGENTS.md` (Git authority)
+- Last change surgical / no unasked deps? → `AGENTS.md` (Minimal change)
+- Last eval smoke/scenario still honest? → `evals/`
+- Stuck agent handed back the wheel? → `AGENTS.md` (When stuck)
+- API OpenAPI linted if published? Plan + feature docs current? → `AI_INTEGRATION.md` / README / `docs/features/`
 
 If any answer is “probably not” → stop and fix it.
 

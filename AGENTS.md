@@ -17,7 +17,7 @@ Standing instructions for coding agents. Follow these every session, on every ta
 
 After any task, check that every component requested was actually delivered — not just the headline feature. If you asked for five things, confirm five things exist. Don't let partial delivery pass as "done."
 
-For non-trivial work, delivery includes the **git loop** (branch + PR to `main`), not only code in the working tree. See **Delivery default** below.
+For non-trivial work, delivery includes the **git loop** under Route A (open a PR) — see **Git authority** below. Not a merge.
 
 ## Distrust green checkmarks
 
@@ -61,43 +61,22 @@ When scope is ambiguous (which modules, files, or interfaces are in play), ask o
 
 ## Commit every change/step
 
-Commit incrementally as work progresses, not in one giant commit at the end. Each logical step (a working feature slice, a passing test, a refactor) gets its own commit with a clear message, so history is reviewable and any step can be rolled back independently.
+Commit incrementally on a **feature branch** as work progresses — not one giant commit at the end. Commits are not a substitute for opening a PR.
 
-Those commits live on a **feature branch**. Incremental commits are not a substitute for opening a PR.
+## Git authority (delivery)
 
-## Delivery default: remote → branch → PR → main
+**Default (Route A):** non-trivial work → branch → commits → push → **open a PR**. Human merges after checks.  
+**Route B:** ask before commit/PR — only if recorded at apply (`CANON_NEXT_STEPS` §7b).  
+If unset: flag A/B once, wait. Do not silently override host “ask first” rules or silently skip PRs.
 
-**Recommended default (Route A)** for new products and for non-trivial work (including applying Canon **and** shipping product capabilities). Record Route B at apply if you prefer ask-before-commit — see **Conflict** below.
+| Do | Don’t |
+|----|--------|
+| One capability → one branch → one PR | Pile onto an open mega-PR / uncommitted heap |
+| Open the PR under Route A (or ask under Route B) | Treat local-only as “done” under Route A |
+| **Merge only if told “merge …”** (e.g. merge #12) | Merge on fix / ship / land / clear the pile / green CI |
+| Stop if `gh`/remote blocked; note it | Force-push `main` or rewrite shared history |
 
-- Never treat local-only `main`, unpushed commits, or “tests pass in the working tree” as done **unless Route B is recorded** and the human deferred git for this task.
-- Asking for a capability means **ship it**: branch → commits → push → **open a PR** to `main` (unless Route B or the human explicitly opts out of git delivery for that task). “Ship” / “land” / “fix the pile” means the PR is ready for review — **not** that the agent merges it.
-- Default loop (GitHub reference): ensure a remote exists → work on a branch (`chore/canon-baseline`, `feat/…`, …) → push → open a PR → **human** merges to `main` after checks.
-- GitHub + Actions + `gh` are the **default** implementation. On GitLab/Forgejo/etc., same loop with that host’s MR/CI tools — do not skip the remote or the merge gate under Route A.
-- Direct push to `main` only when the human explicitly says so, or for a one-shot bootstrap they explicitly approve.
-- **Never merge a PR/MR unless the human explicitly asks to merge** (e.g. “merge it”, “merge #12”, “please merge”). Words like fix, land, ship, resolve, clear the pile, dogfood, or “get it on main” are **not** merge permission — open or update the PR and stop.
-- Do **not** auto-merge, enable auto-merge, or merge because CI is green. Green checks ready a PR for a human; they do not authorize the agent to merge.
-- If `gh` is missing or unauthenticated on the GitHub path, stop and put that in `CANON_NEXT_STEPS.md` (or the chat) as a blocking item — do not silently skip the remote/PR under Route A.
-
-### One capability → one branch → one PR
-
-- Separate reviewable capabilities get **separate** branches and PRs to `main` (e.g. `feat/editor-step-timing`, `feat/routine-chat-edit`) — not one pile of uncommitted work.
-- Do **not** stack unrelated capabilities onto an already-open PR (e.g. keep piling onto `chore/initial-product`). Finish or leave that PR; start a new branch from current `main` (or the agreed base) for the next capability.
-- Prefer smaller PRs a human can understand over a mega-PR. If unsure where to split, split by user-visible capability or by independently mergeable risk.
-
-### Conflict with “don’t commit / don’t PR unless asked”
-
-Host or user rules often say not to commit or open PRs unless the human asks. That conflicts with Canon’s **recommended** delivery loop (branch → PR).
-
-**Resolve at apply time** (see `CANON_NEXT_STEPS.md`), not by silently overriding either side mid-task.
-
-| Route | Meaning |
-|-------|---------|
-| **A — Prefer Canon delivery** | Non-trivial work → branch → PR without asking each time. Optional: add a Cursor project rule from Canon’s `.cursor/rules/canon-delivery.mdc` template. |
-| **B — Prefer ask-before-commit** | Keep host “ask first” rules. Agents must ask before commit/PR. Record this opt-out so local-only work is intentional, not accidental. |
-
-If no route is recorded yet: **flag once**, offer A/B, wait. Do not narrate the clash on every commit afterward, and do not quietly skip the PR under Route A or quietly commit under Route B.
-
-This delivery rule applies to day-one scaffolding **and** ongoing feature work, not only `apply.sh` — once Route A or B is chosen.
+“Ship” means the PR is up for review — **not** merged. GitHub + Actions + `gh` are the default forge/CI; other hosts: same loop with MR + blocking checks.
 
 ## Pull requests: understand to participate
 

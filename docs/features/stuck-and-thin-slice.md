@@ -23,7 +23,7 @@ See `AGENTS.md` — Thin slice first; When stuck / when wrong.
 
 - Silently widening scope instead of asking for bounds.
 - Stacking compensatory patches on a bad slice instead of rolling back.
-- Narrating host “don’t commit” conflicts every turn, or silently overriding without a recorded Route A/B (see `AGENTS.md` conflict section / apply next-steps 7b).
+- Narrating git-authority fights every turn, or merging without an explicit “merge …” ask.
 
 ## Decisions
 

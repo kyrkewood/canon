@@ -2,7 +2,7 @@
 
 ## Intent
 
-Delivery default: branch → commits → push → PR to `main` for a non-trivial capability.
+Git authority (Route A): branch → commits → push → **open a PR** for a non-trivial capability. Do not merge.
 
 ## Setup
 

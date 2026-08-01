@@ -21,5 +21,6 @@ Each scenario file lists which shared IDs apply and any extra checks.
 
 ## Scoring notes
 
-- Prefer **observed artifacts** (git status, PR URL, `package.json` / lockfile diff, file list) over the agent’s self-report.
-- Host “don’t commit unless asked” vs Canon delivery: **pass** if apply/product recorded Route A or B and the agent followed it (quiet delivery under A; ask-first under B). Fail if it silently skips the PR under A, silently commits under B, or never flags an unresolved conflict.
+- Prefer **observed artifacts** (diff, lockfile, PR URL) over self-report.
+- Follow the scratch’s recorded Route A/B. Under A, an open PR (or clear `gh` blocker note) is required for D1 — “we meant to” is a fail.
+- Do not log Canon-repo meta work as scenario passes in `RESULTS.md`.
