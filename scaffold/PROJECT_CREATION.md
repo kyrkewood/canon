@@ -61,6 +61,7 @@ In `quality.yml` (and package scripts / Makefile):
 - [ ] Feature flags / env gates documented in `.env.example` (or equivalent)
 - [ ] README (or `PLAN.md`) Done / Next / Later started; update as capabilities ship
 - [ ] Fill product blanks in `SECURITY.md`, `AI_INTEGRATION.md`, `ACCESSIBILITY.md`, `ARCHITECTURE.md`
+- [ ] Record delivery Route A (prefer Canon PR loop) or Route B (ask-before-commit) — `CANON_NEXT_STEPS` §7b / `AGENTS.md`
 ## 5. Branch protection (before feature PRs)
 
 On the default branch, require:

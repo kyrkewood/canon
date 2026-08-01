@@ -52,15 +52,16 @@ Before changing files, ask me these (one short message; defaults in parentheses)
 4. Repo visibility if creating: private / public (private)
 5. GitHub owner/name if creating (ask; don’t invent an org)
 6. Add README credit line? → --credit (ask; default no)
+7. Host “don’t commit unless asked” vs Canon delivery → Route A prefer delivery / Route B ask-before-commit (ask; default A if unsure)
 
 Do this after I answer (or after I say “use defaults”):
 1. Get the Canon files (clone, sparse checkout, or download — your choice).
 2. Prefer running: scaffold/apply.sh <this-project-root> with the flags we agreed.
    If you cannot run the script, copy the docs + scaffold/ci/*.yml into .github/workflows/
    and follow CANON_NEXT_STEPS / PROJECT_CREATION manually with the same choices.
-3. After apply, create or link a remote and open a PR to main (GitHub default) unless I opted out;
-   do not stop at local commits; do not auto-merge.
-4. Create or update CANON_NEXT_STEPS.md with only what I still must do.
+3. After apply, create or link a remote and open a PR to main (GitHub default) unless I opted out (Route B or local-only);
+   under Route A do not stop at local commits; do not auto-merge.
+4. Create or update CANON_NEXT_STEPS.md with only what I still must do — include section 7b (Route A/B) and record my choice.
 5. Summarize in 5 bullets what you installed and what I should do next.
 6. Do not invent secrets. Do not disable CI gates. Keep explanations short.
 
@@ -73,9 +74,9 @@ in plain language (assume I don’t know GitHub jargon).
 ```text
 Apply https://github.com/kyrkewood/canon to this project. First ask me about:
 UI (--with-ui), GitHub remote+PR (--github/--open-pr), private vs public,
-repo name, and README credit (--credit). Then run apply.sh (or copy docs/CI)
-with those choices. Do not stop at local commits unless I say so. Explain
-CANON_NEXT_STEPS.md simply when done.
+repo name, README credit (--credit), and delivery Route A vs ask-before-commit Route B.
+Then run apply.sh (or copy docs/CI) with those choices. Record the route in
+CANON_NEXT_STEPS. Explain CANON_NEXT_STEPS.md simply when done.
 ```
 
 ---
@@ -84,7 +85,7 @@ CANON_NEXT_STEPS.md simply when done.
 
 | Tool | How to use Canon |
 |------|------------------|
-| **Cursor** | Open the project → Agent chat → paste Fetch & apply. `AGENTS.md` is usually auto-read later. If a user rule says “don’t commit unless asked,” add a project rule that restates Canon’s delivery loop (see this repo’s `.cursor/rules/canon-delivery.mdc`) so the editor matches `AGENTS.md`. |
+| **Cursor** | Open the project → Agent chat → paste Fetch & apply. `AGENTS.md` is usually auto-read later. If you choose **Route A** (prefer Canon delivery) and a user rule says “don’t commit unless asked,” optionally copy `.cursor/rules/canon-delivery.mdc` so the editor matches that choice. Route B = keep ask-first; do not install that rule. |
 | **Claude Code** | In the project directory → paste Fetch & apply. Say “follow AGENTS.md and PROJECT_RULES.md” if needed. |
 | **Codex** (or similar CLI agents) | Same as Claude Code — paste Fetch & apply in the project workspace. |
 | **Lovable** / browser app builders | Paste Fetch & apply; if there’s no shell, ask it to **create the same Markdown files and GitHub workflow files in the project**. Then connect GitHub and enable checks if the host allows. |
