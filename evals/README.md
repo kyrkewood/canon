@@ -8,29 +8,31 @@ See also: [`docs/features/evals.md`](../docs/features/evals.md).
 
 | Layer | What | Status |
 |-------|------|--------|
-| **Smoke** | `evals/smoke-apply.sh` → temp dir → assert expected files | Local + CI via `scripts/verify.sh` |
-| **Scenarios** | Fixed prompts + [`SCORECARD.md`](SCORECARD.md) | Spec ready; run by hand / log in RESULTS |
-| **Results** | One-line log in [`RESULTS.md`](RESULTS.md) | Append when you run |
+| **Smoke** | [`smoke-apply.sh`](smoke-apply.sh) via [`scripts/verify.sh`](../scripts/verify.sh) | Local + CI |
+| **Scenarios** | Fixed prompts + [`SCORECARD.md`](SCORECARD.md) on a **scratch product** | Manual; log in RESULTS |
+| **Results** | [`RESULTS.md`](RESULTS.md) | Observed runs only — no diary passes |
 
-## How to run (today)
+## How to run
 
 ```bash
-./scripts/verify.sh          # includes apply smoke
+./scripts/verify.sh          # apply smoke
 ```
 
-Scenarios (agent behavior):
+Scenarios:
 
-1. Pick a scenario under [`scenarios/`](scenarios/).
-2. In a throwaway product dir (or a scratch clone), give an agent Canon’s rules + the scenario prompt.
-3. Score with the scorecard — pass/fail per criterion; don’t invent partial credit.
-4. Append a line to `RESULTS.md`.
+1. Create a throwaway dir; seed any files the scenario needs; run `scaffold/apply.sh` into it.
+2. Record Route A or B on the scratch.
+3. Follow the scenario prompt **as the agent under test** (or have a cold agent do it).
+4. Score with the scorecard from **artifacts** (diff, lockfile, PR URL).
+5. Append one line to `RESULTS.md`.
+
+`ship-capability` needs a real remote + `gh` (or score **fail** on D1 if you only have a local scratch — that is an honest fail, not a skip).
 
 ## Cadence
 
-- After changes to delivery, minimal-change, or `apply.sh`.
-- Otherwise when something feels “off” in a real product, or ~monthly.
+After changes to git authority, minimal-change, or `apply.sh`; otherwise when field use feels off.
 
 ## Non-goals
 
-- No promptfoo / eval frameworks unless approved.
-- No automated LLM-as-judge on the first implementation.
+- No eval libraries / LLM-as-judge unless approved.
+- No scoring Canon’s own PR history as a product scenario pass.

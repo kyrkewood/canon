@@ -6,11 +6,9 @@ A **light, repeatable check** that Canon’s agent rules and apply path stay val
 
 ## How it should work
 
-1. **Mechanical smoke** (`evals/smoke-apply.sh`, also via `scripts/verify.sh` / CI): run `apply.sh` into a temp dir and assert the expected baseline file set (and that next-steps aren’t empty lies).
-2. **Scenarios** (human- or agent-run): fixed prompts in `evals/scenarios/`; score with `evals/SCORECARD.md` (pass/fail, no LLM judge required).
-3. **Log**: one line per run in `evals/RESULTS.md` (date, scenario or smoke, pass/fail, short note).
-
-Cadence: after material changes to `AGENTS.md`, `apply.sh`, or delivery/minimal-change rules; otherwise occasionally (e.g. monthly).
+1. **Mechanical smoke** (`evals/smoke-apply.sh`, also via `scripts/verify.sh` / CI).
+2. **Scenarios** on a scratch product; score with `evals/SCORECARD.md`.
+3. **Log** observed runs only in `evals/RESULTS.md`.
 
 ## Non-goals
 
@@ -29,11 +27,11 @@ Cadence: after material changes to `AGENTS.md`, `apply.sh`, or delivery/minimal-
 
 | Date | Decision | Why | Revisit when |
 |------|----------|-----|--------------|
-| 2026-07-28 | Docs-first; implement smoke + CI in a follow-up PR | Design before ceremony | After first smoke lands |
-| 2026-07-28 | Checklist scorecard, not LLM judge | Cheap, reviewable, less flaky | If volume of runs makes manual scoring a bottleneck |
-| 2026-08-01 | Smoke + `scripts/verify.sh` + CI workflow shipped | Dogfood local-verify convention | If verify becomes slow or flaky |
+| 2026-07-28 | Checklist scorecard, not LLM judge | Cheap, reviewable | Volume makes manual scoring a bottleneck |
+| 2026-08-01 | Smoke + verify in CI | Dogfood local-verify | Verify becomes slow/flaky |
+| 2026-08-01 | RESULTS = observed scratch/CI only; meta diary removed | Evals were self-congratulatory | — |
+| 2026-08-01 | Compress git authority in AGENTS; merge stays sacred | Scar tissue was crowding standing orders | Authority fights return |
 
 ## Open questions
 
-- Whether RESULTS.md stays committed one-liners (yes for now).
-- Exact file assertions for stack variants (`node` / `python`, `--with-ui`) beyond `--stack=none`.
+- Disposable-remote harness for `ship-capability` without leaving junk GitHub repos.

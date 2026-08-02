@@ -1,21 +1,12 @@
 ---
-description: Route A delivery — open PRs; never merge unless explicitly asked
+description: Route A — open PRs; merge only when explicitly asked
 alwaysApply: true
 ---
 
-# Delivery default (this repo — Route A)
+# Git authority (this repo — Route A)
 
-This repository recorded **Route A** (prefer Canon delivery). Follow [`AGENTS.md`](AGENTS.md).
+Follow [`AGENTS.md`](AGENTS.md) **Git authority**.
 
-For non-trivial work here: **branch → commits → push → open a PR to `main`** without asking each time (Route A).
+Non-trivial work: branch → commits → push → **open a PR**. Do not merge unless told “merge …” (e.g. merge #12). Fix / ship / land / green CI ≠ merge permission.
 
-**Never merge** a PR unless the human explicitly says to merge (e.g. “merge #12”, “please merge”). “Fix”, “ship”, “land”, “clear open PRs”, or “dogfood” is **not** merge permission — open or update the PR and stop.
-
-Only stop before opening a PR when:
-
-- The human explicitly forbade commit/PR **for this task**, or
-- You are blocked (no remote, `gh` missing/unauthed, etc.)
-
-Do not treat local-only work as done. Do not auto-merge or merge because CI is green.
-
-Products that choose **Route B** (ask-before-commit) should not copy this file.
+Route B products: do not copy this file.
