@@ -67,6 +67,28 @@ Apply these on every feature that handles input, auth, or data. Prefer CI (Semgr
 ### Review trigger
 Run a security / OWASP specialist review (human or agent **with tools**) when a PR touches authentication, authorization, cryptography, multi-tenant data, file/URL fetching, or public APIs. Review complements `sast.yml`; it does not replace it.
 
+### CI gates (merge-blocking)
+| Gate | Workflow | Notes |
+|------|----------|-------|
+| Secrets | `secrets-scan.yml` | Gitleaks |
+| Dependencies | `dependency-review.yml` | High+ severity fails PRs |
+| SAST | `sast.yml` | Semgrep **OWASP Top 10** + security-audit; SARIF when available |
+| DAST | `dast.yml` (opt-in) | ZAP baseline against a running URL — enable only when you have a CI-reachable instance |
+
+Gates must **fail the job** on findings (not report-only). Prefer logs/SARIF that cite **rule ID + file/line**.
+
+### Waivers (visible, not silent)
+Do **not** delete or `continue-on-error` a required security workflow to green the build. Use tool-native suppressions with an on-diff justification:
+
+| Tool | Mechanism | Required |
+|------|-----------|----------|
+| Semgrep | `# nosemgrep` on the line, or `.semgrepignore` with comment | Rule ID + reason + owner + expiry in the PR / `SECURITY.md` CI exceptions |
+| Gitleaks | `.gitleaksignore` | Same |
+| Dependency review | `allow` / license config in the action, or documented exception | Same |
+| DAST / ZAP | Alert allowlist in the action config | Same |
+
+Opaque green under deadline pressure is gate-gaming — actionable failures + visible waivers are the intended escape hatch (see `AGENTS.md` — distrust green checkmarks).
+
 ---
 
 ## 4. Logging, Telemetry & GDPR

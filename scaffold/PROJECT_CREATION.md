@@ -34,7 +34,8 @@ Copied automatically by `apply.sh` into `.github/workflows/`:
 | `dependency-review.yml` | Always (GitHub) | Copy as-is; enable Dependency graph |
 | `sast.yml` | Always | Copy as-is; add project-specific Semgrep rules over time |
 | `quality.yml` | Always | Prefills for node/python via apply.sh; otherwise fill by hand |
-| `accessibility.yml` | If UI | Use `apply.sh --with-ui` and wire axe |
+| `accessibility.yml` | If UI | Use `apply.sh --with-ui` and wire axe (AA) |
+| `dast.yml` | Opt-in | Copy from `scaffold/ci/` when you have a CI-reachable app URL; wire ZAP |
 
 ## 3. GitHub remote + baseline PR
 
