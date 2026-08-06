@@ -7,6 +7,15 @@
 **Canonical baseline for building with AI agents – rules, standards, and CI with enough firepower to enforce them.**
 
 **Agents:** works with Cursor, Claude Code, Codex, Lovable, or anything that can edit a project and follow Markdown — not tied to one AI vendor.  
+`AGENTS.md` is the **source of truth**. Discovery differs by tool:
+
+| Tool | How it finds Canon rules |
+|------|--------------------------|
+| **Codex** (and similar) | Often auto-reads `AGENTS.md` |
+| **Cursor** | Project rule [`.cursor/rules/agents.mdc`](.cursor/rules/agents.mdc) points at `AGENTS.md` (applied by `apply.sh`) |
+| **Claude Code** | [`CLAUDE.md`](CLAUDE.md) points at `AGENTS.md` (applied by `apply.sh`) |
+| **Other** | Paste “Follow AGENTS.md and PROJECT_RULES.md” as a standing instruction if the tool has no auto-discovery |
+
 **Hosting / CI:** GitHub is the **default** (Actions + `gh` + PR-to-`main`). Other forges are fine if you keep the same shape: remote → branch → merge request → merge-blocking checks.
 
 You get:
@@ -98,7 +107,7 @@ Open `CANON_NEXT_STEPS.md` in the target project. Delete it when you’re done.
 ## Using it day to day
 
 1. Open the project in your coding agent.  
-2. Standing instruction: *Follow AGENTS.md and PROJECT_RULES.md.* (Many tools auto-read `AGENTS.md`.)  
+2. Standing instruction: *Follow AGENTS.md and PROJECT_RULES.md.* Cursor/Claude Code get pointers from apply; Codex often auto-reads `AGENTS.md`.  
 3. When work touches security, UI, or APIs, also load the matching domain doc.  
 4. Keep change summaries **short** (1–3 bullets). For hard changes, a short literate walkthrough — not an essay. See `AGENTS.md`.
 
@@ -159,7 +168,9 @@ docs/canon-logo.png       Logo (source mark)
 docs/canon-logo.svg       Same mark (SVG wrapper)
 docs/canon-social.png     Social preview 1280×640
 docs/canon-social.svg     Social preview SVG
-AGENTS.md                 Agent workflow
+AGENTS.md                 Agent workflow (source of truth)
+CLAUDE.md                 Claude Code pointer → AGENTS.md
+.cursor/rules/agents.mdc  Cursor pointer → AGENTS.md
 PROJECT_RULES.md          Engineering index
 SECURITY.md               Security & privacy
 ACCESSIBILITY.md          Accessibility

@@ -13,6 +13,8 @@ echo "smoke-apply: target=$TMP"
 
 required=(
   AGENTS.md
+  CLAUDE.md
+  .cursor/rules/agents.mdc
   PROJECT_RULES.md
   SECURITY.md
   ACCESSIBILITY.md
