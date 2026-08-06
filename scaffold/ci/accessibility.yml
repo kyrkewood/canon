@@ -1,5 +1,6 @@
 # Accessibility — required when the product has user-facing UI
 # Enable by removing the paths-ignore (or narrowing it) once UI exists.
+# Target: WCAG 2.2 AA automated floor. Green ≠ full WCAG compliance (see ACCESSIBILITY.md).
 name: Accessibility
 
 on:
@@ -17,23 +18,34 @@ permissions:
 
 jobs:
   axe:
-    name: axe accessibility
+    name: axe accessibility (AA)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # TODO: build or start the app, then run axe (or pa11y/playwright-axe)
-      # against a real URL or static export. Example sketch:
+      # Wire a real scan, then delete the "Refuse empty" step.
+      # Prefer rule-tagged AA output so failures cite axe rule IDs (actionable, not opaque).
       #
-      # - run: npm ci && npm run build
-      # - run: npx --yes @axe-core/cli http://localhost:3000 --exit
+      # Example — static export or running server:
       #
-      # Target WCAG 2.2 AA in CI; AAA remains the design default for critical flows
-      # (see ACCESSIBILITY.md).
+      # - name: Install & build
+      #   run: npm ci && npm run build
+      # - name: Start preview
+      #   run: npx --yes serve -l 3000 dist &
+      # - name: Wait for server
+      #   run: npx --yes wait-on http://127.0.0.1:3000
+      # - name: axe (WCAG 2.2 AA)
+      #   run: |
+      #     npx --yes @axe-core/cli http://127.0.0.1:3000 \
+      #       --tags wcag2a,wcag2aa,wcag21a,wcag21aa,wcag22aa \
+      #       --exit
+      #
+      # Or set repo variable/secret A11Y_BASE_URL to a deployed preview URL.
+      # Keep this job merge-blocking once wired.
 
       - name: Refuse empty accessibility gate
         run: |
-          echo "::error::Wire a real axe/pa11y run (or delete this workflow if there is no UI)."
-          echo "See scaffold/PROJECT_CREATION.md and ACCESSIBILITY.md."
+          echo "::error::Wire a real axe/pa11y AA scan (cite rule IDs in the log), then remove this step."
+          echo "See scaffold/PROJECT_CREATION.md and ACCESSIBILITY.md — green automated AA ≠ full compliance."
           exit 1
