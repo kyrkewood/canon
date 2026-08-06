@@ -20,7 +20,7 @@ Use this longer checklist when you need detail, or when applying by hand.
 ## 1. Bootstrap docs
 
 - [ ] Prefer `./scaffold/apply.sh <target>` over hand-copying.
-- [ ] Or copy into the new repo root: `AGENTS.md`, `PROJECT_RULES.md`, `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, `ARCHITECTURE.md`, plus `docs/features/` (README + `_TEMPLATE.md`).
+- [ ] Or copy into the new repo root: `AGENTS.md`, `CLAUDE.md`, `.cursor/rules/agents.mdc`, `PROJECT_RULES.md`, `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, `ARCHITECTURE.md`, plus `docs/features/` (README + `_TEMPLATE.md`).
 - [ ] Fill product-specific sections in `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, and `ARCHITECTURE.md`.
 - [ ] In `SECURITY.md`, record: secrets manager choice, who owns key rotation, and any temporary CI exceptions.
 

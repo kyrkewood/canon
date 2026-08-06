@@ -85,9 +85,9 @@ CANON_NEXT_STEPS. Explain CANON_NEXT_STEPS.md simply when done.
 
 | Tool | How to use Canon |
 |------|------------------|
-| **Cursor** | Open the project → Agent chat → paste Fetch & apply. `AGENTS.md` is usually auto-read later. If you choose **Route A** (prefer Canon delivery) and a user rule says “don’t commit unless asked,” optionally copy `.cursor/rules/canon-delivery.mdc` so the editor matches that choice. Route B = keep ask-first; do not install that rule. |
-| **Claude Code** | In the project directory → paste Fetch & apply. Say “follow AGENTS.md and PROJECT_RULES.md” if needed. |
-| **Codex** (or similar CLI agents) | Same as Claude Code — paste Fetch & apply in the project workspace. |
+| **Cursor** | Open the project → Agent chat → paste Fetch & apply. Apply installs `.cursor/rules/agents.mdc` → `AGENTS.md`. Route A + ask-first conflict: optionally add `.cursor/rules/canon-delivery.mdc` (see Canon repo); Route B: do not. |
+| **Claude Code** | In the project directory → paste Fetch & apply. Apply installs `CLAUDE.md` → `AGENTS.md`. |
+| **Codex** (or similar CLI agents) | Same apply path; many auto-read `AGENTS.md` natively. |
 | **Lovable** / browser app builders | Paste Fetch & apply; if there’s no shell, ask it to **create the same Markdown files and GitHub workflow files in the project**. Then connect GitHub and enable checks if the host allows. |
 | **ChatGPT / Claude web (no file access)** | Canon can’t install itself. Use a tool that can edit your project, or have someone run `apply.sh` for you. |
 

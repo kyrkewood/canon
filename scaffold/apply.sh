@@ -143,6 +143,10 @@ for doc in "${DOCS[@]}"; do
   copy_file "$CANON_ROOT/$doc" "$TARGET/$doc"
 done
 
+# Agent discovery pointers (tool-specific entrypoints → AGENTS.md)
+copy_file "$CANON_ROOT/CLAUDE.md" "$TARGET/CLAUDE.md"
+copy_file "$CANON_ROOT/.cursor/rules/agents.mdc" "$TARGET/.cursor/rules/agents.mdc"
+
 # Feature-doc kit (directory)
 mkdir -p "$TARGET/docs/features"
 copy_file "$CANON_ROOT/docs/features/README.md" "$TARGET/docs/features/README.md"
