@@ -1,5 +1,6 @@
-# SAST — OWASP-oriented static analysis (required)
-# Start with Semgrep defaults; add project rules under .semgrep/ as the app grows.
+# SAST — OWASP-oriented static analysis (required, merge-blocking)
+# Uses Semgrep OWASP Top 10 + security-audit packs (not generic --config auto alone).
+# Failures must cite rule IDs in the log / Code Scanning; see SECURITY.md for waivers.
 name: SAST
 
 on:
@@ -13,7 +14,7 @@ permissions:
 
 jobs:
   semgrep:
-    name: Semgrep
+    name: Semgrep (OWASP)
     runs-on: ubuntu-latest
     container:
       image: semgrep/semgrep
@@ -21,5 +22,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run Semgrep
-        run: semgrep scan --config auto --error --metrics=off
+      - name: Run Semgrep (OWASP Top 10 + security-audit)
+        run: |
+          semgrep scan \
+            --config p/owasp-top-ten \
+            --config p/security-audit \
+            --error \
+            --metrics=off \
+            --sarif \
+            --output=semgrep.sarif
+          echo "::notice::Semgrep findings (if any) include rule IDs in the log above — fix or waive per SECURITY.md."
+
+      - name: Upload SARIF
+        if: always() && hashFiles('semgrep.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: semgrep.sarif
+        continue-on-error: true

@@ -1,0 +1,46 @@
+# DAST — optional dynamic scan (OWASP ZAP baseline)
+# Opt-in: remove paths-ignore (or use workflow_dispatch) and set ZAP_TARGET_URL
+# to a running preview/staging URL. Heavier than SAST — not applied as required day-one.
+# Merge-blocking once enabled. See SECURITY.md.
+name: DAST
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+    paths-ignore:
+      - "**"
+  pull_request:
+    paths-ignore:
+      - "**"
+
+permissions:
+  contents: read
+
+jobs:
+  zap:
+    name: ZAP baseline
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # When enabling: set repo variable ZAP_TARGET_URL (e.g. https://preview.example.com)
+      # and remove paths-ignore above (or run via workflow_dispatch only).
+      #
+      # - name: ZAP baseline
+      #   uses: zaproxy/action-baseline@v0.14.0
+      #   with:
+      #     target: ${{ vars.ZAP_TARGET_URL }}
+      #     fail_action: true
+      #     allow_issue_writing: false
+
+      - name: Refuse empty DAST gate
+        run: |
+          if [[ -z "${{ vars.ZAP_TARGET_URL }}" ]]; then
+            echo "::error::DAST is opt-in. Set vars.ZAP_TARGET_URL, wire ZAP baseline, remove paths-ignore — or delete this workflow."
+            echo "See SECURITY.md (DAST) and scaffold/ci/README.md."
+            exit 1
+          fi
+          echo "::error::ZAP_TARGET_URL is set but the ZAP step is still commented out — wire it, then remove this step."
+          exit 1
