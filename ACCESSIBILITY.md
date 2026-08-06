@@ -8,9 +8,22 @@ CI gate: [`scaffold/ci/accessibility.yml`](scaffold/ci/accessibility.yml) (merge
 
 ## 1. Targets
 
-- **Required (design + CI): WCAG 2.2 AA** for user-facing UI.
-- **Optional aspiration:** WCAG 2.2 AAA for critical flows where criteria are human-reviewable (e.g. enhanced contrast). Many AAA criteria are **not** automatable (sign language, reading level, etc.) — do not treat them as a CI gate.
-- Accessibility failures are bugs — not polish.
+| Layer | Level | Meaning |
+|-------|-------|---------|
+| **Aim** | WCAG 2.2 **AAA** where feasible | Default for design and agent guidance — prefer the highest practical bar |
+| **Ship floor (CI)** | WCAG 2.2 **AA** | Merge-blocking automated axe/pa11y; must not regress |
+| **Decide** | Human | Whether to accept, defer, or reject AAA recommendations beyond AA |
+
+Many AAA criteria are **not** automatable (sign language, reading level, etc.) — they are never a silent CI gate. Accessibility failures at AA are bugs — not polish.
+
+### Agents: flag high, don’t block on AAA alone
+
+When building or reviewing UI, agents should:
+
+1. Meet **AA** (required) — fix or don’t ship the change.
+2. Prefer **AAA** where it’s cheap and clear (e.g. stronger contrast, better text spacing, no timing gimmicks).
+3. **Surface** remaining AAA gaps to the human as short recommendations (“could hit AAA by …”) — do not treat them as merge blockers unless the human (or product notes) said this flow requires AAA.
+4. Never imply that green AA CI means full WCAG / AAA compliance.
 
 ### Green CI ≠ full compliance
 
@@ -26,7 +39,7 @@ Automated axe/pa11y covers a **subset** of AA. A green accessibility job means �
   - Meaningful labels
   - Predictable focus order
 - Color is never the only means of conveying meaning.
-- Contrast: meet **AA** in CI where tools allow; verify critical screens manually.
+- Contrast: meet **AA** in CI; prefer **AAA** contrast where practical and flag shortfalls for the human.
 
 ---
 
