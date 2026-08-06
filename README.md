@@ -70,7 +70,7 @@ With a UI (accessibility CI on):
 ./scaffold/apply.sh /path/to/your-repo --with-ui
 ```
 
-Already have some of these files? Add `--force` only if you intend to overwrite them.
+Already have some of these files? `--force` prints diffs and writes nothing; `--force --yes` overwrites.
 
 ### 3. Finish the tiny checklist
 
@@ -141,7 +141,8 @@ Or apply with `--credit` to append that line. Not required; skip for private/int
 |------|---------|
 | `--stack=node\|python\|none` | Prefill `quality.yml` (default: auto-detect) |
 | `--with-ui` | Accessibility workflow active (you still wire axe) |
-| `--force` | Overwrite existing canon files |
+| `--force` | Preview overwrite diffs (no write) |
+| `--yes` | With `--force`, actually overwrite |
 | `--credit` | Append the Canon credit line to `README.md` |
 | `--github[=owner/name]` | Ensure git repo + GitHub `origin` (`gh repo create` if needed) |
 | `--public` | With `--github`, create a public repo (default private) |
@@ -197,7 +198,7 @@ scaffold/
 
 ## Improving Canon
 
-This repo is the **source** of the baseline. Change standards here, then re-apply to products with `--force` when you intentionally want updates (review diffs first — force overwrites).
+This repo is the **source** of the baseline. Change standards here, then re-apply to products with `--force` (diff plan) and `--force --yes` when you intentionally overwrite.
 
 Before opening or merging a Canon PR:
 

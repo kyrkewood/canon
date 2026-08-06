@@ -14,7 +14,8 @@ Usage:
   ./scaffold/apply.sh <target-dir> [options]
 
 Options:
-  --force              Overwrite existing canon files if present
+  --force              Plan overwrites for existing Canon files (prints diffs); does not write
+  --yes                With --force, actually overwrite existing Canon files
   --stack=node|python|none
                        Prefill quality.yml for that stack (default: auto-detect)
   --with-ui            Include accessibility CI as active (default: copy, keep dormant)
@@ -28,7 +29,8 @@ Options:
 Examples:
   ./scaffold/apply.sh ~/projects/my-app
   ./scaffold/apply.sh . --stack=node --with-ui --github --open-pr
-  ./scaffold/apply.sh ../new-thing --force --credit --github=acme/new-thing
+  ./scaffold/apply.sh ../new-thing --force              # preview diffs only
+  ./scaffold/apply.sh ../new-thing --force --yes --credit --github=acme/new-thing
 
 What it does:
   1. Creates the target folder if needed
@@ -44,6 +46,7 @@ CANON_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 TARGET=""
 FORCE=0
+FORCE_YES=0
 STACK="auto"
 WITH_UI=0
 CREDIT=0
@@ -57,6 +60,7 @@ for arg in "$@"; do
   case "$arg" in
     -h|--help) usage; exit 0 ;;
     --force) FORCE=1 ;;
+    --yes) FORCE_YES=1 ;;
     --with-ui) WITH_UI=1 ;;
     --credit) CREDIT=1 ;;
     --public) GITHUB_VISIBILITY="public" ;;
@@ -96,6 +100,11 @@ case "$STACK" in
     ;;
 esac
 
+if [[ "$FORCE_YES" -eq 1 && "$FORCE" -ne 1 ]]; then
+  echo "--yes requires --force" >&2
+  exit 1
+fi
+
 mkdir -p "$TARGET"
 TARGET="$(cd "$TARGET" && pwd)"
 
@@ -103,13 +112,90 @@ copy_file() {
   local src="$1"
   local dest="$2"
   if [[ -e "$dest" && "$FORCE" -ne 1 ]]; then
-    echo "  skip (exists): ${dest#"$TARGET"/}  (use --force to overwrite)"
+    echo "  skip (exists): ${dest#"$TARGET"/}  (use --force to preview; --force --yes to overwrite)"
+    return 0
+  fi
+  if [[ -e "$dest" && "$FORCE" -eq 1 && "$FORCE_YES" -ne 1 ]]; then
+    # Preview handled in force_plan; should not reach here during plan-only exit.
     return 0
   fi
   mkdir -p "$(dirname "$dest")"
   cp "$src" "$dest"
   echo "  wrote: ${dest#"$TARGET"/}"
 }
+
+# --force without --yes: show diffs for clobber candidates, write nothing, exit 1
+force_plan() {
+  local dest src rel
+  local found=0
+  echo "Force plan (no files will be written). Re-run with --force --yes to overwrite."
+  echo
+
+  for rel in \
+    AGENTS.md PROJECT_RULES.md SECURITY.md ACCESSIBILITY.md AI_INTEGRATION.md ARCHITECTURE.md \
+    CLAUDE.md \
+    docs/features/README.md docs/features/_TEMPLATE.md \
+    .github/workflows/secrets-scan.yml \
+    .github/workflows/dependency-review.yml \
+    .github/workflows/sast.yml \
+    .github/workflows/quality.yml \
+    .github/workflows/accessibility.yml \
+    CANON_CHECKLIST.md
+  do
+    dest="$TARGET/$rel"
+    [[ -e "$dest" ]] || continue
+    found=1
+    echo "--- would overwrite: $rel ---"
+    case "$rel" in
+      .github/workflows/quality.yml|.github/workflows/accessibility.yml|CANON_CHECKLIST.md)
+        echo "  (generated or checklist file — content may be regenerated)"
+        ;;
+      CLAUDE.md)
+        if [[ -f "$CANON_ROOT/CLAUDE.md" ]]; then
+          diff -u "$dest" "$CANON_ROOT/CLAUDE.md" || true
+        else
+          echo "  (pointer file from Canon)"
+        fi
+        ;;
+      .cursor/rules/agents.mdc)
+        if [[ -f "$CANON_ROOT/.cursor/rules/agents.mdc" ]]; then
+          diff -u "$dest" "$CANON_ROOT/.cursor/rules/agents.mdc" || true
+        fi
+        ;;
+      docs/features/*)
+        diff -u "$dest" "$CANON_ROOT/$rel" || true
+        ;;
+      .github/workflows/*)
+        src="$CANON_ROOT/scaffold/ci/${rel##*/}"
+        if [[ -f "$src" ]]; then
+          diff -u "$dest" "$src" || true
+        fi
+        ;;
+      *)
+        diff -u "$dest" "$CANON_ROOT/$rel" || true
+        ;;
+    esac
+    echo
+  done
+
+  # cursor pointer may exist only after discovery PR; include if present in Canon
+  if [[ -f "$CANON_ROOT/.cursor/rules/agents.mdc" && -e "$TARGET/.cursor/rules/agents.mdc" ]]; then
+    found=1
+    echo "--- would overwrite: .cursor/rules/agents.mdc ---"
+    diff -u "$TARGET/.cursor/rules/agents.mdc" "$CANON_ROOT/.cursor/rules/agents.mdc" || true
+    echo
+  fi
+
+  if [[ "$found" -eq 0 ]]; then
+    echo "No existing Canon files to overwrite. Run without --force to apply new files, or with --force --yes if you expected clobbers."
+    exit 0
+  fi
+  exit 1
+}
+
+if [[ "$FORCE" -eq 1 && "$FORCE_YES" -ne 1 ]]; then
+  force_plan
+fi
 
 detect_stack() {
   if [[ -f "$TARGET/package.json" ]]; then
@@ -160,7 +246,7 @@ done
 # quality.yml — stack-aware
 QUALITY_DEST="$WF_DEST/quality.yml"
 if [[ -e "$QUALITY_DEST" && "$FORCE" -ne 1 ]]; then
-  echo "  skip (exists): .github/workflows/quality.yml  (use --force to overwrite)"
+  echo "  skip (exists): .github/workflows/quality.yml  (use --force to preview; --force --yes to overwrite)"
 else
   case "$STACK" in
     node)
@@ -257,7 +343,7 @@ fi
 # accessibility.yml
 A11Y_DEST="$WF_DEST/accessibility.yml"
 if [[ -e "$A11Y_DEST" && "$FORCE" -ne 1 ]]; then
-  echo "  skip (exists): .github/workflows/accessibility.yml  (use --force to overwrite)"
+  echo "  skip (exists): .github/workflows/accessibility.yml  (use --force to preview; --force --yes to overwrite)"
 elif [[ "$WITH_UI" -eq 1 ]]; then
   cat > "$A11Y_DEST" <<'EOF'
 # Accessibility — required when the product has user-facing UI
