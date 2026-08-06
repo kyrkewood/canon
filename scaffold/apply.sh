@@ -14,8 +14,8 @@ Usage:
   ./scaffold/apply.sh <target-dir> [options]
 
 Options:
-  --force              Plan overwrites for existing Canon files (prints diffs); does not write
-  --yes                With --force, actually overwrite existing Canon files
+  --force              Overwrite existing Canon files (shows diffs; confirms on a TTY)
+  --yes                With --force, skip the confirm prompt (for agents/CI)
   --stack=node|python|none
                        Prefill quality.yml for that stack (default: auto-detect)
   --with-ui            Include accessibility CI as active (default: copy, keep dormant)
@@ -29,8 +29,8 @@ Options:
 Examples:
   ./scaffold/apply.sh ~/projects/my-app
   ./scaffold/apply.sh . --stack=node --with-ui --github --open-pr
-  ./scaffold/apply.sh ../new-thing --force              # preview diffs only
-  ./scaffold/apply.sh ../new-thing --force --yes --credit --github=acme/new-thing
+  ./scaffold/apply.sh ../new-thing --force                 # diffs + confirm on TTY
+  ./scaffold/apply.sh ../new-thing --force --yes --credit  # agents/CI: no prompt
 
 What it does:
   1. Creates the target folder if needed
@@ -108,32 +108,60 @@ fi
 mkdir -p "$TARGET"
 TARGET="$(cd "$TARGET" && pwd)"
 
+# Print unified diff for an existing dest vs Canon src (or a note if generated).
+show_file_diff() {
+  local dest="$1"
+  local src="${2:-}"
+  local rel="${dest#"$TARGET"/}"
+  echo "--- $rel (local vs Canon) ---"
+  if [[ -n "$src" && -f "$src" ]]; then
+    diff -u "$dest" "$src" || true
+  else
+    echo "  (generated/checklist — content may be regenerated on overwrite)"
+  fi
+  echo
+}
+
 copy_file() {
   local src="$1"
   local dest="$2"
-  if [[ -e "$dest" && "$FORCE" -ne 1 ]]; then
-    echo "  skip (exists): ${dest#"$TARGET"/}  (use --force to preview; --force --yes to overwrite)"
+  local rel="${dest#"$TARGET"/}"
+
+  if [[ ! -e "$dest" ]]; then
+    mkdir -p "$(dirname "$dest")"
+    cp "$src" "$dest"
+    echo "  wrote: $rel"
     return 0
   fi
-  if [[ -e "$dest" && "$FORCE" -eq 1 && "$FORCE_YES" -ne 1 ]]; then
-    # Preview handled in force_plan; should not reach here during plan-only exit.
+
+  if cmp -s "$src" "$dest" 2>/dev/null; then
+    echo "  skip (unchanged): $rel"
     return 0
   fi
+
+  # Exists and differs
+  if [[ "$FORCE" -ne 1 ]]; then
+    # Surface drift without requiring --force (like git status / chezmoi).
+    show_file_diff "$dest" "$src"
+    echo "  skip (differs): $rel  (pass --force to overwrite after confirm)"
+    return 0
+  fi
+
   mkdir -p "$(dirname "$dest")"
   cp "$src" "$dest"
-  echo "  wrote: ${dest#"$TARGET"/}"
+  echo "  wrote (overwrote): $rel"
 }
 
-# --force without --yes: show diffs for clobber candidates, write nothing, exit 1
-force_plan() {
-  local dest src rel
-  local found=0
-  echo "Force plan (no files will be written). Re-run with --force --yes to overwrite."
-  echo
+# List of existing paths that --force would clobber (for confirm). Returns count via stdout last line... use global.
+FORCE_CANDIDATES=0
 
+count_force_candidates() {
+  FORCE_CANDIDATES=0
+  local dest rel src
   for rel in \
     AGENTS.md PROJECT_RULES.md SECURITY.md ACCESSIBILITY.md AI_INTEGRATION.md ARCHITECTURE.md \
     CLAUDE.md \
+    .cursor/rules/agents.mdc \
     docs/features/README.md docs/features/_TEMPLATE.md \
     .github/workflows/secrets-scan.yml \
     .github/workflows/dependency-review.yml \
@@ -144,58 +172,74 @@ force_plan() {
   do
     dest="$TARGET/$rel"
     [[ -e "$dest" ]] || continue
-    found=1
-    echo "--- would overwrite: $rel ---"
     case "$rel" in
       .github/workflows/quality.yml|.github/workflows/accessibility.yml|CANON_CHECKLIST.md)
-        echo "  (generated or checklist file — content may be regenerated)"
-        ;;
-      CLAUDE.md)
-        if [[ -f "$CANON_ROOT/CLAUDE.md" ]]; then
-          diff -u "$dest" "$CANON_ROOT/CLAUDE.md" || true
-        else
-          echo "  (pointer file from Canon)"
-        fi
-        ;;
-      .cursor/rules/agents.mdc)
-        if [[ -f "$CANON_ROOT/.cursor/rules/agents.mdc" ]]; then
-          diff -u "$dest" "$CANON_ROOT/.cursor/rules/agents.mdc" || true
-        fi
-        ;;
-      docs/features/*)
-        diff -u "$dest" "$CANON_ROOT/$rel" || true
+        FORCE_CANDIDATES=$((FORCE_CANDIDATES + 1))
+        show_file_diff "$dest" ""
         ;;
       .github/workflows/*)
         src="$CANON_ROOT/scaffold/ci/${rel##*/}"
-        if [[ -f "$src" ]]; then
-          diff -u "$dest" "$src" || true
+        if [[ -f "$src" ]] && ! cmp -s "$src" "$dest" 2>/dev/null; then
+          FORCE_CANDIDATES=$((FORCE_CANDIDATES + 1))
+          show_file_diff "$dest" "$src"
+        elif [[ -f "$src" ]]; then
+          : # unchanged
+        else
+          FORCE_CANDIDATES=$((FORCE_CANDIDATES + 1))
+          show_file_diff "$dest" ""
+        fi
+        ;;
+      .cursor/rules/agents.mdc)
+        src="$CANON_ROOT/.cursor/rules/agents.mdc"
+        [[ -f "$src" ]] || continue
+        if ! cmp -s "$src" "$dest" 2>/dev/null; then
+          FORCE_CANDIDATES=$((FORCE_CANDIDATES + 1))
+          show_file_diff "$dest" "$src"
+        fi
+        ;;
+      CLAUDE.md)
+        src="$CANON_ROOT/CLAUDE.md"
+        [[ -f "$src" ]] || continue
+        if ! cmp -s "$src" "$dest" 2>/dev/null; then
+          FORCE_CANDIDATES=$((FORCE_CANDIDATES + 1))
+          show_file_diff "$dest" "$src"
         fi
         ;;
       *)
-        diff -u "$dest" "$CANON_ROOT/$rel" || true
+        src="$CANON_ROOT/$rel"
+        [[ -f "$src" ]] || continue
+        if ! cmp -s "$src" "$dest" 2>/dev/null; then
+          FORCE_CANDIDATES=$((FORCE_CANDIDATES + 1))
+          show_file_diff "$dest" "$src"
+        fi
         ;;
     esac
-    echo
   done
-
-  # cursor pointer may exist only after discovery PR; include if present in Canon
-  if [[ -f "$CANON_ROOT/.cursor/rules/agents.mdc" && -e "$TARGET/.cursor/rules/agents.mdc" ]]; then
-    found=1
-    echo "--- would overwrite: .cursor/rules/agents.mdc ---"
-    diff -u "$TARGET/.cursor/rules/agents.mdc" "$CANON_ROOT/.cursor/rules/agents.mdc" || true
-    echo
-  fi
-
-  if [[ "$found" -eq 0 ]]; then
-    echo "No existing Canon files to overwrite. Run without --force to apply new files, or with --force --yes if you expected clobbers."
-    exit 0
-  fi
-  exit 1
 }
 
-if [[ "$FORCE" -eq 1 && "$FORCE_YES" -ne 1 ]]; then
-  force_plan
-fi
+confirm_force() {
+  count_force_candidates
+  if [[ "$FORCE_CANDIDATES" -eq 0 ]]; then
+    echo "No differing Canon files to overwrite."
+    return 0
+  fi
+  echo "Force will overwrite $FORCE_CANDIDATES differing file(s) (diffs above)."
+  if [[ "$FORCE_YES" -eq 1 ]]; then
+    echo "  --yes: skipping confirm."
+    return 0
+  fi
+  if [[ -t 0 ]]; then
+    local ans=""
+    read -r -p "Overwrite with Canon versions? [y/N] " ans
+    if [[ "$ans" =~ ^[Yy]$ ]]; then
+      return 0
+    fi
+    echo "Aborted. Re-run with --force when ready (or --force --yes for non-interactive)." >&2
+    exit 1
+  fi
+  echo "Non-interactive terminal: re-run with --force --yes to overwrite without a prompt." >&2
+  exit 1
+}
 
 detect_stack() {
   if [[ -f "$TARGET/package.json" ]]; then
@@ -215,6 +259,10 @@ echo "Applying canon → $TARGET"
 echo "  stack: $STACK"
 echo "  ui a11y workflow: $([[ "$WITH_UI" -eq 1 ]] && echo active || echo dormant)"
 echo
+
+if [[ "$FORCE" -eq 1 ]]; then
+  confirm_force
+fi
 
 echo "Docs"
 DOCS=(
@@ -246,7 +294,7 @@ done
 # quality.yml — stack-aware
 QUALITY_DEST="$WF_DEST/quality.yml"
 if [[ -e "$QUALITY_DEST" && "$FORCE" -ne 1 ]]; then
-  echo "  skip (exists): .github/workflows/quality.yml  (use --force to preview; --force --yes to overwrite)"
+  echo "  skip (exists): .github/workflows/quality.yml  (pass --force to regenerate after confirm)"
 else
   case "$STACK" in
     node)
@@ -343,7 +391,7 @@ fi
 # accessibility.yml
 A11Y_DEST="$WF_DEST/accessibility.yml"
 if [[ -e "$A11Y_DEST" && "$FORCE" -ne 1 ]]; then
-  echo "  skip (exists): .github/workflows/accessibility.yml  (use --force to preview; --force --yes to overwrite)"
+  echo "  skip (exists): .github/workflows/accessibility.yml  (pass --force to regenerate after confirm)"
 elif [[ "$WITH_UI" -eq 1 ]]; then
   cat > "$A11Y_DEST" <<'EOF'
 # Accessibility — required when the product has user-facing UI
