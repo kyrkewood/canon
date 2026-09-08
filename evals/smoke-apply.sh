@@ -5,7 +5,8 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TMP="$(mktemp -d "${TMPDIR:-/tmp}/canon-smoke.XXXXXX")"
-cleanup() { rm -rf "$TMP"; }
+TMP_GENERAL="$(mktemp -d "${TMPDIR:-/tmp}/canon-smoke-general.XXXXXX")"
+cleanup() { rm -rf "$TMP" "$TMP_GENERAL"; }
 trap cleanup EXIT
 
 echo "smoke-apply: target=$TMP"
@@ -25,6 +26,7 @@ required=(
   docs/features/README.md
   docs/features/_TEMPLATE.md
   docs/house-style/README.md
+  docs/house-style/uk.md
   docs/house-style/general.md
   .github/workflows/secrets-scan.yml
   .github/workflows/dependency-review.yml
@@ -57,6 +59,29 @@ fi
 
 if ! grep -q 'HOUSE_STYLE' "$TMP/CANON_NEXT_STEPS.md"; then
   echo "smoke-apply: CANON_NEXT_STEPS.md should mention HOUSE_STYLE.md" >&2
+  exit 1
+fi
+
+if ! grep -q 'en-GB' "$TMP/HOUSE_STYLE.md"; then
+  echo "smoke-apply: default HOUSE_STYLE.md should be the uk starter" >&2
+  exit 1
+fi
+
+if grep -q 'This repo is \*\*Canon\*\*' "$TMP/HOUSE_STYLE.md"; then
+  echo "smoke-apply: applied HOUSE_STYLE.md leaked Canon product notes" >&2
+  exit 1
+fi
+
+echo "smoke-apply: general profile target=$TMP_GENERAL"
+"$ROOT/scaffold/apply.sh" "$TMP_GENERAL" --stack=none --house-style=general
+
+if ! grep -q 'en-US' "$TMP_GENERAL/HOUSE_STYLE.md"; then
+  echo "smoke-apply: --house-style=general should copy the general starter" >&2
+  exit 1
+fi
+
+if grep -q 'This repo is \*\*Canon\*\*' "$TMP_GENERAL/HOUSE_STYLE.md"; then
+  echo "smoke-apply: general HOUSE_STYLE.md leaked Canon product notes" >&2
   exit 1
 fi
 
