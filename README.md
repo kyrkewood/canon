@@ -151,6 +151,7 @@ Or apply with `--credit` to append that line. Not required; skip for private/int
 |------|---------|
 | `--stack=node\|python\|none` | Prefill `quality.yml` (default: auto-detect) |
 | `--with-ui` | Accessibility workflow active (you still wire axe) |
+| `--house-style=uk\|general` | Starter copied to `HOUSE_STYLE.md` (default: uk) |
 | `--force` | Overwrite differing files (diffs + TTY confirm) |
 | `--yes` | With `--force`, skip confirm (agents/CI) |
 | `--credit` | Append the Canon credit line to `README.md` |
@@ -178,9 +179,9 @@ SECURITY.md               Security & privacy
 ACCESSIBILITY.md          Accessibility
 AI_INTEGRATION.md         AI / API / MCP
 ARCHITECTURE.md           Product architecture template
-HOUSE_STYLE.md            Living prose rules (en-GB default; see docs/house-style/)
+HOUSE_STYLE.md            This product’s living prose rules (not the apply source)
 docs/features/            Feature docs kit (template + guide)
-docs/house-style/         Alternate house-style profile (general / en-US)
+docs/house-style/         Starters (`uk.md`, `general.md`) copied into HOUSE_STYLE.md on apply
 evals/                    Light value checks (scenarios + scorecard + apply smoke)
 scripts/verify.sh         Local verify umbrella (also CI)
 .cursor/rules/            Optional Cursor reinforcement of AGENTS delivery
@@ -199,7 +200,7 @@ scaffold/
 - Compressed git authority (Route A/B; merge only on “merge …”)
 - Minimal-change, thin-slice / stuck handling, feature docs, field conventions
 - Light evals: apply smoke + real scratch scenarios (not meta diary)
-- House style: living `HOUSE_STYLE.md` (en-GB) + general example; identifiers stay ecosystem English
+- House style: starters in `docs/house-style/`; apply copies one into `HOUSE_STYLE.md`; identifiers stay ecosystem English
 
 **Next**
 - Re-run scenarios after AGENTS / apply changes; keep RESULTS honest

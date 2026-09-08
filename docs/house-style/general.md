@@ -5,7 +5,7 @@ Living prose rules for this product. Set them once in this file; extend it rathe
 **Locale:** en-US, with regional overrides below.  
 **Agents:** follow this file on every prose surface. Do not restyle untouched files unless asked.
 
-This is the **general** profile (US spelling, dotted `e.g.` / `i.e.`, ISO dates in technical contexts). To use it, copy this file over `HOUSE_STYLE.md` in the repo root, then keep editing `HOUSE_STYLE.md` only.
+This is the **general** starter. Apply copies it to `HOUSE_STYLE.md`. After that, only edit the root file.
 
 ---
 
@@ -96,10 +96,12 @@ Sentence case: "How it should work", not "How It Should Work".
 
 ## Change policy
 
-1. Edit `HOUSE_STYLE.md` (the copy in the repo root). Do not start a second house-style doc.
-2. New rules are additive. To reverse a rule, replace it there and note it in `docs/features/house-style.md`.
+1. Edit this file (`HOUSE_STYLE.md` in the repo root). Do not start a second house-style doc.
+2. New rules are additive. To reverse a rule, replace it here and note it in a feature doc if you keep one.
 3. Apply going forward. Do not sweep the repo to match a tweak unless asked.
 4. If you are already editing a file, fix cheap nits there.
+
+To switch profile, copy `docs/house-style/uk.md` or `docs/house-style/general.md` over this file, then keep extending this file.
 
 ## Product-specific notes
 

@@ -5,6 +5,8 @@ Living prose rules for this product. Set them once in this file; extend it rathe
 **Locale:** en-GB, with regional overrides below.  
 **Agents:** follow this file on every prose surface. Do not restyle untouched files unless asked.
 
+This is the **uk** starter. Apply copies it to `HOUSE_STYLE.md`. After that, only edit the root file.
+
 ---
 
 ## In scope / out of scope
@@ -96,15 +98,13 @@ Sentence case: "How it should work", not "How It Should Work".
 
 ## Change policy
 
-1. Edit this file. Do not start a second house-style doc.
-2. New rules are additive. To reverse a rule, replace it here and note it in [`docs/features/house-style.md`](docs/features/house-style.md).
+1. Edit this file (`HOUSE_STYLE.md` in the repo root). Do not start a second house-style doc.
+2. New rules are additive. To reverse a rule, replace it here and note it in a feature doc if you keep one.
 3. Apply going forward. Do not sweep the repo to match a tweak unless asked.
 4. If you are already editing a file, fix cheap nits there.
 
-To switch profile, copy [`docs/house-style/uk.md`](docs/house-style/uk.md) or [`docs/house-style/general.md`](docs/house-style/general.md) over this file, then keep extending this file.
+To switch profile, copy `docs/house-style/uk.md` or `docs/house-style/general.md` over this file, then keep extending this file.
 
 ## Product-specific notes
 
-- Started from [`docs/house-style/uk.md`](docs/house-style/uk.md).
-- This repo is **Canon** (capital C). The word in running prose is the product name, not a camera brand.
-- Existing Canon docs were written before this file; do not mass-rewrite them. Match this file on new text and on cheap nits in files already being edited.
+_Add product vocabulary, banned phrases, and extra locale rows here._

@@ -5,7 +5,7 @@
 ```bash
 # from a clone of this canon repo
 ./scaffold/apply.sh /path/to/your-project
-# optional: --stack=node|python|none  --with-ui  --force  --credit
+# optional: --stack=node|python|none  --with-ui  --house-style=uk|general  --force  --credit
 #            --github[=owner/name]  --public  --open-pr
 ```
 
@@ -20,8 +20,8 @@ Use this longer checklist when you need detail, or when applying by hand.
 ## 1. Bootstrap docs
 
 - [ ] Prefer `./scaffold/apply.sh <target>` over hand-copying.
-- [ ] Or copy into the new repo root: `AGENTS.md`, `CLAUDE.md`, `.cursor/rules/agents.mdc`, `PROJECT_RULES.md`, `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, `ARCHITECTURE.md`, `HOUSE_STYLE.md`, plus `docs/features/` (README + `_TEMPLATE.md`) and `docs/house-style/` (README + `general.md`).
-- [ ] Fill product-specific sections in `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, `ARCHITECTURE.md`, and `HOUSE_STYLE.md` (or replace `HOUSE_STYLE.md` from `docs/house-style/general.md`).
+- [ ] Or copy into the new repo root: `AGENTS.md`, `CLAUDE.md`, `.cursor/rules/agents.mdc`, `PROJECT_RULES.md`, `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, `ARCHITECTURE.md`, plus `docs/features/` (README + `_TEMPLATE.md`) and `docs/house-style/` (README + `uk.md` + `general.md`). Copy `docs/house-style/uk.md` or `general.md` to `HOUSE_STYLE.md` (do not copy Canon’s own `HOUSE_STYLE.md`).
+- [ ] Fill product-specific sections in `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, `ARCHITECTURE.md`, and `HOUSE_STYLE.md`.
 - [ ] In `SECURITY.md`, record: secrets manager choice, who owns key rotation, and any temporary CI exceptions.
 
 ## 2. Install CI (same PR as first commit of app skeleton)

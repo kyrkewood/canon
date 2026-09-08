@@ -53,6 +53,7 @@ Before changing files, ask me these (one short message; defaults in parentheses)
 5. GitHub owner/name if creating (ask; don’t invent an org)
 6. Add README credit line? → --credit (ask; default no)
 7. Host “don’t commit unless asked” vs Canon delivery → Route A prefer delivery / Route B ask-before-commit (ask; default A if unsure)
+8. House style: uk (en-GB) / general (en-US) → --house-style= (uk)
 
 Do this after I answer (or after I say “use defaults”):
 1. Get the Canon files (clone, sparse checkout, or download — your choice).
@@ -74,7 +75,8 @@ in plain language (assume I don’t know GitHub jargon).
 ```text
 Apply https://github.com/kyrkewood/canon to this project. First ask me about:
 UI (--with-ui), GitHub remote+PR (--github/--open-pr), private vs public,
-repo name, README credit (--credit), and delivery Route A vs ask-before-commit Route B.
+repo name, README credit (--credit), delivery Route A vs ask-before-commit Route B,
+and house style uk vs general (--house-style, default uk).
 Then run apply.sh (or copy docs/CI) with those choices. Record the route in
 CANON_NEXT_STEPS. Explain CANON_NEXT_STEPS.md simply when done.
 ```

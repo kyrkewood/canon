@@ -1,21 +1,23 @@
 # House style examples
 
-`HOUSE_STYLE.md` in the repo root is the **living** file. Agents follow that file. These examples are starting points to copy, not a second source of truth.
+Starters to copy into `HOUSE_STYLE.md`. Agents follow the **root** file only.
 
 | File | Profile |
 |------|---------|
-| [`../../HOUSE_STYLE.md`](../../HOUSE_STYLE.md) | **en-GB** – this repo, and the apply default |
-| [`general.md`](general.md) | **en-US** / general tech-docs default |
+| [`uk.md`](uk.md) | en-GB – apply default (`--house-style=uk`) |
+| [`general.md`](general.md) | en-US / general tech-docs (`--house-style=general`) |
+
+This repo’s living file is [`../../HOUSE_STYLE.md`](../../HOUSE_STYLE.md) (uk starter plus Canon notes). Apply does **not** copy that file into products.
 
 ## Set once
 
-1. Keep the applied `HOUSE_STYLE.md`, or `cp docs/house-style/general.md HOUSE_STYLE.md`.
-2. Fill **Product-specific notes** (names, banned phrases, extra locale rows).
-3. After that, only edit `HOUSE_STYLE.md`.
+1. Apply with `--house-style=uk` or `--house-style=general` (default **uk**).
+2. Or later: `cp docs/house-style/uk.md HOUSE_STYLE.md` (or `general.md`).
+3. Fill **Product-specific notes**. After that, only edit `HOUSE_STYLE.md`.
 
 ## Build on it
 
-Add or replace rules in `HOUSE_STYLE.md`. Note reversals in [`docs/features/house-style.md`](../features/house-style.md). New prose follows the file; do not sweep old docs unless asked.
+Add or replace rules in `HOUSE_STYLE.md`. New prose follows that file; do not sweep old docs unless asked.
 
 ## What it does not cover
 
