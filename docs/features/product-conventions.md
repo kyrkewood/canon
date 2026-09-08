@@ -18,6 +18,7 @@ When a product has the relevant surface, Canon expects:
 | Incomplete features | Env/feature-flag gates documented in `.env.example` |
 | Backlog | README/`PLAN.md` Done·Next·Later **plus** `docs/features/` |
 | Local CI | One verify umbrella mirroring merge gates |
+| Prose | Living `HOUSE_STYLE.md`; identifiers stay ecosystem English |
 
 Dual-runtime contracts share one source of truth. Product blanks in domain docs are filled in the creation PR.
 

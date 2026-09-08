@@ -20,8 +20,8 @@ Use this longer checklist when you need detail, or when applying by hand.
 ## 1. Bootstrap docs
 
 - [ ] Prefer `./scaffold/apply.sh <target>` over hand-copying.
-- [ ] Or copy into the new repo root: `AGENTS.md`, `CLAUDE.md`, `.cursor/rules/agents.mdc`, `PROJECT_RULES.md`, `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, `ARCHITECTURE.md`, plus `docs/features/` (README + `_TEMPLATE.md`).
-- [ ] Fill product-specific sections in `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, and `ARCHITECTURE.md`.
+- [ ] Or copy into the new repo root: `AGENTS.md`, `CLAUDE.md`, `.cursor/rules/agents.mdc`, `PROJECT_RULES.md`, `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, `ARCHITECTURE.md`, `HOUSE_STYLE.md`, plus `docs/features/` (README + `_TEMPLATE.md`) and `docs/house-style/` (README + `general.md`).
+- [ ] Fill product-specific sections in `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, `ARCHITECTURE.md`, and `HOUSE_STYLE.md` (or replace `HOUSE_STYLE.md` from `docs/house-style/general.md`).
 - [ ] In `SECURITY.md`, record: secrets manager choice, who owns key rotation, and any temporary CI exceptions.
 
 ## 2. Install CI (same PR as first commit of app skeleton)
@@ -61,7 +61,7 @@ In `quality.yml` (and package scripts / Makefile):
 - [ ] **If durable data / client state:** `SCHEMA.md` (or equivalent) + versioned contracts as needed
 - [ ] Feature flags / env gates documented in `.env.example` (or equivalent)
 - [ ] README (or `PLAN.md`) Done / Next / Later started; update as capabilities ship
-- [ ] Fill product blanks in `SECURITY.md`, `AI_INTEGRATION.md`, `ACCESSIBILITY.md`, `ARCHITECTURE.md`
+- [ ] Fill product blanks in `SECURITY.md`, `AI_INTEGRATION.md`, `ACCESSIBILITY.md`, `ARCHITECTURE.md`, `HOUSE_STYLE.md`
 - [ ] Record delivery Route A (prefer Canon PR loop) or Route B (ask-before-commit) — `CANON_NEXT_STEPS` §7b / `AGENTS.md`
 ## 5. Branch protection (before feature PRs)
 

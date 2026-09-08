@@ -34,7 +34,7 @@ Examples:
 
 What it does:
   1. Creates the target folder if needed
-  2. Copies AGENTS.md, PROJECT_RULES.md, and domain docs
+  2. Copies AGENTS.md, PROJECT_RULES.md, HOUSE_STYLE.md, and domain docs
   3. Copies GitHub Actions workflows into .github/workflows/
   4. Writes CANON_NEXT_STEPS.md (PR-to-main is required, not optional)
   5. Optional: --credit, --github, --open-pr
@@ -160,9 +160,11 @@ count_force_candidates() {
   local dest rel src
   for rel in \
     AGENTS.md PROJECT_RULES.md SECURITY.md ACCESSIBILITY.md AI_INTEGRATION.md ARCHITECTURE.md \
+    HOUSE_STYLE.md \
     CLAUDE.md \
     .cursor/rules/agents.mdc \
     docs/features/README.md docs/features/_TEMPLATE.md \
+    docs/house-style/README.md docs/house-style/general.md \
     .github/workflows/secrets-scan.yml \
     .github/workflows/dependency-review.yml \
     .github/workflows/sast.yml \
@@ -272,6 +274,7 @@ DOCS=(
   ACCESSIBILITY.md
   AI_INTEGRATION.md
   ARCHITECTURE.md
+  HOUSE_STYLE.md
 )
 for doc in "${DOCS[@]}"; do
   copy_file "$CANON_ROOT/$doc" "$TARGET/$doc"
@@ -285,6 +288,10 @@ copy_file "$CANON_ROOT/.cursor/rules/agents.mdc" "$TARGET/.cursor/rules/agents.m
 mkdir -p "$TARGET/docs/features"
 copy_file "$CANON_ROOT/docs/features/README.md" "$TARGET/docs/features/README.md"
 copy_file "$CANON_ROOT/docs/features/_TEMPLATE.md" "$TARGET/docs/features/_TEMPLATE.md"
+
+mkdir -p "$TARGET/docs/house-style"
+copy_file "$CANON_ROOT/docs/house-style/README.md" "$TARGET/docs/house-style/README.md"
+copy_file "$CANON_ROOT/docs/house-style/general.md" "$TARGET/docs/house-style/general.md"
 
 echo
 echo "CI workflows"
@@ -642,6 +649,7 @@ cat >> "$NEXT_STEPS" <<'EOF'
 
 - `SECURITY.md` — secrets manager, rotation owner
 - `ARCHITECTURE.md` — what this product is
+- `HOUSE_STYLE.md` — keep en-GB, or replace from `docs/house-style/general.md`, then add product vocabulary
 - `ACCESSIBILITY.md` / `AI_INTEGRATION.md` — if those apply
 
 ## 6. Protect main (before feature work)
@@ -658,7 +666,7 @@ In the GitHub repo:
 
 ## 7. Point your coding agent here
 
-Standing instruction: “Follow AGENTS.md and PROJECT_RULES.md.”
+Standing instruction: “Follow AGENTS.md, PROJECT_RULES.md, and HOUSE_STYLE.md.”
 Many tools auto-read AGENTS.md; if not, paste that once as a project rule.
 
 ## 7b. Delivery route (pick one)

@@ -5,6 +5,6 @@ alwaysApply: true
 
 # Standing instructions
 
-Follow [`AGENTS.md`](AGENTS.md) and [`PROJECT_RULES.md`](PROJECT_RULES.md) every session.
+Follow [`AGENTS.md`](AGENTS.md), [`PROJECT_RULES.md`](PROJECT_RULES.md), and [`HOUSE_STYLE.md`](HOUSE_STYLE.md) every session.
 
 Do not fork those rules into this file. Domain rulebooks (`SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, `ARCHITECTURE.md`) load when the task touches those areas.

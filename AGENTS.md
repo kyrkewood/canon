@@ -4,7 +4,7 @@ Standing instructions for coding agents. Follow these every session, on every ta
 
 ## Rules hierarchy
 
-- Always read [`AGENTS.md`](AGENTS.md) (this file) and [`PROJECT_RULES.md`](PROJECT_RULES.md).
+- Always read [`AGENTS.md`](AGENTS.md) (this file), [`PROJECT_RULES.md`](PROJECT_RULES.md), and [`HOUSE_STYLE.md`](HOUSE_STYLE.md).
 - `PROJECT_RULES.md` is the index; load domain rulebooks when the work touches that domain:
   - [`SECURITY.md`](SECURITY.md) — secrets, encryption, OWASP, privacy/logging
   - [`ACCESSIBILITY.md`](ACCESSIBILITY.md) — UI / WCAG

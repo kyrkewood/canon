@@ -111,7 +111,7 @@ If your builder **doesn’t support GitHub Actions**, you still get the agent do
 ## Day-to-day prompt (after Canon is applied)
 
 ```text
-Follow AGENTS.md and PROJECT_RULES.md. Load SECURITY.md / ACCESSIBILITY.md /
+Follow AGENTS.md, PROJECT_RULES.md, and HOUSE_STYLE.md. Load SECURITY.md / ACCESSIBILITY.md /
 AI_INTEGRATION.md only when the task touches those areas. Keep PRs and summaries short.
 ```
 
