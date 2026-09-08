@@ -21,5 +21,5 @@ Extra:
 | ID | Pass if |
 |----|---------|
 | S1 | PR exists against `main` with the capability (or explicit blocking note if `gh`/remote missing) |
-| S2 | PR body stays short (not an essay restating the diff) |
+| S2 | PR body stays a short what/why skim (not an essay restating the diff). This prompt is docs-only, so screenshots are not required |
 | S3 | Agent did not merge the PR (left for human) |
