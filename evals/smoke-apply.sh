@@ -20,9 +20,12 @@ required=(
   ACCESSIBILITY.md
   AI_INTEGRATION.md
   ARCHITECTURE.md
+  HOUSE_STYLE.md
   CANON_NEXT_STEPS.md
   docs/features/README.md
   docs/features/_TEMPLATE.md
+  docs/house-style/README.md
+  docs/house-style/general.md
   .github/workflows/secrets-scan.yml
   .github/workflows/dependency-review.yml
   .github/workflows/sast.yml
@@ -49,6 +52,11 @@ fi
 
 if ! grep -q 'Route A' "$TMP/CANON_NEXT_STEPS.md" || ! grep -q 'Route B' "$TMP/CANON_NEXT_STEPS.md"; then
   echo "smoke-apply: CANON_NEXT_STEPS.md should flag delivery Route A/B" >&2
+  exit 1
+fi
+
+if ! grep -q 'HOUSE_STYLE' "$TMP/CANON_NEXT_STEPS.md"; then
+  echo "smoke-apply: CANON_NEXT_STEPS.md should mention HOUSE_STYLE.md" >&2
   exit 1
 fi
 
