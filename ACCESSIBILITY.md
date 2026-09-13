@@ -50,6 +50,7 @@ Automated axe/pa11y covers a **subset** of AA. A green accessibility job means �
 - No UI PR merged without:
   - Passing automated AA checks for changed surfaces (rule IDs visible in the log)
   - Manual keyboard walkthrough of changed flows
+  - Before/after screenshots in the PR body (see `AGENTS.md`) — review orientation, not an a11y substitute
 - Prefer an accessibility specialist review (human or agent **driving axe/playwright**) on large UI changes — complementary to CI.
 
 ### Two complementary layers

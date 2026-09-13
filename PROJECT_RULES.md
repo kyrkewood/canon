@@ -131,7 +131,7 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 - Prefer clarity over cleverness.
 - Ask before violating a rule.
 - Treat missing CI or missing domain docs as a scaffolding defect.
-- Produce changes for **understanding to participate** (see `AGENTS.md`) — short summaries by default; literate explainers and check questions only when the change is non-trivial.
+- Produce changes for **understanding to participate** (see `AGENTS.md`) — skim-sized what/why; before/after screenshots when UI changed; literate explainers only when the change is non-trivial, and not in the PR body if they would bloat it.
 - Canon is **agent-agnostic** (any tool that reads these Markdown files). **GitHub is the default forge/CI**; other hosts should mirror remote → MR → merge-blocking checks (see [`ADOPT.md`](ADOPT.md)).
 
 ---
@@ -143,6 +143,7 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 - Blind user can complete core flow? → `ACCESSIBILITY.md`
 - Violating PR blocked by CI today? Local verify mirrors gates? → `scaffold/ci/` / `scripts/verify.sh` (or product umbrella)
 - Last capability: own branch + open PR (not pile-on); agent did not merge without “merge …”? → `AGENTS.md` (Git authority)
+- Last PR: copy skim-sized (what/why, not a second diff); UI changes have before/after shots? → `AGENTS.md` (PRs)
 - Last change surgical / no unasked deps? → `AGENTS.md` (Minimal change)
 - Last eval smoke/scenario still honest? → `evals/`
 - Stuck agent handed back the wheel? → `AGENTS.md` (When stuck)

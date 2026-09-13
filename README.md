@@ -109,7 +109,7 @@ Open `CANON_NEXT_STEPS.md` in the target project. Delete it when you’re done.
 1. Open the project in your coding agent.  
 2. Standing instruction: *Follow AGENTS.md and PROJECT_RULES.md.* Cursor/Claude Code get pointers from apply; Codex often auto-reads `AGENTS.md`.  
 3. When work touches security, UI, or APIs, also load the matching domain doc.  
-4. Keep change summaries **short** (1–3 bullets). For hard changes, a short literate walkthrough — not an essay. See `AGENTS.md`.
+4. Keep PR copy a **skim** (1–3 bullets: what changed and why). UI changes include before/after screenshots. See `AGENTS.md`.
 
 You mostly **don’t edit Canon itself** for each product. You apply it, fill product-specific blanks, and ship.
 
