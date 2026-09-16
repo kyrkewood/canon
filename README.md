@@ -14,7 +14,7 @@
 | **Codex** (and similar) | Often auto-reads `AGENTS.md` |
 | **Cursor** | Project rule [`.cursor/rules/agents.mdc`](.cursor/rules/agents.mdc) points at `AGENTS.md` (applied by `apply.sh`) |
 | **Claude Code** | [`CLAUDE.md`](CLAUDE.md) points at `AGENTS.md` (applied by `apply.sh`) |
-| **Other** | Paste “Follow AGENTS.md and PROJECT_RULES.md” as a standing instruction if the tool has no auto-discovery |
+| **Other** | Paste “Follow AGENTS.md, PROJECT_RULES.md, and HOUSE_STYLE.md” as a standing instruction if the tool has no auto-discovery |
 
 **Hosting / CI:** GitHub is the **default** (Actions + `gh` + PR-to-`main`). Other forges are fine if you keep the same shape: remote → branch → merge request → merge-blocking checks.
 
@@ -97,6 +97,7 @@ Open `CANON_NEXT_STEPS.md` in the target project. Delete it when you’re done.
 | `ACCESSIBILITY.md` | WCAG targets and UI rules |
 | `AI_INTEGRATION.md` | APIs / MCP / agent-friendly design |
 | `ARCHITECTURE.md` | Short living map of *this* product (you fill it in) |
+| `HOUSE_STYLE.md` | Prose, dates, spelling (identifiers stay ecosystem English) |
 | `docs/features/` | Living feature docs (purpose, behavior, edge cases, decisions) |
 | `.github/workflows/*` | Secrets scan, dependency review, SAST, quality (+ a11y if UI) |
 
@@ -107,7 +108,7 @@ Open `CANON_NEXT_STEPS.md` in the target project. Delete it when you’re done.
 ## Using it day to day
 
 1. Open the project in your coding agent.  
-2. Standing instruction: *Follow AGENTS.md and PROJECT_RULES.md.* Cursor/Claude Code get pointers from apply; Codex often auto-reads `AGENTS.md`.  
+2. Standing instruction: *Follow AGENTS.md, PROJECT_RULES.md, and HOUSE_STYLE.md.* Cursor/Claude Code get pointers from apply; Codex often auto-reads `AGENTS.md`.  
 3. When work touches security, UI, or APIs, also load the matching domain doc.  
 4. Keep PR copy a **skim** (1–3 bullets: what changed and why). UI changes include before/after screenshots. See `AGENTS.md`.
 
@@ -122,7 +123,7 @@ Printed again in `CANON_NEXT_STEPS.md`:
 1. **GitHub remote** — `gh repo create … --source=. --remote=origin` (or `apply.sh --github`)  
 2. **Baseline PR to `main`** — branch → push → `gh pr create` (or `--open-pr`); do not stop at local commits; do not auto-merge  
 3. **Match CI to your toolchain** — e.g. `npm run lint` / `typecheck` / `test`, or edit `quality.yml`  
-4. **Fill product blanks** in `SECURITY.md` and `ARCHITECTURE.md` (others if relevant)  
+4. **Fill product blanks** in `SECURITY.md`, `ARCHITECTURE.md`, and `HOUSE_STYLE.md` (others if relevant)  
 5. **Protect `main`** — Dependency graph + required status checks  
 6. **Delete** `CANON_NEXT_STEPS.md` after the baseline PR is merged  
 
@@ -150,6 +151,7 @@ Or apply with `--credit` to append that line. Not required; skip for private/int
 |------|---------|
 | `--stack=node\|python\|none` | Prefill `quality.yml` (default: auto-detect) |
 | `--with-ui` | Accessibility workflow active (you still wire axe) |
+| `--house-style=uk\|general` | Starter copied to `HOUSE_STYLE.md` (default: uk) |
 | `--force` | Overwrite differing files (diffs + TTY confirm) |
 | `--yes` | With `--force`, skip confirm (agents/CI) |
 | `--credit` | Append the Canon credit line to `README.md` |
@@ -177,7 +179,9 @@ SECURITY.md               Security & privacy
 ACCESSIBILITY.md          Accessibility
 AI_INTEGRATION.md         AI / API / MCP
 ARCHITECTURE.md           Product architecture template
+HOUSE_STYLE.md            This product’s living prose rules (not the apply source)
 docs/features/            Feature docs kit (template + guide)
+docs/house-style/         Starters (`uk.md`, `general.md`) copied into HOUSE_STYLE.md on apply
 evals/                    Light value checks (scenarios + scorecard + apply smoke)
 scripts/verify.sh         Local verify umbrella (also CI)
 .cursor/rules/            Optional Cursor reinforcement of AGENTS delivery
@@ -196,6 +200,7 @@ scaffold/
 - Compressed git authority (Route A/B; merge only on “merge …”)
 - Minimal-change, thin-slice / stuck handling, feature docs, field conventions
 - Light evals: apply smoke + real scratch scenarios (not meta diary)
+- House style: starters in `docs/house-style/`; apply copies one into `HOUSE_STYLE.md`; identifiers stay ecosystem English
 
 **Next**
 - Re-run scenarios after AGENTS / apply changes; keep RESULTS honest

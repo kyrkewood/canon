@@ -19,6 +19,8 @@ Options:
   --stack=node|python|none
                        Prefill quality.yml for that stack (default: auto-detect)
   --with-ui            Include accessibility CI as active (default: copy, keep dormant)
+  --house-style=uk|general
+                       Copy that starter to HOUSE_STYLE.md (default: uk)
   --credit             Append a short Canon credit line to the target README.md
   --github[=owner/name]
                        Ensure git repo + GitHub remote (gh repo create if missing)
@@ -27,14 +29,14 @@ Options:
   -h, --help           Show this help
 
 Examples:
-  ./scaffold/apply.sh ~/projects/my-app
+  ./scaffold/apply.sh ~/projects/my-app --house-style=uk
   ./scaffold/apply.sh . --stack=node --with-ui --github --open-pr
   ./scaffold/apply.sh ../new-thing --force                 # diffs + confirm on TTY
   ./scaffold/apply.sh ../new-thing --force --yes --credit  # agents/CI: no prompt
 
 What it does:
   1. Creates the target folder if needed
-  2. Copies AGENTS.md, PROJECT_RULES.md, and domain docs
+  2. Copies AGENTS.md, PROJECT_RULES.md, domain docs, and a house-style starter → HOUSE_STYLE.md
   3. Copies GitHub Actions workflows into .github/workflows/
   4. Writes CANON_NEXT_STEPS.md (PR-to-main is required, not optional)
   5. Optional: --credit, --github, --open-pr
@@ -55,6 +57,7 @@ GITHUB_REPO=""
 GITHUB_VISIBILITY="private"
 OPEN_PR=0
 GH_BLOCKER=""
+HOUSE_STYLE_PROFILE="uk"
 
 for arg in "$@"; do
   case "$arg" in
@@ -71,6 +74,7 @@ for arg in "$@"; do
       GITHUB_REPO="${arg#*=}"
       ;;
     --stack=*) STACK="${arg#*=}" ;;
+    --house-style=*) HOUSE_STYLE_PROFILE="${arg#*=}" ;;
     -*)
       echo "Unknown option: $arg" >&2
       usage >&2
@@ -96,6 +100,14 @@ case "$STACK" in
   auto|node|python|none) ;;
   *)
     echo "--stack must be node, python, none, or auto" >&2
+    exit 1
+    ;;
+esac
+
+case "$HOUSE_STYLE_PROFILE" in
+  uk|general) ;;
+  *)
+    echo "--house-style must be uk or general" >&2
     exit 1
     ;;
 esac
@@ -160,9 +172,11 @@ count_force_candidates() {
   local dest rel src
   for rel in \
     AGENTS.md PROJECT_RULES.md SECURITY.md ACCESSIBILITY.md AI_INTEGRATION.md ARCHITECTURE.md \
+    HOUSE_STYLE.md \
     CLAUDE.md \
     .cursor/rules/agents.mdc \
     docs/features/README.md docs/features/_TEMPLATE.md \
+    docs/house-style/README.md docs/house-style/uk.md docs/house-style/general.md \
     .github/workflows/secrets-scan.yml \
     .github/workflows/dependency-review.yml \
     .github/workflows/sast.yml \
@@ -199,6 +213,14 @@ count_force_candidates() {
         ;;
       CLAUDE.md)
         src="$CANON_ROOT/CLAUDE.md"
+        [[ -f "$src" ]] || continue
+        if ! cmp -s "$src" "$dest" 2>/dev/null; then
+          FORCE_CANDIDATES=$((FORCE_CANDIDATES + 1))
+          show_file_diff "$dest" "$src"
+        fi
+        ;;
+      HOUSE_STYLE.md)
+        src="$CANON_ROOT/docs/house-style/${HOUSE_STYLE_PROFILE}.md"
         [[ -f "$src" ]] || continue
         if ! cmp -s "$src" "$dest" 2>/dev/null; then
           FORCE_CANDIDATES=$((FORCE_CANDIDATES + 1))
@@ -257,6 +279,7 @@ fi
 
 echo "Applying canon → $TARGET"
 echo "  stack: $STACK"
+echo "  house style: $HOUSE_STYLE_PROFILE"
 echo "  ui a11y workflow: $([[ "$WITH_UI" -eq 1 ]] && echo active || echo dormant)"
 echo
 
@@ -277,6 +300,8 @@ for doc in "${DOCS[@]}"; do
   copy_file "$CANON_ROOT/$doc" "$TARGET/$doc"
 done
 
+copy_file "$CANON_ROOT/docs/house-style/${HOUSE_STYLE_PROFILE}.md" "$TARGET/HOUSE_STYLE.md"
+
 # Agent discovery pointers (tool-specific entrypoints → AGENTS.md)
 copy_file "$CANON_ROOT/CLAUDE.md" "$TARGET/CLAUDE.md"
 copy_file "$CANON_ROOT/.cursor/rules/agents.mdc" "$TARGET/.cursor/rules/agents.mdc"
@@ -285,6 +310,11 @@ copy_file "$CANON_ROOT/.cursor/rules/agents.mdc" "$TARGET/.cursor/rules/agents.m
 mkdir -p "$TARGET/docs/features"
 copy_file "$CANON_ROOT/docs/features/README.md" "$TARGET/docs/features/README.md"
 copy_file "$CANON_ROOT/docs/features/_TEMPLATE.md" "$TARGET/docs/features/_TEMPLATE.md"
+
+mkdir -p "$TARGET/docs/house-style"
+copy_file "$CANON_ROOT/docs/house-style/README.md" "$TARGET/docs/house-style/README.md"
+copy_file "$CANON_ROOT/docs/house-style/uk.md" "$TARGET/docs/house-style/uk.md"
+copy_file "$CANON_ROOT/docs/house-style/general.md" "$TARGET/docs/house-style/general.md"
 
 echo
 echo "CI workflows"
@@ -637,13 +667,17 @@ Edit `.github/workflows/quality.yml` and replace the failing placeholder with yo
 EOF
 fi
 
-cat >> "$NEXT_STEPS" <<'EOF'
+cat >> "$NEXT_STEPS" <<EOF
 ## 5. Fill product-specific blanks
 
-- `SECURITY.md` — secrets manager, rotation owner
-- `ARCHITECTURE.md` — what this product is
-- `ACCESSIBILITY.md` / `AI_INTEGRATION.md` — if those apply
+- \`SECURITY.md\` — secrets manager, rotation owner
+- \`ARCHITECTURE.md\` — what this product is
+- \`HOUSE_STYLE.md\` — started from \`docs/house-style/${HOUSE_STYLE_PROFILE}.md\`; add product vocabulary. To switch: \`cp docs/house-style/uk.md HOUSE_STYLE.md\` or \`general.md\`
+- \`ACCESSIBILITY.md\` / \`AI_INTEGRATION.md\` — if those apply
 
+EOF
+
+cat >> "$NEXT_STEPS" <<'EOF'
 ## 6. Protect main (before feature work)
 
 In the GitHub repo:
@@ -658,7 +692,7 @@ In the GitHub repo:
 
 ## 7. Point your coding agent here
 
-Standing instruction: “Follow AGENTS.md and PROJECT_RULES.md.”
+Standing instruction: “Follow AGENTS.md, PROJECT_RULES.md, and HOUSE_STYLE.md.”
 Many tools auto-read AGENTS.md; if not, paste that once as a project rule.
 
 ## 7b. Delivery route (pick one)

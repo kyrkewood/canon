@@ -7,7 +7,7 @@ Ensure Cursor and Claude Code load Canon’s standing instructions. `AGENTS.md` 
 ## How it should work
 
 - `apply.sh` copies `CLAUDE.md` and `.cursor/rules/agents.mdc` into the target.
-- Both files only redirect to `AGENTS.md` / `PROJECT_RULES.md` — no forked rules.
+- Both files only redirect to `AGENTS.md` / `PROJECT_RULES.md` / `HOUSE_STYLE.md` — no forked rules.
 - Codex-style tools that already read `AGENTS.md` need no pointer.
 - Optional Route A Cursor rule (`canon-delivery.mdc`) remains separate and is **not** applied by default.
 

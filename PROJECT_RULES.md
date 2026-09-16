@@ -11,6 +11,7 @@ Detailed standards live in:
 | [`ACCESSIBILITY.md`](ACCESSIBILITY.md) | WCAG targets, UI non-negotiables, CI vs manual |
 | [`AI_INTEGRATION.md`](AI_INTEGRATION.md) | APIs, schemas, MCP, agent-friendly UX |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Evolving system shape (fill per product) |
+| [`HOUSE_STYLE.md`](HOUSE_STYLE.md) | Prose, dates, spelling; identifiers stay ecosystem English |
 | [`docs/features/`](docs/features/) | Living feature docs (purpose, behavior, edge cases, decisions) |
 | [`scaffold/PROJECT_CREATION.md`](scaffold/PROJECT_CREATION.md) | Day-one checklist including CI |
 | [`README.md`](README.md) | How to use this repo — terminal apply via `scaffold/apply.sh` |
@@ -98,7 +99,7 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 4. `CANON_NEXT_STEPS.md` completed and removed
 5. CI green on a smoke baseline after quality commands are real
 6. Secrets managed outside git — documented in `SECURITY.md`
-7. Product-specific blanks filled in `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, `ARCHITECTURE.md` (templates are not done)
+7. Product-specific blanks filled in `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, `ARCHITECTURE.md`, `HOUSE_STYLE.md` (templates are not done)
 8. Local verify umbrella documented (README or package scripts / Makefile)
 
 ---
@@ -109,10 +110,12 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 - `AGENTS.md`
 - `PROJECT_RULES.md` (this file)
 - `ARCHITECTURE.md`
+- `HOUSE_STYLE.md`
 - `SECURITY.md`
 - `AI_INTEGRATION.md`
 - `ACCESSIBILITY.md`
 - `docs/features/` (README + `_TEMPLATE.md`; feature files as capabilities ship)
+- `docs/house-style/` (README + example profile(s); living file is `HOUSE_STYLE.md`)
 - `.github/workflows/` from `scaffold/ci/`
 
 ### Living plan + feature docs
@@ -120,7 +123,7 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 - **README (or `PLAN.md`) Done / Next / Later** — living backlog surface. Update in the same PR as capability ships. Both are useful; neither replaces the other.
 
 ### How Agents Should Load Rules
-- Always: `AGENTS.md` + `PROJECT_RULES.md`
+- Always: `AGENTS.md` + `PROJECT_RULES.md` + `HOUSE_STYLE.md`
 - When touching auth, data, crypto, deps, or public APIs → `SECURITY.md`
 - When touching UI → `ACCESSIBILITY.md`
 - When touching APIs, tools, or agent surfaces → `AI_INTEGRATION.md`
@@ -145,6 +148,7 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 - Last capability: own branch + open PR (not pile-on); agent did not merge without “merge …”? → `AGENTS.md` (Git authority)
 - Last PR: copy skim-sized (what/why, not a second diff); UI changes have before/after shots? → `AGENTS.md` (PRs)
 - Last change surgical / no unasked deps? → `AGENTS.md` (Minimal change)
+- New prose follows `HOUSE_STYLE.md` without renaming identifiers / APIs? → `HOUSE_STYLE.md`
 - Last eval smoke/scenario still honest? → `evals/`
 - Stuck agent handed back the wheel? → `AGENTS.md` (When stuck)
 - API OpenAPI linted if published? Plan + feature docs current? → `AI_INTEGRATION.md` / README / `docs/features/`

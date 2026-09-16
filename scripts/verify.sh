@@ -22,10 +22,14 @@ required=(
   ACCESSIBILITY.md
   AI_INTEGRATION.md
   ARCHITECTURE.md
+  HOUSE_STYLE.md
   ADOPT.md
   README.md
   docs/features/README.md
   docs/features/_TEMPLATE.md
+  docs/house-style/README.md
+  docs/house-style/uk.md
+  docs/house-style/general.md
   scaffold/apply.sh
   scaffold/PROJECT_CREATION.md
 )

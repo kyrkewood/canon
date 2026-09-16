@@ -5,7 +5,7 @@
 ```bash
 # from a clone of this canon repo
 ./scaffold/apply.sh /path/to/your-project
-# optional: --stack=node|python|none  --with-ui  --force  --credit
+# optional: --stack=node|python|none  --with-ui  --house-style=uk|general  --force  --credit
 #            --github[=owner/name]  --public  --open-pr
 ```
 
@@ -20,8 +20,8 @@ Use this longer checklist when you need detail, or when applying by hand.
 ## 1. Bootstrap docs
 
 - [ ] Prefer `./scaffold/apply.sh <target>` over hand-copying.
-- [ ] Or copy into the new repo root: `AGENTS.md`, `CLAUDE.md`, `.cursor/rules/agents.mdc`, `PROJECT_RULES.md`, `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, `ARCHITECTURE.md`, plus `docs/features/` (README + `_TEMPLATE.md`).
-- [ ] Fill product-specific sections in `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, and `ARCHITECTURE.md`.
+- [ ] Or copy into the new repo root: `AGENTS.md`, `CLAUDE.md`, `.cursor/rules/agents.mdc`, `PROJECT_RULES.md`, `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, `ARCHITECTURE.md`, plus `docs/features/` (README + `_TEMPLATE.md`) and `docs/house-style/` (README + `uk.md` + `general.md`). Copy `docs/house-style/uk.md` or `general.md` to `HOUSE_STYLE.md` (do not copy Canon’s own `HOUSE_STYLE.md`).
+- [ ] Fill product-specific sections in `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, `ARCHITECTURE.md`, and `HOUSE_STYLE.md`.
 - [ ] In `SECURITY.md`, record: secrets manager choice, who owns key rotation, and any temporary CI exceptions.
 
 ## 2. Install CI (same PR as first commit of app skeleton)
@@ -61,7 +61,7 @@ In `quality.yml` (and package scripts / Makefile):
 - [ ] **If durable data / client state:** `SCHEMA.md` (or equivalent) + versioned contracts as needed
 - [ ] Feature flags / env gates documented in `.env.example` (or equivalent)
 - [ ] README (or `PLAN.md`) Done / Next / Later started; update as capabilities ship
-- [ ] Fill product blanks in `SECURITY.md`, `AI_INTEGRATION.md`, `ACCESSIBILITY.md`, `ARCHITECTURE.md`
+- [ ] Fill product blanks in `SECURITY.md`, `AI_INTEGRATION.md`, `ACCESSIBILITY.md`, `ARCHITECTURE.md`, `HOUSE_STYLE.md`
 - [ ] Record delivery Route A (prefer Canon PR loop) or Route B (ask-before-commit) — `CANON_NEXT_STEPS` §7b / `AGENTS.md`
 ## 5. Branch protection (before feature PRs)
 
