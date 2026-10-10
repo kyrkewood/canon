@@ -45,10 +45,22 @@ Database and compute are not selectable in v1; changing them means editing the C
 
 - No other providers shipped. Others are a documented extension point: IaC as code, reviewed, deployed via OIDC. Add one only when someone runs and tests it.
 - No second IaC tool; no Terraform/OpenTofu/Pulumi.
-- Canon never runs `cdk bootstrap`, `deploy` or `destroy`, and sessions get no AWS credentials. Verification is offline (`synth`, `cdk-nag`).
+- Canon never runs `cdk bootstrap`, `deploy` or `destroy`, and sessions get no AWS credentials by default. Verification is offline (`synth`, `cdk-nag`). The only exception is the read-only role below.
 - No multi-environment (staging/prod) default.
 - No RDS, containers or custom networking in v1.
 - No claim that the stack is "free". Cost claims are best-effort.
+
+## Exception: read-only session role
+
+Default is no credentials. A human may grant a session one AWS role, only when offline checks cannot answer the question (for example, inspecting what is actually deployed, or cost and budget state) and only when all of these hold:
+
+- The role is read-only and metadata-only: describe, list and get calls on resource configuration, CloudFormation, Budgets and Cost Explorer. No data-plane reads (S3 objects, DynamoDB items, SSM parameter values, logs), no `kms:Decrypt`, no write actions of any kind.
+- A person created and granted it for that environment or task. The agent never requests, widens or creates credentials, and never assumes a role it was not given.
+- It is short-lived (an assumed role with a session duration, or a revocable role), scoped to one account, and defined outside this repo (the account-baseline repo), so its policy is reviewed separately.
+- Its use is declared in the session or PR, and results show resource names and states, never secret values.
+- Deploy, bootstrap, destroy and any mutating call stay human-only, whatever the role allows. If a call would write, stop and hand it to the human.
+
+Canon ships no such role; this rule only permits one. If the role grants more than read-only metadata, the exception does not apply and the default rule stands.
 
 ## Edge cases & failure modes
 
@@ -70,7 +82,8 @@ Database and compute are not selectable in v1; changing them means editing the C
 | 2026-10-10 | DynamoDB + Lambda fixed defaults | Cheapest, fastest, lowest surprise-bill risk | If SQL demand is common |
 | 2026-10-10 | Deploy on merge via GitHub OIDC, environment-scoped | No long-lived keys; matches `SECURITY.md`; approvals can be added later | If a staging environment is needed |
 | 2026-10-10 | Few config knobs (region, deploy mode, budget, env name) | Each knob is an untested combination that can break the free-tier guarantee | If adopters repeatedly edit the same code |
-| 2026-10-10 | Canon and its sessions never hold AWS credentials | Verification is offline; humans apply | Never expected |
+| 2026-10-10 | Canon and its sessions hold no AWS credentials by default | Verification is offline; humans apply | Never expected |
+| 2026-10-10 | Allow one human-granted, read-only, metadata-only role as a strict exception | Some questions (what is deployed, what it costs) cannot be answered offline; the role is defined outside this repo and never writes | If a session ever needs more than metadata reads |
 | 2026-10-10 | Default is opt-in (`none` remains first class) | Existing adopters see no change; minimal-change rule | — |
 
 ## Open questions
