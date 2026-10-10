@@ -3,8 +3,4 @@ description: Follow AGENTS.md as standing instructions (source of truth)
 alwaysApply: true
 ---
 
-# Standing instructions
-
-Follow [`AGENTS.md`](AGENTS.md), [`PROJECT_RULES.md`](PROJECT_RULES.md), and [`HOUSE_STYLE.md`](HOUSE_STYLE.md) every session.
-
-Do not fork those rules into this file. Domain rulebooks (`SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, `ARCHITECTURE.md`) load when the task touches those areas.
+Follow [`AGENTS.md`](AGENTS.md) every session. It says which other docs to load and when. Do not fork its rules into this file.

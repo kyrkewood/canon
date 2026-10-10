@@ -175,7 +175,8 @@ count_force_candidates() {
     HOUSE_STYLE.md \
     CLAUDE.md \
     .cursor/rules/agents.mdc \
-    docs/features/README.md docs/features/_TEMPLATE.md \
+    docs/agent/git-delivery.md docs/agent/pull-requests.md docs/agent/checklist.md \
+    docs/features/README.md docs/features/_TEMPLATE.md docs/session-handoff.md \
     docs/house-style/README.md docs/house-style/uk.md docs/house-style/general.md \
     .github/workflows/secrets-scan.yml \
     .github/workflows/dependency-review.yml \
@@ -306,10 +307,17 @@ copy_file "$CANON_ROOT/docs/house-style/${HOUSE_STYLE_PROFILE}.md" "$TARGET/HOUS
 copy_file "$CANON_ROOT/CLAUDE.md" "$TARGET/CLAUDE.md"
 copy_file "$CANON_ROOT/.cursor/rules/agents.mdc" "$TARGET/.cursor/rules/agents.mdc"
 
+# On-demand agent docs (loaded via AGENTS.md pointers)
+mkdir -p "$TARGET/docs/agent"
+for f in git-delivery pull-requests checklist; do
+  copy_file "$CANON_ROOT/docs/agent/$f.md" "$TARGET/docs/agent/$f.md"
+done
+
 # Feature-doc kit (directory)
 mkdir -p "$TARGET/docs/features"
 copy_file "$CANON_ROOT/docs/features/README.md" "$TARGET/docs/features/README.md"
 copy_file "$CANON_ROOT/docs/features/_TEMPLATE.md" "$TARGET/docs/features/_TEMPLATE.md"
+copy_file "$CANON_ROOT/docs/session-handoff.md" "$TARGET/docs/session-handoff.md"
 
 mkdir -p "$TARGET/docs/house-style"
 copy_file "$CANON_ROOT/docs/house-style/README.md" "$TARGET/docs/house-style/README.md"
@@ -692,7 +700,7 @@ In the GitHub repo:
 
 ## 7. Point your coding agent here
 
-Standing instruction: “Follow AGENTS.md, PROJECT_RULES.md, and HOUSE_STYLE.md.”
+Standing instruction: “Follow AGENTS.md.” (It points to the other docs and says when to load them.)
 Many tools auto-read AGENTS.md; if not, paste that once as a project rule.
 
 ## 7b. Delivery route (pick one)

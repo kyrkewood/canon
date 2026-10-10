@@ -105,6 +105,7 @@ GitHub is the **default** place for remotes and CI; if you use another host, kee
 - Baseline landed via **PR/MR to `main`**, not only local commits  
 - You finished / deleted `CANON_NEXT_STEPS.md`  
 - Your agent is told to follow those docs on every task  
+- Long chat? Your agent will suggest a fresh session at natural breaks and give you a resume prompt to paste (`docs/session-handoff.md`)  
 
 If your builder **doesn’t support GitHub Actions**, you still get the agent docs — add merge-blocking CI when you have a real host.
 
@@ -113,8 +114,7 @@ If your builder **doesn’t support GitHub Actions**, you still get the agent do
 ## Day-to-day prompt (after Canon is applied)
 
 ```text
-Follow AGENTS.md, PROJECT_RULES.md, and HOUSE_STYLE.md. Load SECURITY.md / ACCESSIBILITY.md /
-AI_INTEGRATION.md only when the task touches those areas. Keep PRs and summaries short.
+Follow AGENTS.md. It lists which other docs to load and when. Keep PRs and summaries short.
 ```
 
 Save that as a standing instruction / project rule in your tool if it has one.

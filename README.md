@@ -14,7 +14,7 @@
 | **Codex** (and similar) | Often auto-reads `AGENTS.md` |
 | **Cursor** | Project rule [`.cursor/rules/agents.mdc`](.cursor/rules/agents.mdc) points at `AGENTS.md` (applied by `apply.sh`) |
 | **Claude Code** | [`CLAUDE.md`](CLAUDE.md) points at `AGENTS.md` (applied by `apply.sh`) |
-| **Other** | Paste “Follow AGENTS.md, PROJECT_RULES.md, and HOUSE_STYLE.md” as a standing instruction if the tool has no auto-discovery |
+| **Other** | Paste “Follow AGENTS.md” as a standing instruction if the tool has no auto-discovery |
 
 **Hosting / CI:** GitHub is the **default** (Actions + `gh` + PR-to-`main`). Other forges are fine if you keep the same shape: remote → branch → merge request → merge-blocking checks.
 
@@ -91,14 +91,16 @@ Open `CANON_NEXT_STEPS.md` in the target project. Delete it when you’re done.
 
 | Piece | Purpose |
 |-------|---------|
-| `AGENTS.md` | How the coding agent should work (verify delivery, lean PRs, etc.) |
-| `PROJECT_RULES.md` | Index of engineering non‑negotiables |
+| `AGENTS.md` | Short master doc: always-on agent rules plus a “load when” table |
+| `docs/agent/` | On-demand detail: git delivery, PR writing, end-of-task checklist |
+| `PROJECT_RULES.md` | Engineering non‑negotiables (principles, code, tests, CI) |
 | `SECURITY.md` | Secrets, encryption, OWASP-oriented checks, privacy/logging |
 | `ACCESSIBILITY.md` | WCAG targets and UI rules |
 | `AI_INTEGRATION.md` | APIs / MCP / agent-friendly design |
 | `ARCHITECTURE.md` | Short living map of *this* product (you fill it in) |
 | `HOUSE_STYLE.md` | Prose, dates, spelling (identifiers stay ecosystem English) |
 | `docs/features/` | Living feature docs (purpose, behavior, edge cases, decisions) |
+| `docs/session-handoff.md` | Agents suggest a fresh session at natural breaks, with a paste-ready resume prompt |
 | `.github/workflows/*` | Secrets scan, dependency review, SAST, quality (+ a11y if UI) |
 
 **Rules without CI are wishes.** Canon installs merge-blocking workflows when your host supports them.
@@ -108,7 +110,7 @@ Open `CANON_NEXT_STEPS.md` in the target project. Delete it when you’re done.
 ## Using it day to day
 
 1. Open the project in your coding agent.  
-2. Standing instruction: *Follow AGENTS.md, PROJECT_RULES.md, and HOUSE_STYLE.md.* Cursor/Claude Code get pointers from apply; Codex often auto-reads `AGENTS.md`.  
+2. Standing instruction: *Follow AGENTS.md.* It points to the other docs and says when to load them. Cursor/Claude Code get pointers from apply; Codex often auto-reads `AGENTS.md`.  
 3. When work touches security, UI, or APIs, also load the matching domain doc.  
 4. Keep PR copy a **skim** (1–3 bullets: what changed and why). UI changes include before/after screenshots. See `AGENTS.md`.
 
@@ -171,16 +173,18 @@ docs/canon-logo.png       Logo (source mark)
 docs/canon-logo.svg       Same mark (SVG wrapper)
 docs/canon-social.png     Social preview 1280×640
 docs/canon-social.svg     Social preview SVG
-AGENTS.md                 Agent workflow (source of truth)
+AGENTS.md                 Master doc (source of truth, kept small)
+docs/agent/               On-demand agent detail (git, PRs, checklist)
 CLAUDE.md                 Claude Code pointer → AGENTS.md
 .cursor/rules/agents.mdc  Cursor pointer → AGENTS.md
-PROJECT_RULES.md          Engineering index
+PROJECT_RULES.md          Engineering norms
 SECURITY.md               Security & privacy
 ACCESSIBILITY.md          Accessibility
 AI_INTEGRATION.md         AI / API / MCP
 ARCHITECTURE.md           Product architecture template
 HOUSE_STYLE.md            This product’s living prose rules (not the apply source)
 docs/features/            Feature docs kit (template + guide)
+docs/session-handoff.md   Fresh-session nudge + resume prompt (loaded on demand)
 docs/house-style/         Starters (`uk.md`, `general.md`) copied into HOUSE_STYLE.md on apply
 evals/                    Light value checks (scenarios + scorecard + apply smoke)
 scripts/verify.sh         Local verify umbrella (also CI)

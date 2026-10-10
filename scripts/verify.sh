@@ -23,10 +23,14 @@ required=(
   AI_INTEGRATION.md
   ARCHITECTURE.md
   HOUSE_STYLE.md
+  docs/agent/git-delivery.md
+  docs/agent/pull-requests.md
+  docs/agent/checklist.md
   ADOPT.md
   README.md
   docs/features/README.md
   docs/features/_TEMPLATE.md
+  docs/session-handoff.md
   docs/house-style/README.md
   docs/house-style/uk.md
   docs/house-style/general.md
@@ -39,6 +43,15 @@ for f in "${required[@]}"; do
     fail=1
   fi
 done
+
+echo "== master doc stays small =="
+agents_bytes=$(wc -c < AGENTS.md)
+if [[ "$agents_bytes" -gt 4096 ]]; then
+  echo "AGENTS.md is $agents_bytes bytes (> 4096): move detail into docs/agent/ and point to it" >&2
+  fail=1
+else
+  echo "ok ($agents_bytes bytes)"
+fi
 
 echo "== no conflict markers in tracked markdown =="
 if git ls-files '*.md' | xargs grep -nE '^<<<<<<< |^>>>>>>> ' 2>/dev/null; then
