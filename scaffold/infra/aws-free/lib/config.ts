@@ -14,6 +14,10 @@ export interface InfraConfig {
   budgetEmail: string;
   envName: string;
   allowPaid: boolean;
+  /** `owner/name` allowed to deploy via OIDC. Only the OIDC stack needs it. */
+  githubRepo?: string;
+  /** Existing GitHub OIDC provider to reuse (an account can hold only one). */
+  oidcProviderArn?: string;
 }
 
 const CREDENTIAL_VALUE = /AKIA[0-9A-Z]{16}|ASIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|ghp_[A-Za-z0-9]{20,}/;
@@ -73,7 +77,17 @@ export function loadConfig(values: Record<string, string>, placeholderOk = proce
   const appName = values.CANON_INFRA_APP_NAME || 'CanonApp';
   if (!/^[A-Za-z][A-Za-z0-9-]{0,127}$/.test(appName)) throw new Error('CANON_INFRA_APP_NAME must start with a letter and use letters, digits or hyphens');
 
-  return { region, account, appName, deploy, budgetUsd, budgetEmail, envName, allowPaid: values.CANON_INFRA_ALLOW_PAID === 'true' };
+  const githubRepo = values.CANON_INFRA_GITHUB_REPO || undefined;
+  if (githubRepo !== undefined && !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(githubRepo)) {
+    throw new Error('CANON_INFRA_GITHUB_REPO must be owner/name with no wildcards');
+  }
+
+  const oidcProviderArn = values.CANON_INFRA_OIDC_PROVIDER_ARN || undefined;
+  if (oidcProviderArn !== undefined && !/^arn:aws[a-z-]*:iam::\d{12}:oidc-provider\/token\.actions\.githubusercontent\.com$/.test(oidcProviderArn)) {
+    throw new Error('CANON_INFRA_OIDC_PROVIDER_ARN must be the ARN of the account\'s GitHub OIDC provider');
+  }
+
+  return { region, account, appName, deploy, budgetUsd, budgetEmail, envName, allowPaid: values.CANON_INFRA_ALLOW_PAID === 'true', githubRepo, oidcProviderArn };
 }
 
 export function loadConfigFile(path: string): InfraConfig {

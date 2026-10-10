@@ -153,6 +153,7 @@ Or apply with `--credit` to append that line. Not required; skip for private/int
 |------|---------|
 | `--stack=node\|python\|none` | Prefill `quality.yml` (default: auto-detect) |
 | `--with-ui` | Accessibility workflow active (you still wire axe) |
+| `--infra=aws-free\|none` | Opt in to the AWS free-tier CDK starter: `infra/`, Infra synth and Infra deploy workflows, an infra job in `quality.yml` (default: `none`) |
 | `--house-style=uk\|general` | Starter copied to `HOUSE_STYLE.md` (default: uk) |
 | `--force` | Overwrite differing files (diffs + TTY confirm) |
 | `--yes` | With `--force`, skip confirm (agents/CI) |

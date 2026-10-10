@@ -22,6 +22,9 @@ Options:
   --house-style=uk|general
                        Copy that starter to HOUSE_STYLE.md (default: uk)
   --credit             Append a short Canon credit line to the target README.md
+  --infra=aws-free|none
+                       Opt in to the AWS free-tier CDK starter: infra/, Infra synth + Infra deploy
+                       workflows, and an infra job in quality.yml (default: none)
   --github[=owner/name]
                        Ensure git repo + GitHub remote (gh repo create if missing)
   --public             With --github, create a public repo (default: private)
@@ -39,7 +42,7 @@ What it does:
   2. Copies AGENTS.md, PROJECT_RULES.md, domain docs, and a house-style starter → HOUSE_STYLE.md
   3. Copies GitHub Actions workflows into .github/workflows/
   4. Writes CANON_NEXT_STEPS.md (PR-to-main is required, not optional)
-  5. Optional: --credit, --github, --open-pr
+  5. Optional: --credit, --github, --open-pr, --infra=aws-free
 EOF
 }
 
@@ -58,6 +61,7 @@ GITHUB_VISIBILITY="private"
 OPEN_PR=0
 GH_BLOCKER=""
 HOUSE_STYLE_PROFILE="uk"
+INFRA="none"
 
 for arg in "$@"; do
   case "$arg" in
@@ -75,6 +79,7 @@ for arg in "$@"; do
       ;;
     --stack=*) STACK="${arg#*=}" ;;
     --house-style=*) HOUSE_STYLE_PROFILE="${arg#*=}" ;;
+    --infra=*) INFRA="${arg#*=}" ;;
     -*)
       echo "Unknown option: $arg" >&2
       usage >&2
@@ -108,6 +113,14 @@ case "$HOUSE_STYLE_PROFILE" in
   uk|general) ;;
   *)
     echo "--house-style must be uk or general" >&2
+    exit 1
+    ;;
+esac
+
+case "$INFRA" in
+  aws-free|none) ;;
+  *)
+    echo "--infra must be aws-free or none" >&2
     exit 1
     ;;
 esac
@@ -164,6 +177,12 @@ copy_file() {
   echo "  wrote (overwrote): $rel"
 }
 
+# Workflows installed only with --infra=aws-free (empty otherwise, so non-AWS adopters are never touched).
+INFRA_WORKFLOWS=()
+if [[ "$INFRA" == "aws-free" ]]; then
+  INFRA_WORKFLOWS=(.github/workflows/infra-synth.yml .github/workflows/infra-deploy.yml)
+fi
+
 # List of existing paths that --force would clobber (for confirm). Returns count via stdout last line... use global.
 FORCE_CANDIDATES=0
 
@@ -183,7 +202,8 @@ count_force_candidates() {
     .github/workflows/sast.yml \
     .github/workflows/quality.yml \
     .github/workflows/accessibility.yml \
-    CANON_CHECKLIST.md
+    CANON_CHECKLIST.md \
+    ${INFRA_WORKFLOWS[@]+"${INFRA_WORKFLOWS[@]}"}
   do
     dest="$TARGET/$rel"
     [[ -e "$dest" ]] || continue
@@ -281,6 +301,7 @@ fi
 echo "Applying canon → $TARGET"
 echo "  stack: $STACK"
 echo "  house style: $HOUSE_STYLE_PROFILE"
+echo "  infra: $INFRA"
 echo "  ui a11y workflow: $([[ "$WITH_UI" -eq 1 ]] && echo active || echo dormant)"
 echo
 
@@ -335,6 +356,8 @@ done
 
 # quality.yml — stack-aware
 QUALITY_DEST="$WF_DEST/quality.yml"
+QUALITY_WRITTEN=0
+INFRA_QUALITY_MANUAL=0
 if [[ -e "$QUALITY_DEST" && "$FORCE" -ne 1 ]]; then
   echo "  skip (exists): .github/workflows/quality.yml  (pass --force to regenerate after confirm)"
 else
@@ -427,7 +450,49 @@ EOF
       cp "$CANON_ROOT/scaffold/ci/quality.yml" "$QUALITY_DEST"
       ;;
   esac
+  QUALITY_WRITTEN=1
   echo "  wrote: .github/workflows/quality.yml"
+fi
+
+# Infra job: the scaffold lives in infra/ with its own package.json, which the root steps never see.
+if [[ "$INFRA" == "aws-free" ]]; then
+  if [[ "$QUALITY_WRITTEN" -eq 1 ]]; then
+    cat >> "$QUALITY_DEST" <<'INFRAJOB'
+
+  infra:
+    name: Infra lint, types, tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: infra/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+INFRAJOB
+    echo "  wrote: infra job in .github/workflows/quality.yml"
+  else
+    INFRA_QUALITY_MANUAL=1
+    echo "  warn: quality.yml already exists; add an infra job (working-directory: infra) by hand"
+  fi
 fi
 
 # accessibility.yml
@@ -469,6 +534,25 @@ EOF
   echo "  wrote: .github/workflows/accessibility.yml (active — wire axe before merge)"
 else
   copy_file "$CANON_ROOT/scaffold/ci/accessibility.yml" "$A11Y_DEST"
+fi
+
+if [[ "$INFRA" == "aws-free" ]]; then
+  for wf in infra-synth.yml infra-deploy.yml; do
+    copy_file "$CANON_ROOT/scaffold/ci/$wf" "$WF_DEST/$wf"
+  done
+
+  echo
+  echo "Infrastructure (aws-free)"
+  INFRA_SRC="$CANON_ROOT/scaffold/infra/aws-free"
+  while IFS= read -r -d '' src; do
+    rel="${src#"$INFRA_SRC"/}"
+    if [[ "$rel" == "canon-infra.env" && -e "$TARGET/infra/$rel" ]]; then
+      # Adopter-owned config: never overwritten, not even by --force.
+      echo "  skip (adopter-owned): infra/$rel"
+      continue
+    fi
+    copy_file "$src" "$TARGET/infra/$rel"
+  done < <(find "$INFRA_SRC" -type f ! -path '*/node_modules/*' ! -path '*/cdk.out/*' -print0 | sort -z)
 fi
 
 copy_file "$CANON_ROOT/scaffold/PROJECT_CREATION.md" "$TARGET/CANON_CHECKLIST.md"
@@ -697,6 +781,43 @@ In the GitHub repo:
    - SAST
    - Quality
    - Accessibility (only if you have UI)
+EOF
+
+if [[ "$INFRA" == "aws-free" ]]; then
+  cat >> "$NEXT_STEPS" <<'INFRASTEPS'
+   - Infra synth (only with --infra=aws-free; see 6b)
+
+## 6b. AWS infrastructure (aws-free) — humans run these; Canon and agents never do
+
+Canon never runs bootstrap, deploy or destroy and holds no AWS credentials. Do these once, in order,
+with your own credentials. Until `DEPLOY_ENABLED` is `true`, the deploy workflow skips and stays green.
+
+1. **Config.** Edit `infra/canon-infra.env`: `CANON_INFRA_BUDGET_EMAIL`, `CANON_INFRA_REGION`,
+   `CANON_INFRA_GITHUB_REPO` (exact `owner/name`), and ideally `CANON_INFRA_ACCOUNT_ID` so the wrong
+   credentials fail. Confirm the new `infra/` dependencies (`aws-cdk-lib`, `constructs`, `cdk-nag`,
+   `eslint`); choosing `--infra=aws-free` counts as approval.
+2. **Bootstrap** (admin credentials): `cd infra && npm ci && npx cdk bootstrap aws://ACCOUNT_ID/REGION`
+3. **Deploy the OIDC role stack once, by hand** (admin credentials): `npm run deploy:oidc`. The pipeline
+   cannot create its own first role. Copy the `DeployRoleArn` output. An account can hold only one GitHub
+   OIDC provider: if it already has one, set `CANON_INFRA_OIDC_PROVIDER_ARN` first so the stack reuses it.
+4. **Create the GitHub environment** (Settings → Environments) named exactly `CANON_INFRA_ENV_NAME`
+   (`prod` by default; it must match `environment:` in `.github/workflows/infra-deploy.yml`).
+   Add **required reviewers on any account that controls IAM**, and limit deployment branches to `main`.
+5. **Set the role ARN** as an *environment* variable: `gh variable set AWS_DEPLOY_ROLE_ARN --env prod --body <DeployRoleArn>`
+6. **Protect `main`** (section 6) and require **Infra synth** and **Quality**, so nothing reaches the deploy untested.
+7. **Switch deploys on, last:** `gh variable set DEPLOY_ENABLED --body true`. Merges that touch `infra/` then deploy
+   (after reviewer approval, if set). Run the workflow by hand from the Actions tab (`workflow_dispatch`) to test.
+INFRASTEPS
+  if [[ "$INFRA_QUALITY_MANUAL" -eq 1 ]]; then
+    cat >> "$NEXT_STEPS" <<'INFRAQ'
+
+`quality.yml` already existed, so Canon did not touch it. Add a job that runs `npm ci`, `npm run lint`,
+`npm run typecheck` and `npm test` with `working-directory: infra`, and require it.
+INFRAQ
+  fi
+fi
+
+cat >> "$NEXT_STEPS" <<'EOF'
 
 ## 7. Point your coding agent here
 

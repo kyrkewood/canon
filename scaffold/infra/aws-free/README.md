@@ -22,4 +22,6 @@ CANON_INFRA_PLACEHOLDER_OK=1 npx cdk synth   # offline; no AWS credentials neede
 
 You run `cdk bootstrap`, `deploy` and `destroy` yourself with your own credentials. Canon does not. `destroy` removes the stack (except the retained `prod` table); the bootstrap bucket, repository and roles stay until you delete them. The assets bucket must be empty to be deleted.
 
-CI wiring (PR check, OIDC deploy on merge, destroy workflow) is a later step; see `docs/features/infrastructure.md`.
+**CI (installed by `apply.sh --infra=aws-free`):** `infra-synth.yml` (PR + `main`, no credentials), `infra-deploy.yml` (OIDC deploy on merge, skipped until the repo variable `DEPLOY_ENABLED` is `true`) and an `infra` job in `quality.yml` (lint, typecheck, tests). The destroy workflow is a later step; see `docs/features/infrastructure.md`.
+
+**One-time OIDC role** (`lib/github-oidc-stack.ts`): set `CANON_INFRA_GITHUB_REPO`, then run `npm run deploy:oidc` once by hand with admin credentials. The pipeline cannot create its own first role. The role trusts exactly `repo:<owner>/<repo>:environment:<env>` (audience `sts.amazonaws.com`, never a wildcard) and may only `sts:AssumeRole` on the four `cdk-<qualifier>-{deploy,file-publishing,image-publishing,lookup}-role-<account>-<region>` bootstrap roles. An account holds only one GitHub OIDC provider; if it already has one, set `CANON_INFRA_OIDC_PROVIDER_ARN` to reuse it. Then follow section 6b of `CANON_NEXT_STEPS.md`.
