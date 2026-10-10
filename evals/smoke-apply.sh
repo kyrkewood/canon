@@ -17,6 +17,9 @@ required=(
   CLAUDE.md
   .cursor/rules/agents.mdc
   PROJECT_RULES.md
+  docs/agent/git-delivery.md
+  docs/agent/pull-requests.md
+  docs/agent/checklist.md
   SECURITY.md
   ACCESSIBILITY.md
   AI_INTEGRATION.md
