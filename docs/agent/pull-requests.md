@@ -37,4 +37,4 @@ For non-trivial PRs, end the explainer with **3–5** questions the author can a
 
 ## Micro-worlds (rare)
 
-Only when reading cannot build intuition (eg migrations, unfamiliar engines, tricky algorithms): a tiny step-through or visualisation the reviewer can operate – not a second product.
+Only when reading cannot build intuition (eg, migrations, unfamiliar engines, tricky algorithms): a tiny step-through or visualisation the reviewer can operate – not a second product.
