@@ -18,6 +18,8 @@ Let an adopter pick an infrastructure preference when applying Canon and get a w
 | `CANON_INFRA_DEPLOY` | `merge` | `merge` \| `manual` \| `tag` \| `none` |
 | `CANON_INFRA_BUDGET_USD` | `5` | Budget alert threshold |
 | `CANON_INFRA_ENV_NAME` | `prod` | Single environment only |
+| `CANON_INFRA_ACCOUNT_ID` | unset | Optional. Pins `env.account` so wrong credentials fail |
+| `CANON_INFRA_APP_NAME` | `CanonApp` | Optional. Stack id and SSM path root |
 | `CANON_INFRA_ALLOW_PAID` | unset | Explicit escape hatch from the free-tier guardrail |
 
 Database and compute are not selectable in v1; changing them means editing the CDK code.

@@ -6,7 +6,7 @@ import { AppStack } from './stack.js';
 
 export function buildApp(config: InfraConfig, lambdaDir: string): App {
   const app = new App();
-  new AppStack(app, 'CanonApp', { config, lambdaDir, env: { region: config.region } });
+  new AppStack(app, config.appName, { config, lambdaDir, env: { region: config.region, account: config.account } });
   Aspects.of(app).add(new AwsSolutionsChecks({ verbose: true }));
   Aspects.of(app).add(new FreeTierGuard(config.allowPaid));
   return app;

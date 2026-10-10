@@ -21,7 +21,7 @@ test('shipped canon-infra.env parses (placeholder email allowed only when asked)
 
 test('accepts a valid config', () => {
   assert.deepEqual(loadConfig(good), {
-    region: 'us-east-1', deploy: 'merge', budgetUsd: 5, budgetEmail: 'me@corp.test', envName: 'prod', allowPaid: false,
+    region: 'us-east-1', account: undefined, appName: 'CanonApp', deploy: 'merge', budgetUsd: 5, budgetEmail: 'me@corp.test', envName: 'prod', allowPaid: false,
   });
 });
 
@@ -31,6 +31,8 @@ for (const [name, patch, re] of [
   ['zero budget', { CANON_INFRA_BUDGET_USD: '0' }, /BUDGET_USD/],
   ['bad email', { CANON_INFRA_BUDGET_EMAIL: 'nope' }, /EMAIL/],
   ['bad env name', { CANON_INFRA_ENV_NAME: 'Prod!' }, /ENV_NAME/],
+  ['bad account id', { CANON_INFRA_ACCOUNT_ID: '123' }, /ACCOUNT_ID/],
+  ['bad app name', { CANON_INFRA_APP_NAME: 'bad name' }, /APP_NAME/],
   ['wrong provider', { CANON_INFRA_PROVIDER: 'gcp' }, /PROVIDER/],
 ] as const) {
   test(`rejects ${name}`, () => assert.throws(() => loadConfig({ ...good, ...patch }), re));
@@ -44,4 +46,10 @@ test('rejects secret-looking keys and credential-looking values', () => {
 test('allowPaid only when exactly "true"', () => {
   assert.equal(loadConfig({ ...good, CANON_INFRA_ALLOW_PAID: 'true' }).allowPaid, true);
   assert.equal(loadConfig({ ...good, CANON_INFRA_ALLOW_PAID: 'yes' }).allowPaid, false);
+});
+
+test('accepts an account id and app name', () => {
+  const cfg = loadConfig({ ...good, CANON_INFRA_ACCOUNT_ID: '123456789012', CANON_INFRA_APP_NAME: 'Shop' });
+  assert.equal(cfg.account, '123456789012');
+  assert.equal(cfg.appName, 'Shop');
 });
