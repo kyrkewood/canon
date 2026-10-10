@@ -25,6 +25,7 @@ required=(
   CANON_NEXT_STEPS.md
   docs/features/README.md
   docs/features/_TEMPLATE.md
+  docs/session-handoff.md
   docs/house-style/README.md
   docs/house-style/uk.md
   docs/house-style/general.md

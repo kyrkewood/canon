@@ -59,6 +59,11 @@ When scope is ambiguous (which modules, files, or interfaces are in play), ask o
 - **Fix forward or roll back.** If the last slice is clearly wrong, prefer reverting that commit/branch tip and retrying cleanly over stacking compensatory patches. Fix forward when the mistake is small and local; roll back when the branch has become a tangle.
 - **Don’t torch bridges.** No force-push to `main`/shared default branches, no rewriting history others may rely on, no deleting others’ branches or work without an explicit ask.
 
+## Session boundaries
+
+At a boundary — a PR just opened, the user switches to an unrelated capability, or you catch yourself re-asking settled questions or contradicting an earlier decision — recommend a **fresh session** once, with one sentence of why. Never mid-task; don't repeat if declined.
+Offer a paste-ready resume prompt: see [`docs/session-handoff.md`](docs/session-handoff.md).
+
 ## Commit every change/step
 
 Commit incrementally on a **feature branch** as work progresses — not one giant commit at the end. Commits are not a substitute for opening a PR.

@@ -175,7 +175,7 @@ count_force_candidates() {
     HOUSE_STYLE.md \
     CLAUDE.md \
     .cursor/rules/agents.mdc \
-    docs/features/README.md docs/features/_TEMPLATE.md \
+    docs/features/README.md docs/features/_TEMPLATE.md docs/session-handoff.md \
     docs/house-style/README.md docs/house-style/uk.md docs/house-style/general.md \
     .github/workflows/secrets-scan.yml \
     .github/workflows/dependency-review.yml \
@@ -310,6 +310,7 @@ copy_file "$CANON_ROOT/.cursor/rules/agents.mdc" "$TARGET/.cursor/rules/agents.m
 mkdir -p "$TARGET/docs/features"
 copy_file "$CANON_ROOT/docs/features/README.md" "$TARGET/docs/features/README.md"
 copy_file "$CANON_ROOT/docs/features/_TEMPLATE.md" "$TARGET/docs/features/_TEMPLATE.md"
+copy_file "$CANON_ROOT/docs/session-handoff.md" "$TARGET/docs/session-handoff.md"
 
 mkdir -p "$TARGET/docs/house-style"
 copy_file "$CANON_ROOT/docs/house-style/README.md" "$TARGET/docs/house-style/README.md"

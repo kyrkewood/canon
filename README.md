@@ -99,6 +99,7 @@ Open `CANON_NEXT_STEPS.md` in the target project. Delete it when you’re done.
 | `ARCHITECTURE.md` | Short living map of *this* product (you fill it in) |
 | `HOUSE_STYLE.md` | Prose, dates, spelling (identifiers stay ecosystem English) |
 | `docs/features/` | Living feature docs (purpose, behavior, edge cases, decisions) |
+| `docs/session-handoff.md` | Agents suggest a fresh session at natural breaks, with a paste-ready resume prompt |
 | `.github/workflows/*` | Secrets scan, dependency review, SAST, quality (+ a11y if UI) |
 
 **Rules without CI are wishes.** Canon installs merge-blocking workflows when your host supports them.
@@ -181,6 +182,7 @@ AI_INTEGRATION.md         AI / API / MCP
 ARCHITECTURE.md           Product architecture template
 HOUSE_STYLE.md            This product’s living prose rules (not the apply source)
 docs/features/            Feature docs kit (template + guide)
+docs/session-handoff.md   Fresh-session nudge + resume prompt (loaded on demand)
 docs/house-style/         Starters (`uk.md`, `general.md`) copied into HOUSE_STYLE.md on apply
 evals/                    Light value checks (scenarios + scorecard + apply smoke)
 scripts/verify.sh         Local verify umbrella (also CI)
