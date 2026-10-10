@@ -4,38 +4,22 @@ Standing instructions for coding agents. Follow these every session, on every ta
 
 ## Rules hierarchy
 
-- Always read [`AGENTS.md`](AGENTS.md) (this file), [`PROJECT_RULES.md`](PROJECT_RULES.md), and [`HOUSE_STYLE.md`](HOUSE_STYLE.md).
-- `PROJECT_RULES.md` is the index; load domain rulebooks when the work touches that domain:
-  - [`SECURITY.md`](SECURITY.md) — secrets, encryption, OWASP, privacy/logging
-  - [`ACCESSIBILITY.md`](ACCESSIBILITY.md) — UI / WCAG
-  - [`AI_INTEGRATION.md`](AI_INTEGRATION.md) — APIs, MCP, agent UX
-  - [`ARCHITECTURE.md`](ARCHITECTURE.md) — system shape
-  - [`docs/features/`](docs/features/) — living notes for shipped capabilities
+- Always read this file, [`PROJECT_RULES.md`](PROJECT_RULES.md), and [`HOUSE_STYLE.md`](HOUSE_STYLE.md).
+- Load a domain rulebook when the work touches that domain:
+  - [`SECURITY.md`](SECURITY.md) – auth, data, secrets, crypto, deps, public APIs, privacy/logging
+  - [`ACCESSIBILITY.md`](ACCESSIBILITY.md) – UI / WCAG
+  - [`AI_INTEGRATION.md`](AI_INTEGRATION.md) – APIs, tools, MCP, agent surfaces
+  - [`ARCHITECTURE.md`](ARCHITECTURE.md) – changing system shape
+  - [`docs/features/`](docs/features/) – the matching `<capability>.md`, created or updated in the same PR
 - When rules conflict, follow the stricter rule and call out the conflict before proceeding.
 
-## Verify delivery against spec
+## Verify before done
 
-After any task, check that every component requested was actually delivered — not just the headline feature. If you asked for five things, confirm five things exist. Don't let partial delivery pass as "done."
-
-For non-trivial work, delivery includes the **git loop** under Route A (open a PR) — see **Git authority** below. Not a merge.
-
-## Distrust green checkmarks
-
-Passing tests and green CI are not proof of correctness. Before declaring something complete:
-
-- Read the actual implementation, not just the test output.
-- Watch for hardcoded return values, stubbed logic, mocked-out core paths, or tests that assert trivially true things.
-- If a test looks too easy to pass, ask why — it may be testing the mock instead of the behavior.
-
-## Specify quality explicitly, not just function
-
-State what the code should do, how it should be structured, and what standard it should meet (error handling, edge cases, naming, performance, style conventions). Ambiguous requests get bare-minimum implementations by default — precision in the ask is what raises the quality of the output.
-
-## Clean up as part of the task, not after
-
-Every task includes explicit cleanup: remove dead code, unused imports/variables, leftover debug prints, temp files, and scaffolding created along the way. Don't leave the codebase messier than before the task started.
-
-After the behavior works, tighten for conciseness and clarity **in the same task** before you call it done — not a later cleanup PR by default.
+- Check that every component requested was delivered, not just the headline feature.
+- Green tests and CI are not proof. Read the implementation: look for hardcoded returns, stubbed logic, mocked-out core paths, and tests that assert something trivially true.
+- Re-run the relevant tests and tools yourself; do not accept a summary of success.
+- Remove dead code, unused imports, debug prints, and scaffolding, and tighten for concision, in the same task.
+- For non-trivial work, delivery includes the **git loop** (open a PR) – see **Git authority**. Not a merge.
 
 ## Minimal change (no sprawl)
 
@@ -118,10 +102,6 @@ For each meaningful capability you add or change:
 - Cover purpose, expected behavior, non-goals, edge cases, and decisions worth remembering.
 - Do it in the **same PR** as the behavior change. Skip for trivial fixes with no behavior change.
 - See [`docs/features/README.md`](docs/features/README.md).
-
-## Trust but verify, always
-
-"It works" is not the finish line. Re-check completed work against the original ask, re-read implementation details, and re-run relevant tests/tools yourself rather than accepting a summary of success at face value. Assume the AI defaults to the minimum viable version of any task unless explicitly pushed further.
 
 ## Scaffolding new products
 

@@ -122,13 +122,8 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 - **`docs/features/<capability>.md`** — decision/behavior record per capability.
 - **README (or `PLAN.md`) Done / Next / Later** — living backlog surface. Update in the same PR as capability ships. Both are useful; neither replaces the other.
 
-### How Agents Should Load Rules
-- Always: `AGENTS.md` + `PROJECT_RULES.md` + `HOUSE_STYLE.md`
-- When touching auth, data, crypto, deps, or public APIs → `SECURITY.md`
-- When touching UI → `ACCESSIBILITY.md`
-- When touching APIs, tools, or agent surfaces → `AI_INTEGRATION.md`
-- When changing system shape → `ARCHITECTURE.md`
-- When adding or changing a capability → matching `docs/features/<capability>.md` (create/update in the same PR); refresh Done / Next / Later if you keep that surface
+### How agents should load rules
+See [`AGENTS.md`](AGENTS.md) – Rules hierarchy.
 
 ### Agent usage
 - Prefer clarity over cleverness.
@@ -139,21 +134,17 @@ Workflows: [`scaffold/ci/`](scaffold/ci/).
 
 ---
 
-## 5. Regular Smell Tests
+## 5. Smell tests
+
+Rule-specific checks live with their rules (`AGENTS.md`, domain rulebooks). These are the ones with no other home:
 
 - BYOK / delete-user / trusted logs / no raw PII? → `SECURITY.md`
 - LLM can orient in one page? → `AI_INTEGRATION.md` / `ARCHITECTURE.md`
 - Blind user can complete core flow? → `ACCESSIBILITY.md`
-- Violating PR blocked by CI today? Local verify mirrors gates? → `scaffold/ci/` / `scripts/verify.sh` (or product umbrella)
-- Last capability: own branch + open PR (not pile-on); agent did not merge without “merge …”? → `AGENTS.md` (Git authority)
-- Last PR: copy skim-sized (what/why, not a second diff); UI changes have before/after shots? → `AGENTS.md` (PRs)
-- Last change surgical / no unasked deps? → `AGENTS.md` (Minimal change)
-- New prose follows `HOUSE_STYLE.md` without renaming identifiers / APIs? → `HOUSE_STYLE.md`
+- Violating PR blocked by CI today? Local verify mirrors gates? → `scaffold/ci/` / `scripts/verify.sh`
 - Last eval smoke/scenario still honest? → `evals/`
-- Stuck agent handed back the wheel? → `AGENTS.md` (When stuck)
-- API OpenAPI linted if published? Plan + feature docs current? → `AI_INTEGRATION.md` / README / `docs/features/`
 
-If any answer is “probably not” → stop and fix it.
+If any answer is "probably not" – stop and fix it.
 
 ---
 
