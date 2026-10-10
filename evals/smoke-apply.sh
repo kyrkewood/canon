@@ -89,4 +89,31 @@ if grep -q 'This repo is \*\*Canon\*\*' "$TMP_GENERAL/HOUSE_STYLE.md"; then
   exit 1
 fi
 
+TMP_INFRA="$(mktemp -d "${TMPDIR:-/tmp}/canon-smoke-infra.XXXXXX")"
+trap 'rm -rf "$TMP" "$TMP_GENERAL" "$TMP_INFRA"' EXIT
+echo "smoke-apply: infra target=$TMP_INFRA"
+if [[ -e "$TMP/infra" ]]; then
+  echo "smoke-apply: infra/ should not be copied by default" >&2
+  exit 1
+fi
+"$ROOT/scaffold/apply.sh" "$TMP_INFRA" --stack=none --infra=aws-free
+for f in infra/package.json infra/canon-infra.env infra/lib/stack.ts infra/cdk.json; do
+  if [[ ! -e "$TMP_INFRA/$f" ]]; then
+    echo "smoke-apply: --infra=aws-free missing $f" >&2
+    exit 1
+  fi
+done
+if [[ -e "$TMP_INFRA/infra/node_modules" ]]; then
+  echo "smoke-apply: infra/node_modules should not be copied" >&2
+  exit 1
+fi
+if ! grep -q 'Infrastructure' "$TMP_INFRA/CANON_NEXT_STEPS.md"; then
+  echo "smoke-apply: CANON_NEXT_STEPS.md should list infra steps" >&2
+  exit 1
+fi
+if "$ROOT/scaffold/apply.sh" "$TMP_INFRA" --infra=bogus >/dev/null 2>&1; then
+  echo "smoke-apply: --infra=bogus should fail" >&2
+  exit 1
+fi
+
 echo "smoke-apply: PASS"
