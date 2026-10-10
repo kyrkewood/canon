@@ -1,0 +1,47 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { test } from 'node:test';
+import { fileURLToPath } from 'node:url';
+import { loadConfig, parseEnvFile } from '../lib/config.js';
+
+const good = {
+  CANON_INFRA_PROVIDER: 'aws-free',
+  CANON_INFRA_REGION: 'us-east-1',
+  CANON_INFRA_DEPLOY: 'merge',
+  CANON_INFRA_BUDGET_USD: '5',
+  CANON_INFRA_BUDGET_EMAIL: 'me@corp.test',
+  CANON_INFRA_ENV_NAME: 'prod',
+};
+
+test('shipped canon-infra.env parses (placeholder email allowed only when asked)', () => {
+  const file = parseEnvFile(readFileSync(fileURLToPath(new URL('../canon-infra.env', import.meta.url)), 'utf8'));
+  assert.throws(() => loadConfig(file, false), /placeholder/);
+  assert.equal(loadConfig(file, true).deploy, 'merge');
+});
+
+test('accepts a valid config', () => {
+  assert.deepEqual(loadConfig(good), {
+    region: 'us-east-1', deploy: 'merge', budgetUsd: 5, budgetEmail: 'me@corp.test', envName: 'prod', allowPaid: false,
+  });
+});
+
+for (const [name, patch, re] of [
+  ['bad region', { CANON_INFRA_REGION: 'moon' }, /REGION/],
+  ['bad deploy mode', { CANON_INFRA_DEPLOY: 'yolo' }, /DEPLOY/],
+  ['zero budget', { CANON_INFRA_BUDGET_USD: '0' }, /BUDGET_USD/],
+  ['bad email', { CANON_INFRA_BUDGET_EMAIL: 'nope' }, /EMAIL/],
+  ['bad env name', { CANON_INFRA_ENV_NAME: 'Prod!' }, /ENV_NAME/],
+  ['wrong provider', { CANON_INFRA_PROVIDER: 'gcp' }, /PROVIDER/],
+] as const) {
+  test(`rejects ${name}`, () => assert.throws(() => loadConfig({ ...good, ...patch }), re));
+}
+
+test('rejects secret-looking keys and credential-looking values', () => {
+  assert.throws(() => loadConfig({ ...good, CANON_INFRA_API_KEY: 'abc' }), /secret/);
+  assert.throws(() => loadConfig({ ...good, CANON_INFRA_NOTE: 'AKIAABCDEFGHIJKLMNOP' }), /credential/);
+});
+
+test('allowPaid only when exactly "true"', () => {
+  assert.equal(loadConfig({ ...good, CANON_INFRA_ALLOW_PAID: 'true' }).allowPaid, true);
+  assert.equal(loadConfig({ ...good, CANON_INFRA_ALLOW_PAID: 'yes' }).allowPaid, false);
+});

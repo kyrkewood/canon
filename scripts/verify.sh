@@ -32,6 +32,8 @@ required=(
   docs/house-style/general.md
   scaffold/apply.sh
   scaffold/PROJECT_CREATION.md
+  scaffold/infra/aws-free/package-lock.json
+  scaffold/infra/aws-free/canon-infra.env
 )
 for f in "${required[@]}"; do
   if [[ ! -e "$f" ]]; then
@@ -46,6 +48,17 @@ if git ls-files '*.md' | xargs grep -nE '^<<<<<<< |^>>>>>>> ' 2>/dev/null; then
   fail=1
 else
   echo "ok"
+fi
+
+echo "== scaffold/infra/aws-free (typecheck, tests, offline synth) =="
+if command -v npm >/dev/null 2>&1; then
+  INFRA_TMP="$(mktemp -d "${TMPDIR:-/tmp}/canon-infra.XXXXXX")"
+  trap 'rm -rf "$INFRA_TMP"' EXIT
+  cp -R scaffold/infra/aws-free/. "$INFRA_TMP/"
+  (cd "$INFRA_TMP" && npm ci --silent && npm run --silent typecheck && npm test --silent >/dev/null \
+    && CANON_INFRA_PLACEHOLDER_OK=1 npx cdk synth --quiet) || fail=1
+else
+  echo "npm not found; skipping infra example checks" >&2
 fi
 
 echo "== evals/smoke-apply.sh =="
