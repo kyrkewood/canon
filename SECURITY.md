@@ -87,7 +87,7 @@ Do **not** delete or `continue-on-error` a required security workflow to green t
 | Dependency review | `allow` / license config in the action, or documented exception | Same |
 | DAST / ZAP | Alert allowlist in the action config | Same |
 
-Opaque green under deadline pressure is gate-gaming — actionable failures + visible waivers are the intended escape hatch (see `AGENTS.md` — distrust green checkmarks).
+Opaque green under deadline pressure is gate-gaming — actionable failures + visible waivers are the intended escape hatch (see `AGENTS.md` — distrust green checks).
 
 ---
 

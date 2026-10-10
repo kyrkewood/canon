@@ -12,7 +12,7 @@ Keep pull requests easy to review: a short what/why, plus before/after screensho
 - Skip shots when there is no visual delta.
 - Literate walkthroughs and check questions stay for non-obvious work. Put them in a comment or linked doc if they would bloat the body.
 
-See `AGENTS.md` — Pull requests.
+See `docs/agent/pull-requests.md`.
 
 ## Non-goals
 

@@ -1,142 +1,32 @@
 # AGENTS.md
 
-Standing instructions for coding agents. Follow these every session, on every task.
+Standing instructions for coding agents. This is the master doc: short rules here, detail in the docs it points to. Load a pointer only when the task needs it.
 
-## Rules hierarchy
+## Always
 
-- Always read [`AGENTS.md`](AGENTS.md) (this file), [`PROJECT_RULES.md`](PROJECT_RULES.md), and [`HOUSE_STYLE.md`](HOUSE_STYLE.md).
-- `PROJECT_RULES.md` is the index; load domain rulebooks when the work touches that domain:
-  - [`SECURITY.md`](SECURITY.md) — secrets, encryption, OWASP, privacy/logging
-  - [`ACCESSIBILITY.md`](ACCESSIBILITY.md) — UI / WCAG
-  - [`AI_INTEGRATION.md`](AI_INTEGRATION.md) — APIs, MCP, agent UX
-  - [`ARCHITECTURE.md`](ARCHITECTURE.md) — system shape
-  - [`docs/features/`](docs/features/) — living notes for shipped capabilities
-- When rules conflict, follow the stricter rule and call out the conflict before proceeding.
+- **Verify delivery against the spec.** If five things were asked for, confirm five exist. No partial delivery as "done".
+- **Distrust green checks.** Read the implementation, not just test output. Watch for stubs, hardcoded returns, and tests that only exercise a mock.
+- **Minimal change.** Smallest diff that solves the ask. No new dependencies or files without approval, no public API changes unless requested, no unrelated refactors. Honour any allowed/forbidden paths the human names.
+- **Thin slice first.** Land one end-to-end path before broadening. If scope is ambiguous, ask once for bounds before a large edit.
+- **Clean up in the same task.** Remove dead code, unused imports, debug prints, and temp files. Tighten before calling it done.
+- **Be specific about quality.** Error handling, edge cases, naming, and conventions are part of the ask, not extras.
+- **Hand back the wheel.** After a few failed attempts at the same approach, stop and ask. Roll back a tangled branch rather than stacking patches. Never force-push shared branches or rewrite shared history.
+- **Session boundaries.** At a boundary (PR just opened, user switches to an unrelated capability, or you catch yourself re-asking settled questions or contradicting an earlier decision), recommend a fresh session once, with one sentence of why. Never mid-task; don't repeat if declined. Offer the resume prompt in [`docs/session-handoff.md`](docs/session-handoff.md).
+- **Conflicting rules.** Follow the stricter one and call out the conflict.
+- **Commit each step** on a feature branch. Non-trivial work ends in an open PR (in cloud sessions this file is the explicit request for it). **Merge only when told "merge …"** – ship, fix, land, and green CI are not permission.
 
-## Verify delivery against spec
+## Load when
 
-After any task, check that every component requested was actually delivered — not just the headline feature. If you asked for five things, confirm five things exist. Don't let partial delivery pass as "done."
-
-For non-trivial work, delivery includes the **git loop** under Route A (open a PR) — see **Git authority** below. Not a merge.
-
-## Distrust green checkmarks
-
-Passing tests and green CI are not proof of correctness. Before declaring something complete:
-
-- Read the actual implementation, not just the test output.
-- Watch for hardcoded return values, stubbed logic, mocked-out core paths, or tests that assert trivially true things.
-- If a test looks too easy to pass, ask why — it may be testing the mock instead of the behavior.
-
-## Specify quality explicitly, not just function
-
-State what the code should do, how it should be structured, and what standard it should meet (error handling, edge cases, naming, performance, style conventions). Ambiguous requests get bare-minimum implementations by default — precision in the ask is what raises the quality of the output.
-
-## Clean up as part of the task, not after
-
-Every task includes explicit cleanup: remove dead code, unused imports/variables, leftover debug prints, temp files, and scaffolding created along the way. Don't leave the codebase messier than before the task started.
-
-After the behavior works, tighten for conciseness and clarity **in the same task** before you call it done — not a later cleanup PR by default.
-
-## Minimal change (no sprawl)
-
-Prefer the smallest diff that correctly solves the ask.
-
-- **Justify new files and dependencies.** Default to extending what exists (stdlib, current modules, current patterns). Do **not** add a library, framework, or new package without explicit human approval. Do not add a new file when an existing one can hold the behavior cleanly.
-- **Stay in bounds.** Touch only modules needed for the task. If the human names allowed/forbidden paths, treat that as hard scope. Do not “while I’m here” unrelated refactors.
-- **Interfaces are sacrosanct.** Do not change existing public APIs, types, or module contracts unless the human explicitly asks for that change (or approves it after you propose it).
-- **Surgical commits and PRs.** Reject your own solutions that wander across unrelated paths. If the diff spreads wider than the problem requires, narrow it before requesting review.
-- **Budgets when useful.** When the human sets a line/file budget or “minimal change” constraint, treat it as a hard requirement and say if you cannot meet it.
-
-## Thin slice first
-
-For non-trivial work, land one end-to-end path that works (a tracer bullet) before broadening. Prefer a narrow vertical slice over scaffolding many unfinished layers.
-
-When scope is ambiguous (which modules, files, or interfaces are in play), ask once for bounds before a large edit — allowed/forbidden paths, and whether public interfaces may change.
-
-## When stuck / when wrong
-
-- **Hand back the wheel.** After a few failed attempts at the same approach, or when confidence is low, stop and ask. Do not keep “fixing” in circles or silently widen scope to escape the problem.
-- **Fix forward or roll back.** If the last slice is clearly wrong, prefer reverting that commit/branch tip and retrying cleanly over stacking compensatory patches. Fix forward when the mistake is small and local; roll back when the branch has become a tangle.
-- **Don’t torch bridges.** No force-push to `main`/shared default branches, no rewriting history others may rely on, no deleting others’ branches or work without an explicit ask.
-
-## Session boundaries
-
-At a boundary — a PR just opened, the user switches to an unrelated capability, or you catch yourself re-asking settled questions or contradicting an earlier decision — recommend a **fresh session** once, with one sentence of why. Never mid-task; don't repeat if declined.
-Offer a paste-ready resume prompt: see [`docs/session-handoff.md`](docs/session-handoff.md).
-
-## Commit every change/step
-
-Commit incrementally on a **feature branch** as work progresses — not one giant commit at the end. Commits are not a substitute for opening a PR.
-
-## Git authority (delivery)
-
-**Default (Route A):** non-trivial work → branch → commits → push → **open a PR**. Human merges after checks.  
-**Route B:** ask before commit/PR — only if recorded at apply (`CANON_NEXT_STEPS` §7b).  
-If unset: flag A/B once, wait. Do not silently override host “ask first” rules or silently skip PRs.
-
-| Do | Don’t |
-|----|--------|
-| One capability → one branch → one PR | Pile onto an open mega-PR / uncommitted heap |
-| Open the PR under Route A (or ask under Route B) | Treat local-only as “done” under Route A |
-| **Merge only if told “merge …”** (e.g. merge #12) | Merge on fix / ship / land / clear the pile / green CI |
-| Stop if `gh`/remote blocked; note it | Force-push `main` or rewrite shared history |
-
-“Ship” means the PR is up for review — **not** merged. GitHub + Actions + `gh` are the default forge/CI; other hosts: same loop with MR + blocking checks.
-
-## Pull requests: understand to participate
-
-Understanding—not generation—is the bottleneck. Review exists so humans can **steer the next loop**, not only thumbs-up the last one. Avoid cognitive debt: shipping code nobody can fluently evolve.
-
-The PR body is a **skim**: what changed and why. The diff is the deep dive. Do not write a second copy of the change in prose.
-
-### PR body — skim, then code
-- Default: **1–3 bullets** (what / why). Add risk or test notes only when non-obvious.
-- Size copy to the change: a one-line fix gets a one-line PR. A reviewer should skim the body in seconds, then open the files if they need more.
-- Do **not** restate the diff, pad with template sections, or write an essay in the PR description.
-
-### Screenshots (when UI changed)
-If the PR changes anything a person can see (layout, styling, routing, client-rendered data), attach **before and after** screenshots of the affected surfaces.
-- Crop to the change; one pair per distinct view is enough.
-- Skip when there is no visual delta (docs, backend, Markdown-only, etc.).
-- Stills by default. A short clip only if motion or interaction *is* the change.
-- No real secrets or PII in shots.
-
-### Literate walkthrough (when non-trivial)
-Before asking for review on a non-obvious change, produce a short explainer (comment or linked doc — not extra bulk in the PR body):
-1. **Background** — what already existed
-2. **Intuition** — goal and essence, before code
-3. **Literate diff** — walk changes in teaching order (not file-alpha), with small snippets only where they teach
-
-Skip this for trivial PRs. Bloat is a failure mode equal to under-explaining.
-
-### Check questions (speed regulator)
-For non-trivial PRs, end the explainer with **3–5** questions the author can answer cold before requesting review. Same bar when reviewing others. Omit quizzes on trivial changes.
-
-### Micro-worlds (rare)
-Only when reading cannot build intuition (e.g. migrations, unfamiliar engines, tricky algorithms): a tiny step-through or visualization the reviewer can operate—not a second product.
-
-## Feature docs (living decision records)
-
-For each meaningful capability you add or change:
-
-- Create or update `docs/features/<capability>.md` from [`docs/features/_TEMPLATE.md`](docs/features/_TEMPLATE.md).
-- Cover purpose, expected behavior, non-goals, edge cases, and decisions worth remembering.
-- Do it in the **same PR** as the behavior change. Skip for trivial fixes with no behavior change.
-- See [`docs/features/README.md`](docs/features/README.md).
-
-## Trust but verify, always
-
-"It works" is not the finish line. Re-check completed work against the original ask, re-read implementation details, and re-run relevant tests/tools yourself rather than accepting a summary of success at face value. Assume the AI defaults to the minimum viable version of any task unless explicitly pushed further.
-
-## Scaffolding new products
-
-When creating a new product from this baseline:
-
-- **Prompt-only users:** point them at [`ADOPT.md`](ADOPT.md) (fetch & apply prompt).
-- **Chat/apply path:** before running `apply.sh` or copying files, **ask** for the apply choices (UI, stack, `--github` / `--open-pr`, visibility, repo name, `--credit`, `--house-style=uk|general`, and **delivery vs ask-before-commit** — Route A/B). Do not guess org/repo names or silently skip the remote/PR unless the human opts out (Route B or explicit local-only).
-- **Preferred (terminal):** from a canon clone, run `./scaffold/apply.sh /path/to/project` (see [`README.md`](README.md)), then finish `CANON_NEXT_STEPS.md` in the target.
-- After apply: create or link a remote and open a PR/MR to `main` — do not stop at local commits. On GitHub, use `apply.sh --github` / `--open-pr` when available.
-- Do not hand-copy files unless the script cannot run; if you must, follow [`scaffold/PROJECT_CREATION.md`](scaffold/PROJECT_CREATION.md).
-- Wire real lint/typecheck/test commands — do not leave placeholder jobs that `exit 0` (or the refuse-empty stubs).
-- Treat missing merge-blocking gates (secrets, deps, SAST, quality, and accessibility when UI exists) as a failed scaffold, not a follow-up task.
-- Specialist security or accessibility reviews may run on later PRs; they complement CI and never replace it.
+| Task | Read |
+|------|------|
+| Always | [`PROJECT_RULES.md`](PROJECT_RULES.md) – principles, code and test norms |
+| Writing prose (UI copy, docs, commits, PR text) | [`HOUSE_STYLE.md`](HOUSE_STYLE.md) |
+| Branching, committing, opening or merging PRs (Route A/B) | [`docs/agent/git-delivery.md`](docs/agent/git-delivery.md) |
+| Writing a PR body, screenshots, walkthroughs | [`docs/agent/pull-requests.md`](docs/agent/pull-requests.md) |
+| Finishing a task (self-check) | [`docs/agent/checklist.md`](docs/agent/checklist.md) |
+| Auth, data, crypto, deps, secrets, privacy | [`SECURITY.md`](SECURITY.md) |
+| UI | [`ACCESSIBILITY.md`](ACCESSIBILITY.md) |
+| APIs, MCP, agent surfaces | [`AI_INTEGRATION.md`](AI_INTEGRATION.md) |
+| Changing system shape | [`ARCHITECTURE.md`](ARCHITECTURE.md) |
+| Adding or changing a capability | [`docs/features/`](docs/features/) – create or update `<capability>.md` from [`_TEMPLATE.md`](docs/features/_TEMPLATE.md) in the same PR |
+| Scaffolding a new product | [`ADOPT.md`](ADOPT.md), [`scaffold/PROJECT_CREATION.md`](scaffold/PROJECT_CREATION.md); ask for the apply choices first, then run `scaffold/apply.sh` |

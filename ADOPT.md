@@ -114,8 +114,7 @@ If your builder **doesn’t support GitHub Actions**, you still get the agent do
 ## Day-to-day prompt (after Canon is applied)
 
 ```text
-Follow AGENTS.md, PROJECT_RULES.md, and HOUSE_STYLE.md. Load SECURITY.md / ACCESSIBILITY.md /
-AI_INTEGRATION.md only when the task touches those areas. Keep PRs and summaries short.
+Follow AGENTS.md. It lists which other docs to load and when. Keep PRs and summaries short.
 ```
 
 Save that as a standing instruction / project rule in your tool if it has one.
