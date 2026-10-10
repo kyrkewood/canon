@@ -105,6 +105,7 @@ GitHub is the **default** place for remotes and CI; if you use another host, kee
 - Baseline landed via **PR/MR to `main`**, not only local commits  
 - You finished / deleted `CANON_NEXT_STEPS.md`  
 - Your agent is told to follow those docs on every task  
+- Long chat? Your agent will suggest a fresh session at natural breaks and give you a resume prompt to paste (`docs/session-handoff.md`)  
 
 If your builder **doesn’t support GitHub Actions**, you still get the agent docs — add merge-blocking CI when you have a real host.
 

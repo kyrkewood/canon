@@ -11,6 +11,7 @@ Standing instructions for coding agents. This is the master doc: short rules her
 - **Clean up in the same task.** Remove dead code, unused imports, debug prints, and temp files. Tighten before calling it done.
 - **Be specific about quality.** Error handling, edge cases, naming, and conventions are part of the ask, not extras.
 - **Hand back the wheel.** After a few failed attempts at the same approach, stop and ask. Roll back a tangled branch rather than stacking patches. Never force-push shared branches or rewrite shared history.
+- **Session boundaries.** At a boundary (PR just opened, user switches to an unrelated capability, or you catch yourself re-asking settled questions or contradicting an earlier decision), recommend a fresh session once, with one sentence of why. Never mid-task; don't repeat if declined. Offer the resume prompt in [`docs/session-handoff.md`](docs/session-handoff.md).
 - **Conflicting rules.** Follow the stricter one and call out the conflict.
 - **Commit each step** on a feature branch. Non-trivial work ends in an open PR (in cloud sessions this file is the explicit request for it). **Merge only when told "merge …"** – ship, fix, land, and green CI are not permission.
 
