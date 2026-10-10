@@ -12,7 +12,7 @@ Standing instructions for coding agents. This is the master doc: short rules her
 - **Be specific about quality.** Error handling, edge cases, naming, and conventions are part of the ask, not extras.
 - **Hand back the wheel.** After a few failed attempts at the same approach, stop and ask. Roll back a tangled branch rather than stacking patches. Never force-push shared branches or rewrite shared history.
 - **Conflicting rules.** Follow the stricter one and call out the conflict.
-- **Commit each step** on a feature branch. Non-trivial work ends in an open PR. **Merge only when told "merge …"** – ship, fix, land, and green CI are not permission.
+- **Commit each step** on a feature branch. Non-trivial work ends in an open PR (in cloud sessions this file is the explicit request for it). **Merge only when told "merge …"** – ship, fix, land, and green CI are not permission.
 
 ## Load when
 
