@@ -29,6 +29,7 @@ Dual-runtime contracts share one source of truth. Product blanks in domain docs 
 - No copied KeyProvider/logger/MCP packages in `apply.sh`.
 - No Cursor-only workflow rules in the required baseline.
 - No hardening SQL recipes as Canon defaults.
+- Infrastructure is the one exception: an opt-in AWS free-tier example, see [`infrastructure.md`](infrastructure.md).
 
 ## Edge cases & failure modes
 
