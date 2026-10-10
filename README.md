@@ -101,6 +101,7 @@ Open `CANON_NEXT_STEPS.md` in the target project. Delete it when you’re done.
 | `HOUSE_STYLE.md` | Prose, dates, spelling (identifiers stay ecosystem English) |
 | `docs/features/` | Living feature docs (purpose, behavior, edge cases, decisions) |
 | `docs/session-handoff.md` | Agents suggest a fresh session at natural breaks, with a paste-ready resume prompt |
+| `scaffold/infra/aws-free/` | Optional AWS free-tier CDK starter ([feature doc](docs/features/infrastructure.md)); copy by hand, not yet wired into `apply.sh` |
 | `.github/workflows/*` | Secrets scan, dependency review, SAST, quality (+ a11y if UI) |
 
 **Rules without CI are wishes.** Canon installs merge-blocking workflows when your host supports them.
@@ -184,6 +185,7 @@ AI_INTEGRATION.md         AI / API / MCP
 ARCHITECTURE.md           Product architecture template
 HOUSE_STYLE.md            This product’s living prose rules (not the apply source)
 docs/features/            Feature docs kit (template + guide)
+                          infrastructure.md covers the AWS starter
 docs/session-handoff.md   Fresh-session nudge + resume prompt (loaded on demand)
 docs/house-style/         Starters (`uk.md`, `general.md`) copied into HOUSE_STYLE.md on apply
 evals/                    Light value checks (scenarios + scorecard + apply smoke)
@@ -193,6 +195,7 @@ scaffold/
   apply.sh                Terminal apply
   PROJECT_CREATION.md     Full creation checklist
   ci/                     Workflow templates
+  infra/aws-free/         Optional AWS free-tier CDK starter (TypeScript)
 ```
 
 ---
@@ -204,6 +207,7 @@ scaffold/
 - Compressed git authority (Route A/B; merge only on “merge …”)
 - Minimal-change, thin-slice / stuck handling, feature docs, field conventions
 - Light evals: apply smoke + real scratch scenarios (not meta diary)
+- AWS free-tier CDK starter in `scaffold/infra/aws-free/` (offline checks in `verify.sh`)
 - House style: starters in `docs/house-style/`; apply copies one into `HOUSE_STYLE.md`; identifiers stay ecosystem English
 
 **Next**
@@ -225,6 +229,8 @@ Before opening or merging a Canon PR:
 ```bash
 ./scripts/verify.sh
 ```
+
+This also typechecks, tests, and synthesizes the infra starter offline (skipped if `npm` is missing).
 
 Evals: [`evals/`](evals/). This repo is **Route A**; `.cursor/rules/canon-delivery.mdc` matches that. Products pick A or B at apply (§7b).
 
