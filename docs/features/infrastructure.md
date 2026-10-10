@@ -6,7 +6,7 @@ Let an adopter pick an infrastructure preference when applying Canon and get a w
 
 ## How it should work
 
-`apply.sh --infra=aws-free|none` (default `aws-free` when prompted; asks interactively in a TTY, and `ADOPT.md` tells agents to ask). Choosing `aws-free` copies a self-contained `infra/` directory, a deploy workflow and a PR check workflow, and records the choice in `infra/canon-infra.env`.
+`apply.sh --infra=aws-free|none` (default `none`; `ADOPT.md` tells agents to ask). Choosing `aws-free` copies a self-contained `infra/` directory, `infra-synth.yml` and `infra-deploy.yml`, adds an `infra` job to `quality.yml`, and records the choice in `infra/canon-infra.env`. With `none`, nothing infra-related is installed. `infra/canon-infra.env` is adopter-owned: re-running with `--force` never overwrites it.
 
 **Stack (fixed defaults):** Lambda + API Gateway, DynamoDB, S3, SSM Parameter Store for secrets (not Secrets Manager), an AWS Budgets alert. No NAT gateway, no load balancer, no RDS.
 
@@ -20,6 +20,8 @@ Let an adopter pick an infrastructure preference when applying Canon and get a w
 | `CANON_INFRA_ENV_NAME` | `prod` | Single environment only |
 | `CANON_INFRA_ACCOUNT_ID` | unset | Optional. Pins `env.account` so wrong credentials fail |
 | `CANON_INFRA_APP_NAME` | `CanonApp` | Optional. Stack id and SSM path root |
+| `CANON_INFRA_GITHUB_REPO` | unset | `owner/name`, exact. Needed only for the one-time OIDC stack |
+| `CANON_INFRA_OIDC_PROVIDER_ARN` | unset | Optional. Reuse the account's existing GitHub OIDC provider |
 | `CANON_INFRA_ALLOW_PAID` | unset | Explicit escape hatch from the free-tier guardrail |
 
 Database and compute are not selectable in v1; changing them means editing the CDK code.
@@ -28,18 +30,21 @@ Database and compute are not selectable in v1; changing them means editing the C
 
 **Deploy (default `merge`):**
 
-- Pull request: `cdk synth` + `cdk-nag` (AWS Solutions pack) + a custom free-tier rule (fails on NAT gateways, non-micro instances, RDS, load balancers unless `CANON_INFRA_ALLOW_PAID`). No AWS credentials; fork PRs never get any.
-- Merge to `main`: `cdk deploy` via GitHub OIDC (no long-lived keys). Trust is scoped to a GitHub `environment` so required reviewers can be added later. The workflow role may only assume the CDK bootstrap roles; broad permissions sit in the CloudFormation execution role. Deploys run serially in one `concurrency` group and are never cancelled mid-flight.
+- Pull request and push to `main` (`infra-synth.yml`): `cdk synth` + `cdk-nag` (AWS Solutions pack) + a custom free-tier rule (fails on NAT gateways, non-micro instances, RDS, load balancers, KMS keys, EIPs unless `CANON_INFRA_ALLOW_PAID`). No AWS credentials and no `id-token` permission; fork PRs never get any. Lint, typecheck and tests run in an `infra` job in `quality.yml`.
+- Merge to `main`, or `workflow_dispatch` (`infra-deploy.yml`): `cdk deploy` via GitHub OIDC (no long-lived keys, `aws-actions/configure-aws-credentials`). `id-token: write` is set on the job only. The job runs in a GitHub `environment` that holds `AWS_DEPLOY_ROLE_ARN`, so required reviewers can be added; the role trusts exactly `repo:<owner>/<repo>:environment:<env>` and may only assume the four CDK bootstrap roles (`lib/github-oidc-stack.ts`); broad permissions sit in the CloudFormation execution role. The job is gated by the repo variable `DEPLOY_ENABLED == 'true'`, so a fresh adopter's first merge does not fail before OIDC exists. Deploys run serially in one `concurrency` group (`deploy`) and are never cancelled mid-flight.
 - Other modes ship as separate workflow templates (`deploy-manual.yml`, `deploy-on-tag.yml`); `apply.sh` copies the one selected.
 
 **Teardown:** `npm run destroy` locally, and a `workflow_dispatch` destroy workflow that needs a typed confirmation and the same GitHub environment.
 
 **Human steps** (listed in `CANON_NEXT_STEPS`, never run by Canon):
 
-1. `cdk bootstrap` with the adopter's own credentials.
-2. Deploy the one-time OIDC role stack locally.
-3. Set the role ARN as a GitHub repo variable.
-4. Confirm the new `infra/` dependencies (`aws-cdk-lib`, `constructs`, `cdk-nag`). Choosing `--infra=aws-free` counts as approval for these, listed as one checklist line.
+1. Edit `infra/canon-infra.env` (budget email, region, account id, GitHub repo).
+2. `cdk bootstrap` with the adopter's own credentials.
+3. Deploy the one-time OIDC role stack by hand (`npm run deploy:oidc`, admin credentials: the pipeline cannot create its own first role). An account holds one GitHub OIDC provider; reuse an existing one via `CANON_INFRA_OIDC_PROVIDER_ARN`.
+4. Create the GitHub environment (name = `CANON_INFRA_ENV_NAME`), with required reviewers on any account that controls IAM, and set `AWS_DEPLOY_ROLE_ARN` on it.
+5. Protect `main` and require Infra synth and Quality.
+6. Set the repo variable `DEPLOY_ENABLED=true`, last.
+7. Confirm the new `infra/` dependencies (`aws-cdk-lib`, `constructs`, `cdk-nag`, `eslint`, `typescript-eslint`). Choosing `--infra=aws-free` counts as approval for these, listed as one checklist line.
 
 ## Non-goals
 
@@ -85,6 +90,15 @@ Canon ships no such role; this rule only permits one. If the role grants more th
 | 2026-10-10 | Canon and its sessions hold no AWS credentials by default | Verification is offline; humans apply | Never expected |
 | 2026-10-10 | Allow one human-granted, read-only, metadata-only role as a strict exception | Some questions (what is deployed, what it costs) cannot be answered offline; the role is defined outside this repo and never writes | If a session ever needs more than metadata reads |
 | 2026-10-10 | Default is opt-in (`none` remains first class) | Existing adopters see no change; minimal-change rule | — |
+| 2026-10-10 | Deploy job gated by repo variable `DEPLOY_ENABLED=='true'`, set last | The first merge after apply must not fail red before OIDC exists | If a setup check can replace the manual switch |
+| 2026-10-10 | `id-token: write` on the deploy job only; `contents: read` at workflow level | Least privilege: no other job or fork can mint an OIDC token | — |
+| 2026-10-10 | OIDC role stack ships in `infra/` but is deployed by hand, outside the pipeline's app | A pipeline cannot create its own first role; Canon never runs deploy | If account-baseline tooling replaces it |
+| 2026-10-10 | Role trust is exact `repo:<owner>/<repo>:environment:<env>`; stack and config reject wildcards | A wildcard would let any branch or PR deploy | Never expected |
+| 2026-10-10 | Existing GitHub OIDC provider reused through `CANON_INFRA_OIDC_PROVIDER_ARN` | An account can hold only one; a duplicate create fails | If adopters rarely share accounts |
+| 2026-10-10 | Infra lint, typecheck and tests run as an `infra` job inside `quality.yml` | Root `package.json` steps never see `infra/`; Quality stays the one required check | If infra needs its own required check |
+| 2026-10-10 | Deploy runs only for changes under `infra/` (plus `workflow_dispatch`) | Avoids a reviewer approval on every unrelated merge | If infra depends on files outside `infra/` |
+| 2026-10-10 | `infra/canon-infra.env` is never overwritten by `apply.sh`, even with `--force` | It holds the adopter's account, region and email | — |
+| 2026-10-10 | Infra synth tolerates the placeholder budget email until `DEPLOY_ENABLED` is true | The baseline PR stays green; once deploys are on, the placeholder fails before merge | — |
 
 ## Open questions
 
@@ -97,6 +111,6 @@ Canon ships no such role; this rule only permits one. If the role grants more th
 
 1. This doc, plus the `product-conventions.md` non-goals amendment and a `SECURITY.md`/`ARCHITECTURE.md` link.
 2. `infra/` CDK example (stack + config reader + guardrail rule) with synth and `cdk-nag` in CI.
-3. PR check and merge-deploy workflows, OIDC role stack, `CANON_NEXT_STEPS` entries.
-4. `apply.sh --infra`, prompt, smoke test, `ADOPT.md`.
+3. PR check and merge-deploy workflows, OIDC role stack, `CANON_NEXT_STEPS` entries. (Done.)
+4. `apply.sh --infra`, smoke test, `ADOPT.md`. (Done; the interactive prompt is not built.)
 5. Destroy workflow and alternate deploy-mode templates.

@@ -1,0 +1,72 @@
+# Infra deploy — opt-in (apply.sh --infra=aws-free). Deploys infra/ on merge to main via GitHub OIDC (no long-lived keys).
+#
+# Does nothing until the repository variable DEPLOY_ENABLED is "true", so a fresh adopter's first merge
+# does not fail red before the OIDC role exists. Set it last (see CANON_NEXT_STEPS.md).
+#
+# The job runs in a GitHub environment. Its name must equal CANON_INFRA_ENV_NAME in infra/canon-infra.env,
+# because the AWS role trusts exactly repo:<owner>/<repo>:environment:<name>. The environment holds the
+# AWS_DEPLOY_ROLE_ARN variable. Add required reviewers on any account that controls IAM.
+name: Infra deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - infra/**
+      - .github/workflows/infra-deploy.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One deploy at a time, never cancelled mid-flight (a cancelled update can strand a stack in UPDATE_ROLLBACK_FAILED).
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy
+    if: vars.DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    environment: prod
+    # id-token is requested at job level only, never workflow level.
+    permissions:
+      id-token: write
+      contents: read
+    defaults:
+      run:
+        working-directory: infra
+    steps:
+      - name: Require the role ARN
+        if: vars.AWS_DEPLOY_ROLE_ARN == ''
+        working-directory: .
+        run: |
+          echo "::error::Set AWS_DEPLOY_ROLE_ARN as a variable on the GitHub environment (see CANON_NEXT_STEPS.md)."
+          exit 1
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: infra/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Read region from config
+        id: cfg
+        run: echo "region=$(sed -n 's/^CANON_INFRA_REGION=//p' canon-infra.env)" >> "$GITHUB_OUTPUT"
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ steps.cfg.outputs.region }}
+
+      - name: Deploy
+        run: npm run deploy
