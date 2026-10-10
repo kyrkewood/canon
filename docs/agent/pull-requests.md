@@ -8,7 +8,7 @@ The PR body is a **skim**: what changed and why. The diff is the deep dive. Do n
 
 ## PR body
 
-- Default: **1–3 bullets** (what / why). Add risk or test notes only when non-obvious.
+- Default: **one to three bullets** (what / why). Add risk or test notes only when non-obvious.
 - Size copy to the change: a one-line fix gets a one-line PR.
 - Do **not** restate the diff, pad with template sections, or write an essay.
 
@@ -33,8 +33,8 @@ Skip this for trivial PRs. Bloat is a failure mode equal to under-explaining.
 
 ## Check questions
 
-For non-trivial PRs, end the explainer with **3–5** questions the author can answer cold before requesting review. Same bar when reviewing others. Omit on trivial changes.
+For non-trivial PRs, end the explainer with **three to five** questions the author can answer cold before requesting review. Same bar when reviewing others. Omit on trivial changes.
 
 ## Micro-worlds (rare)
 
-Only when reading cannot build intuition (eg migrations, unfamiliar engines, tricky algorithms): a tiny step-through or visualisation the reviewer can operate – not a second product.
+Only when reading cannot build intuition (eg, migrations, unfamiliar engines, tricky algorithms): a tiny step-through or visualisation the reviewer can operate – not a second product.
