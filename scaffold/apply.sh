@@ -24,6 +24,8 @@ Options:
   --credit             Append a short Canon credit line to the target README.md
   --github[=owner/name]
                        Ensure git repo + GitHub remote (gh repo create if missing)
+  --infra=aws-free|none
+                       Copy the AWS free-tier CDK starter to infra/ (default: none)
   --public             With --github, create a public repo (default: private)
   --open-pr            After apply: branch, commit, push, and open a PR to main
   -h, --help           Show this help
@@ -39,7 +41,7 @@ What it does:
   2. Copies AGENTS.md, PROJECT_RULES.md, domain docs, and a house-style starter → HOUSE_STYLE.md
   3. Copies GitHub Actions workflows into .github/workflows/
   4. Writes CANON_NEXT_STEPS.md (PR-to-main is required, not optional)
-  5. Optional: --credit, --github, --open-pr
+  5. Optional: --infra, --credit, --github, --open-pr
 EOF
 }
 
@@ -58,6 +60,7 @@ GITHUB_VISIBILITY="private"
 OPEN_PR=0
 GH_BLOCKER=""
 HOUSE_STYLE_PROFILE="uk"
+INFRA="none"
 
 for arg in "$@"; do
   case "$arg" in
@@ -74,6 +77,7 @@ for arg in "$@"; do
       GITHUB_REPO="${arg#*=}"
       ;;
     --stack=*) STACK="${arg#*=}" ;;
+    --infra=*) INFRA="${arg#*=}" ;;
     --house-style=*) HOUSE_STYLE_PROFILE="${arg#*=}" ;;
     -*)
       echo "Unknown option: $arg" >&2
@@ -108,6 +112,14 @@ case "$HOUSE_STYLE_PROFILE" in
   uk|general) ;;
   *)
     echo "--house-style must be uk or general" >&2
+    exit 1
+    ;;
+esac
+
+case "$INFRA" in
+  aws-free|none) ;;
+  *)
+    echo "--infra must be aws-free or none" >&2
     exit 1
     ;;
 esac
@@ -166,6 +178,13 @@ copy_file() {
 
 # List of existing paths that --force would clobber (for confirm). Returns count via stdout last line... use global.
 FORCE_CANDIDATES=0
+
+INFRA_SRC="$CANON_ROOT/scaffold/infra/aws-free"
+
+# Starter files to copy (skips installed deps and build output).
+infra_files() {
+  find "$INFRA_SRC" -type f -not -path '*/node_modules/*' -not -path '*/cdk.out/*' | sort
+}
 
 count_force_candidates() {
   FORCE_CANDIDATES=0
@@ -238,6 +257,17 @@ count_force_candidates() {
         ;;
     esac
   done
+
+  if [[ "$INFRA" == "aws-free" ]]; then
+    while IFS= read -r src; do
+      rel="infra/${src#"$INFRA_SRC"/}"
+      dest="$TARGET/$rel"
+      if [[ -e "$dest" ]] && ! cmp -s "$src" "$dest" 2>/dev/null; then
+        FORCE_CANDIDATES=$((FORCE_CANDIDATES + 1))
+        show_file_diff "$dest" "$src"
+      fi
+    done < <(infra_files)
+  fi
 }
 
 confirm_force() {
@@ -281,6 +311,7 @@ fi
 echo "Applying canon → $TARGET"
 echo "  stack: $STACK"
 echo "  house style: $HOUSE_STYLE_PROFILE"
+echo "  infra: $INFRA"
 echo "  ui a11y workflow: $([[ "$WITH_UI" -eq 1 ]] && echo active || echo dormant)"
 echo
 
@@ -469,6 +500,14 @@ EOF
   echo "  wrote: .github/workflows/accessibility.yml (active — wire axe before merge)"
 else
   copy_file "$CANON_ROOT/scaffold/ci/accessibility.yml" "$A11Y_DEST"
+fi
+
+if [[ "$INFRA" == "aws-free" ]]; then
+  echo
+  echo "Infrastructure (aws-free)"
+  while IFS= read -r src; do
+    copy_file "$src" "$TARGET/infra/${src#"$INFRA_SRC"/}"
+  done < <(infra_files)
 fi
 
 copy_file "$CANON_ROOT/scaffold/PROJECT_CREATION.md" "$TARGET/CANON_CHECKLIST.md"
@@ -684,6 +723,22 @@ cat >> "$NEXT_STEPS" <<EOF
 - \`ACCESSIBILITY.md\` / \`AI_INTEGRATION.md\` — if those apply
 
 EOF
+
+if [[ "$INFRA" == "aws-free" ]]; then
+  cat >> "$NEXT_STEPS" <<'EOF'
+## 5b. Infrastructure (AWS free-tier starter in `infra/`)
+
+Not authoritative: check current AWS free-tier terms. Canon never runs these for you.
+
+1. Set `CANON_INFRA_BUDGET_EMAIL` (and ideally `CANON_INFRA_ACCOUNT_ID`) in `infra/canon-infra.env`; synth refuses the placeholder.
+2. In `infra/`: `npm ci && npm run typecheck && npm test`.
+3. Review the new dependencies (`aws-cdk-lib`, `constructs`, `cdk-nag`) in the baseline PR.
+4. Deploy by hand with your own credentials (`cdk bootstrap`, `cdk deploy`). Deploy-on-merge workflows are not shipped yet.
+
+See `infra/README.md`.
+
+EOF
+fi
 
 cat >> "$NEXT_STEPS" <<'EOF'
 ## 6. Protect main (before feature work)
