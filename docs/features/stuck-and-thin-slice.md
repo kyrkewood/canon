@@ -12,7 +12,7 @@ Standing orders so agents ship a narrow working path first, stop thrashing when 
 - Fix forward when the mistake is small; roll back a tangled slice and retry cleanly.
 - No force-push to default branches, no rewriting shared history, no deleting others’ work without an ask.
 
-See `AGENTS.md` — Thin slice first; When stuck / when wrong.
+See `AGENTS.md` — Thin slice first; Hand back the wheel.
 
 ## Non-goals
 

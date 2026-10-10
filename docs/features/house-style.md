@@ -6,7 +6,7 @@ Give a product one living prose file so agents stop improvising spelling, dates,
 
 ## How it should work
 
-- [`HOUSE_STYLE.md`](../../HOUSE_STYLE.md) is the contract for **this** product. Agents load it every session, with `AGENTS.md` and `PROJECT_RULES.md`.
+- [`HOUSE_STYLE.md`](../../HOUSE_STYLE.md) is the contract for **this** product. Agents load it when writing prose, via the `AGENTS.md` load table.
 - Starters live in [`docs/house-style/`](../house-style/): `uk.md` (en-GB) and `general.md` (en-US). They are generic; they do not carry Canon product notes.
 - Apply copies the chosen starter **into** `HOUSE_STYLE.md` (`--house-style=uk|general`, default **uk**). It does not copy this repo’s living file.
 - It applies to **every prose surface** (docs, UI copy, errors, PRs, commits, comments, chat).

@@ -1,163 +1,63 @@
 # Project Engineering Rules (v1)
 
-Portable baseline for products scaffolded from this repository.  
-This file is the **index**: principles, always-on engineering norms, and pointers to domain rulebooks.
-
-Detailed standards live in:
-
-| Doc | Covers |
-|-----|--------|
-| [`SECURITY.md`](SECURITY.md) | Secrets, encryption/BYOK, OWASP, privacy & logging |
-| [`ACCESSIBILITY.md`](ACCESSIBILITY.md) | WCAG targets, UI non-negotiables, CI vs manual |
-| [`AI_INTEGRATION.md`](AI_INTEGRATION.md) | APIs, schemas, MCP, agent-friendly UX |
-| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Evolving system shape (fill per product) |
-| [`HOUSE_STYLE.md`](HOUSE_STYLE.md) | Prose, dates, spelling; identifiers stay ecosystem English |
-| [`docs/features/`](docs/features/) | Living feature docs (purpose, behavior, edge cases, decisions) |
-| [`scaffold/PROJECT_CREATION.md`](scaffold/PROJECT_CREATION.md) | Day-one checklist including CI |
-| [`README.md`](README.md) | How to use this repo — terminal apply via `scaffold/apply.sh` |
-| [`ADOPT.md`](ADOPT.md) | Prompt-only / beginner path (Cursor, Claude Code, Codex, Lovable, …) |
+Portable engineering norms for products scaffolded from this repository. Always-on and kept short.  
+What to load, and when, lives in [`AGENTS.md`](AGENTS.md). Domain detail lives in the rulebooks it points to.
 
 ---
 
-## 0. Guiding Principles (Non-Negotiables)
+## 0. Guiding principles (non-negotiables)
 
-1. **Future-safe by default**  
-   Anything painful to retrofit later (encryption, compliance, accessibility) must be planned now.
-
-2. **Explicit contracts beat implicit behavior**  
-   APIs, schemas, logs, tests, and tools must be self-describing and stable.
-
-3. **AI-first is real**  
-   Systems must be easy for machines to understand, not just humans.
-
-4. **Compliance without heroics**  
-   GDPR, security, and accessibility are outcomes of design—not cleanup tasks.
-
-5. **CI is part of creation, not cleanup**  
-   A product is not scaffolded until required CI gates exist and block merge. Prompt rules without pipelines are aspirational only.
+1. **Future-safe by default.** Anything painful to retrofit later (encryption, compliance, accessibility) is planned now.
+2. **Explicit contracts beat implicit behaviour.** APIs, schemas, logs, tests, and tools are self-describing and stable.
+3. **AI-first is real.** Systems are easy for machines to understand, not just humans.
+4. **Compliance without heroics.** GDPR, security, and accessibility are outcomes of design, not cleanup tasks.
+5. **CI is part of creation, not cleanup.** A product is not scaffolded until required CI gates exist and block merge. Prompt rules without pipelines are aspirational only.
 
 ---
 
-## 1. Code Structure & Typing
+## 1. Code structure and typing
 
 - Avoid deeply nested functions; extract small, named units with clear responsibilities.
-- In typed languages, avoid wildcard types, `any`, and equivalent type-system escape hatches.
+- In typed languages, avoid wildcard types, `any`, and equivalent escape hatches.
 - Never use global variables; pass state and dependencies explicitly.
-- Prefer extending existing modules over new files; no new third-party dependencies without explicit approval (see `AGENTS.md` — Minimal change).
+- Prefer extending existing modules over new files; no new third-party dependencies without explicit approval.
 - Existing public interfaces stay unchanged unless the change is explicitly requested.
-- Gate incomplete capabilities behind **feature flags / env** documented in `.env.example` (or equivalent) — do not leave half-shipped paths reachable in production builds without an explicit off switch.
+- Gate incomplete capabilities behind **feature flags / env** documented in `.env.example` (or equivalent). No half-shipped paths reachable in production without an off switch.
 
 ---
 
-## 2. Testing Philosophy
+## 2. Testing
 
-- Tests describe **behavior**, not implementation.
-- Tests are written in **separate commits** from features.
-- Tests are immutable unless behavior or requirements change.
-- Security and accessibility behavior have first-class homes — see [`SECURITY.md`](SECURITY.md) and [`ACCESSIBILITY.md`](ACCESSIBILITY.md) — not only SAST / URL axe.
-
-### Commit Discipline
-1. Feature commit  
-2. Test commit  
-3. Optional refactor commit  
-
-Never modify tests just to make CI pass, or silence failing tests without explanation.
-
-### Required Coverage
-- Core domain logic
-- API contracts
-- Permission and authorization boundaries
-- Regression tests for bugs
-
-> Deleting a test requires a written justification.
+- Tests describe **behaviour**, not implementation, and are immutable unless behaviour or requirements change.
+- Tests go in **separate commits** from features: feature, then test, then optional refactor.
+- Never modify tests just to make CI pass, or silence failing tests without explanation. Deleting a test needs a written justification.
+- Required coverage: core domain logic, API contracts, permission and authorisation boundaries, regression tests for bugs.
+- Security and accessibility behaviour have first-class homes in [`SECURITY.md`](SECURITY.md) and [`ACCESSIBILITY.md`](ACCESSIBILITY.md), not only SAST / URL axe.
 
 ---
 
-## 3. Continuous Integration (Required at Project Creation)
+## 3. Continuous integration
 
-Full checklist: [`scaffold/PROJECT_CREATION.md`](scaffold/PROJECT_CREATION.md).  
-Apply tool: [`scaffold/apply.sh`](scaffold/apply.sh) (see [`README.md`](README.md)).  
-Workflows: [`scaffold/ci/`](scaffold/ci/).
+Install scaffold CI on day one, before feature work (prefer [`scaffold/apply.sh`](scaffold/apply.sh)). Workflows: [`scaffold/ci/`](scaffold/ci/). Full checklist and definition of done: [`scaffold/PROJECT_CREATION.md`](scaffold/PROJECT_CREATION.md).
 
-### Non-Negotiables
-- Install scaffold CI on day one — before feature work (prefer `apply.sh`).
-- Required checks are **merge-blocking** on the default branch.
-- Exceptions are explicit, time-bounded, and recorded in [`SECURITY.md`](SECURITY.md).
-- Wire real lint / typecheck / test commands in the creation PR — no no-op jobs.
-- Provide a **local verify umbrella** (script or Make target) that mirrors merge gates as closely as practical — so “green locally” means the same family of checks as CI, not a random subset.
-
-### Required Gates
-**Always:** secrets scan, dependency review, SAST, quality (lint/types/tests).  
-**When UI exists:** accessibility.  
-**When a public API exists:** OpenAPI (or equivalent) lint in CI — see [`AI_INTEGRATION.md`](AI_INTEGRATION.md).  
-**Specialist reviewers** (OWASP, a11y, privacy) complement CI; they never replace it.
-
-### Creation Definition of Done
-1. Docs + workflows applied via [`scaffold/apply.sh`](scaffold/apply.sh) (or equivalent hand copy)
-2. GitHub remote exists; baseline landed via **PR merged to `main`** (not local-only commits)
-3. Branch protection enabled on `main` before feature work
-4. `CANON_NEXT_STEPS.md` completed and removed
-5. CI green on a smoke baseline after quality commands are real
-6. Secrets managed outside git — documented in `SECURITY.md`
-7. Product-specific blanks filled in `SECURITY.md`, `ACCESSIBILITY.md`, `AI_INTEGRATION.md`, `ARCHITECTURE.md`, `HOUSE_STYLE.md` (templates are not done)
-8. Local verify umbrella documented (README or package scripts / Makefile)
+- Required checks are **merge-blocking** on the default branch. Exceptions are explicit, time-bounded, and recorded in [`SECURITY.md`](SECURITY.md).
+- Wire real lint / typecheck / test commands in the creation PR. No no-op jobs.
+- Provide a **local verify umbrella** (script or Make target) that mirrors merge gates as closely as practical.
+- **Always:** secrets scan, dependency review, SAST, quality. **When UI exists:** accessibility. **When a public API exists:** OpenAPI lint ([`AI_INTEGRATION.md`](AI_INTEGRATION.md)).
+- Specialist reviewers (OWASP, a11y, privacy) complement CI; they never replace it.
 
 ---
 
-## 4. Repo-Level Enforcement
+## 4. Repo-level enforcement
 
-### Required Files
-- `AGENTS.md`
-- `PROJECT_RULES.md` (this file)
-- `ARCHITECTURE.md`
-- `HOUSE_STYLE.md`
-- `SECURITY.md`
-- `AI_INTEGRATION.md`
-- `ACCESSIBILITY.md`
-- `docs/features/` (README + `_TEMPLATE.md`; feature files as capabilities ship)
-- `docs/house-style/` (README + example profile(s); living file is `HOUSE_STYLE.md`)
-- `.github/workflows/` from `scaffold/ci/`
+Required files: `AGENTS.md`, `PROJECT_RULES.md`, `ARCHITECTURE.md`, `HOUSE_STYLE.md`, `SECURITY.md`, `AI_INTEGRATION.md`, `ACCESSIBILITY.md`, `docs/agent/`, `docs/features/` (README + `_TEMPLATE.md`), `docs/house-style/` (README + profiles; living file is `HOUSE_STYLE.md`), and `.github/workflows/` from `scaffold/ci/`.
 
-### Living plan + feature docs
-- **`docs/features/<capability>.md`** — decision/behavior record per capability.
-- **README (or `PLAN.md`) Done / Next / Later** — living backlog surface. Update in the same PR as capability ships. Both are useful; neither replaces the other.
+Living records: `docs/features/<capability>.md` per capability, and a README (or `PLAN.md`) Done / Next / Later list. Update both in the same PR as the capability ships.
 
-### How Agents Should Load Rules
-- Always: `AGENTS.md` + `PROJECT_RULES.md` + `HOUSE_STYLE.md`
-- When touching auth, data, crypto, deps, or public APIs → `SECURITY.md`
-- When touching UI → `ACCESSIBILITY.md`
-- When touching APIs, tools, or agent surfaces → `AI_INTEGRATION.md`
-- When changing system shape → `ARCHITECTURE.md`
-- When adding or changing a capability → matching `docs/features/<capability>.md` (create/update in the same PR); refresh Done / Next / Later if you keep that surface
-
-### Agent usage
-- Prefer clarity over cleverness.
-- Ask before violating a rule.
-- Treat missing CI or missing domain docs as a scaffolding defect.
-- Produce changes for **understanding to participate** (see `AGENTS.md`) — skim-sized what/why; before/after screenshots when UI changed; literate explainers only when the change is non-trivial, and not in the PR body if they would bloat it.
-- Canon is **agent-agnostic** (any tool that reads these Markdown files). **GitHub is the default forge/CI**; other hosts should mirror remote → MR → merge-blocking checks (see [`ADOPT.md`](ADOPT.md)).
-
----
-
-## 5. Regular Smell Tests
-
-- BYOK / delete-user / trusted logs / no raw PII? → `SECURITY.md`
-- LLM can orient in one page? → `AI_INTEGRATION.md` / `ARCHITECTURE.md`
-- Blind user can complete core flow? → `ACCESSIBILITY.md`
-- Violating PR blocked by CI today? Local verify mirrors gates? → `scaffold/ci/` / `scripts/verify.sh` (or product umbrella)
-- Last capability: own branch + open PR (not pile-on); agent did not merge without “merge …”? → `AGENTS.md` (Git authority)
-- Last PR: copy skim-sized (what/why, not a second diff); UI changes have before/after shots? → `AGENTS.md` (PRs)
-- Last change surgical / no unasked deps? → `AGENTS.md` (Minimal change)
-- New prose follows `HOUSE_STYLE.md` without renaming identifiers / APIs? → `HOUSE_STYLE.md`
-- Last eval smoke/scenario still honest? → `evals/`
-- Stuck agent handed back the wheel? → `AGENTS.md` (When stuck)
-- API OpenAPI linted if published? Plan + feature docs current? → `AI_INTEGRATION.md` / README / `docs/features/`
-
-If any answer is “probably not” → stop and fix it.
+Missing CI or missing domain docs is a scaffolding defect. Ask before violating a rule.
 
 ---
 
 ## Versioning
-- This document and the domain rulebooks are versioned.
-- Changes require explicit rationale.
-- Rules are additive unless explicitly deprecated.
+
+Rules are versioned and additive unless explicitly deprecated. Changes need a written rationale.
