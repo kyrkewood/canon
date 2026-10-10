@@ -5,6 +5,10 @@ export type DeployMode = (typeof DEPLOY_MODES)[number];
 
 export interface InfraConfig {
   region: string;
+  /** Optional 12-digit account id; pins env.account so wrong credentials fail instead of deploying elsewhere. */
+  account?: string;
+  /** CloudFormation stack id and SSM path root; lets several apps share one account. */
+  appName: string;
   deploy: DeployMode;
   budgetUsd: number;
   budgetEmail: string;
@@ -63,7 +67,13 @@ export function loadConfig(values: Record<string, string>, placeholderOk = proce
   const envName = values.CANON_INFRA_ENV_NAME ?? '';
   if (!/^[a-z][a-z0-9-]{0,19}$/.test(envName)) throw new Error('CANON_INFRA_ENV_NAME must be lowercase letters, digits or hyphens (max 20)');
 
-  return { region, deploy, budgetUsd, budgetEmail, envName, allowPaid: values.CANON_INFRA_ALLOW_PAID === 'true' };
+  const account = values.CANON_INFRA_ACCOUNT_ID || undefined;
+  if (account !== undefined && !/^\d{12}$/.test(account)) throw new Error('CANON_INFRA_ACCOUNT_ID must be a 12-digit AWS account id');
+
+  const appName = values.CANON_INFRA_APP_NAME || 'CanonApp';
+  if (!/^[A-Za-z][A-Za-z0-9-]{0,127}$/.test(appName)) throw new Error('CANON_INFRA_APP_NAME must start with a letter and use letters, digits or hyphens');
+
+  return { region, account, appName, deploy, budgetUsd, budgetEmail, envName, allowPaid: values.CANON_INFRA_ALLOW_PAID === 'true' };
 }
 
 export function loadConfigFile(path: string): InfraConfig {
