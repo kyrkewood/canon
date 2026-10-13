@@ -6,7 +6,9 @@ Let an adopter pick an infrastructure preference when applying Canon and get a w
 
 ## How it should work
 
-`apply.sh --infra=aws-free|none` (default `aws-free` when prompted; asks interactively in a TTY, and `ADOPT.md` tells agents to ask). Choosing `aws-free` copies a self-contained `infra/` directory, a deploy workflow and a PR check workflow, and records the choice in `infra/canon-infra.env`.
+`apply.sh --infra=aws-free|none` (default `none`; no interactive prompt yet). Choosing `aws-free` copies a self-contained `infra/` directory and adds an infrastructure section to `CANON_NEXT_STEPS.md`.
+
+**Not shipped yet:** the deploy, PR check, manual, tag and destroy workflow templates described below, and the `ADOPT.md` question. Until they land, deploy by hand.
 
 **Stack (fixed defaults):** Lambda + API Gateway, DynamoDB, S3, SSM Parameter Store for secrets (not Secrets Manager), an AWS Budgets alert. No NAT gateway, no load balancer, no RDS.
 
@@ -36,10 +38,22 @@ Database and compute are not selectable in v1; changing them means editing the C
 
 **Human steps** (listed in `CANON_NEXT_STEPS`, never run by Canon):
 
-1. `cdk bootstrap` with the adopter's own credentials.
-2. Deploy the one-time OIDC role stack locally.
+1. Confirm the account baseline exists (see below): the GitHub OIDC provider and CDK bootstrap, in every region the stack uses.
+2. Deploy the one-time per-repo deploy role stack locally, passing it the provider ARN. The stack references the provider and never creates it.
 3. Set the role ARN as a GitHub repo variable.
 4. Confirm the new `infra/` dependencies (`aws-cdk-lib`, `constructs`, `cdk-nag`). Choosing `--infra=aws-free` counts as approval for these, listed as one checklist line.
+
+## Account-baseline interface
+
+A GitHub OIDC provider is an account singleton (one per issuer URL), so a product repo cannot own it: a second `create` fails, and deleting it breaks every other repo in the account. Account-level setup lives in a separate account-baseline repo. This repo only consumes it.
+
+| Account baseline provides | Product repo owns |
+|---------------------------|-------------------|
+| The GitHub OIDC provider (`token.actions.githubusercontent.com`, audience `sts.amazonaws.com`), and its ARN | A deploy role that references that ARN (`OpenIdConnectProvider.fromOpenIdConnectProviderArn`, or a stack parameter) |
+| `cdk bootstrap` in every region used, including `us-east-1` when the stack needs CloudFront certificates | A trust policy scoped to `repo:<owner>/<repo>:environment:<env>`, never `repo:<owner>/<repo>:*` |
+| Org and account creation, and any read-only session role (see below) | Permission to assume only the CDK bootstrap roles (deploy, file-publishing, image-publishing, lookup) |
+
+Canon does not create accounts, manage organisations or hold multi-account logic.
 
 ## Non-goals
 
@@ -60,7 +74,7 @@ Default is no credentials. A human may grant a session one AWS role, only when o
 - Its use is declared in the session or PR, and results show resource names and states, never secret values.
 - Deploy, bootstrap, destroy and any mutating call stay human-only, whatever the role allows. If a call would write, stop and hand it to the human.
 
-Canon ships no such role; this rule only permits one. If the role grants more than read-only metadata, the exception does not apply and the default rule stands.
+Canon ships no such role; this rule only permits one. The account-baseline repo's read-only session role is the reference implementation to copy the shape from: AWS-managed `SecurityAudit` and `ViewOnlyAccess` plus a short list of named metadata reads, one trusted principal, and a session duration of a few hours. Organisation and billing reads are added only in the management account. Link to that repo's role from your own baseline docs; do not copy its policy into a product repo. If the role grants more than read-only metadata, the exception does not apply and the default rule stands.
 
 ## Edge cases & failure modes
 
@@ -68,6 +82,9 @@ Canon ships no such role; this rule only permits one. If the role grants more th
 - **Deploy happens after merge**, so a failed deploy leaves `main` ahead of production. The failure must show as a failing run.
 - **Cancelling a CloudFormation update mid-way** can strand a stack in `UPDATE_ROLLBACK_FAILED`; hence no cancel-in-progress.
 - **Admin on the deploy role.** Attaching `AdministratorAccess` "to get the deploy working" is rejected in review. Fix the missing permission on the CloudFormation execution role instead.
+
+- **Second OIDC provider.** Creating the provider in a product repo fails when the account already has one (or, worse, succeeds and later breaks other repos on delete). The role stack takes the ARN as input.
+- **Missing bootstrap in a region.** A deploy to a region (or `us-east-1` for CloudFront certificates) that was never bootstrapped fails at the assume-role step. Bootstrap every region first.
 - **Over-broad OIDC trust** (`repo:owner/name:*`) would let any branch or PR deploy. Trust is scoped to the environment/`main`.
 - **Config with credentials-looking values** fails the secrets test.
 - **Overriding the guardrail** with `CANON_INFRA_ALLOW_PAID` is allowed but must be visible in review.
@@ -86,6 +103,7 @@ Canon ships no such role; this rule only permits one. If the role grants more th
 | 2026-10-10 | Canon and its sessions hold no AWS credentials by default | Verification is offline; humans apply | Never expected |
 | 2026-10-10 | Allow one human-granted, read-only, metadata-only role as a strict exception | Some questions (what is deployed, what it costs) cannot be answered offline; the role is defined outside this repo and never writes | If a session ever needs more than metadata reads |
 | 2026-10-10 | Default is opt-in (`none` remains first class) | Existing adopters see no change; minimal-change rule | — |
+| 2026-10-13 | Role stack references the OIDC provider ARN; the provider and bootstrap belong to the account-baseline repo | The provider is an account singleton; creating it per repo collides across repos | If an account hosts only one repo and no baseline repo exists |
 
 ## Open questions
 
