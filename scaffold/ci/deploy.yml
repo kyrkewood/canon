@@ -1,0 +1,41 @@
+# Deploy on merge to main via GitHub OIDC (no long-lived keys). Template for --infra=aws-free.
+# Needs the GitHub environment named below, holding the variable AWS_DEPLOY_ROLE_ARN.
+# Add required reviewers to that environment when you want an approval gate.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# One deploy at a time, never cancelled mid-flight (avoids UPDATE_ROLLBACK_FAILED).
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: prod # must match CANON_INFRA_ENV_NAME and the role's trusted environment
+    permissions:
+      id-token: write
+      contents: read
+    defaults:
+      run:
+        working-directory: infra
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: infra/package-lock.json
+      - run: npm ci
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1 # keep in sync with CANON_INFRA_REGION
+      - run: npm run deploy
