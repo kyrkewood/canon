@@ -31,7 +31,7 @@ Database and compute are not selectable in v1; changing them means editing the C
 **Deploy (default `merge`):**
 
 - Pull request: `cdk synth` + `cdk-nag` (AWS Solutions pack) + a custom free-tier rule (fails on NAT gateways, non-micro instances, RDS, load balancers unless `CANON_INFRA_ALLOW_PAID`). No AWS credentials; fork PRs never get any.
-- Merge to `main`: `cdk deploy` via GitHub OIDC (no long-lived keys). Trust is scoped to a GitHub `environment` so required reviewers can be added later. The workflow role may only assume the CDK bootstrap roles; broad permissions sit in the CloudFormation execution role. Deploys run serially in one `concurrency` group and are never cancelled mid-flight.
+- Merge to `main`: `cdk deploy` via GitHub OIDC (no long-lived keys). Trust is scoped to a GitHub `environment` so required reviewers can be added later. The workflow role may only assume the CDK bootstrap roles; broad permissions sit in the CloudFormation execution role. `AdministratorAccess` (or any `*:*` grant) on the deploy role is not acceptable: it turns a leaked or hijacked workflow into full account control, and it bypasses the execution role that is meant to bound what a deploy can touch. Deploys run serially in one `concurrency` group and are never cancelled mid-flight.
 - `scaffold/ci/no-static-aws-keys.yml` (copied for every project) fails any workflow that names an AWS access key, secret key or session token, so key-based deploys cannot slip back in.
 - Other modes ship as separate workflow templates (`deploy-manual.yml`, `deploy-on-tag.yml`); `apply.sh` copies the one selected.
 
@@ -82,6 +82,7 @@ Canon ships no such role; this rule only permits one. The account-baseline repo'
 - **Free-tier terms change.** AWS reworked its free tier in 2025 (credits-based plans for new accounts, to be verified). Files carry a "last checked" date and say "verify against current AWS terms". No CI job tracks pricing.
 - **Deploy happens after merge**, so a failed deploy leaves `main` ahead of production. The failure must show as a failing run.
 - **Cancelling a CloudFormation update mid-way** can strand a stack in `UPDATE_ROLLBACK_FAILED`; hence no cancel-in-progress.
+- **Admin on the deploy role.** Attaching `AdministratorAccess` "to get the deploy working" is rejected in review. Fix the missing permission on the CloudFormation execution role instead.
 - **Second OIDC provider.** Creating the provider in a product repo fails when the account already has one (or, worse, succeeds and later breaks other repos on delete). The role stack takes the ARN as input.
 - **Missing bootstrap in a region.** A deploy to a region (or `us-east-1` for CloudFront certificates) that was never bootstrapped fails at the assume-role step. Bootstrap every region first.
 - **Over-broad OIDC trust** (`repo:owner/name:*`) would let any branch or PR deploy. Trust is scoped to the environment/`main`.
