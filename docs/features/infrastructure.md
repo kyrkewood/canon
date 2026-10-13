@@ -60,7 +60,7 @@ Default is no credentials. A human may grant a session one AWS role, only when o
 - Its use is declared in the session or PR, and results show resource names and states, never secret values.
 - Deploy, bootstrap, destroy and any mutating call stay human-only, whatever the role allows. If a call would write, stop and hand it to the human.
 
-Canon ships no such role; this rule only permits one. If the role grants more than read-only metadata, the exception does not apply and the default rule stands.
+Canon ships no such role; this rule only permits one. The account-baseline repo's read-only session role is the reference implementation to copy the shape from: AWS-managed `SecurityAudit` and `ViewOnlyAccess` plus a short list of named metadata reads, one trusted principal, and a session duration of a few hours. Organisation and billing reads are added only in the management account. Link to that repo's role from your own baseline docs; do not copy its policy into a product repo. If the role grants more than read-only metadata, the exception does not apply and the default rule stands.
 
 ## Edge cases & failure modes
 
