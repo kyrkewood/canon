@@ -82,7 +82,6 @@ Canon ships no such role; this rule only permits one. The account-baseline repo'
 - **Deploy happens after merge**, so a failed deploy leaves `main` ahead of production. The failure must show as a failing run.
 - **Cancelling a CloudFormation update mid-way** can strand a stack in `UPDATE_ROLLBACK_FAILED`; hence no cancel-in-progress.
 - **Admin on the deploy role.** Attaching `AdministratorAccess` "to get the deploy working" is rejected in review. Fix the missing permission on the CloudFormation execution role instead.
-
 - **Second OIDC provider.** Creating the provider in a product repo fails when the account already has one (or, worse, succeeds and later breaks other repos on delete). The role stack takes the ARN as input.
 - **Missing bootstrap in a region.** A deploy to a region (or `us-east-1` for CloudFront certificates) that was never bootstrapped fails at the assume-role step. Bootstrap every region first.
 - **Over-broad OIDC trust** (`repo:owner/name:*`) would let any branch or PR deploy. Trust is scoped to the environment/`main`.
