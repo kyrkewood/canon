@@ -6,7 +6,9 @@ Let an adopter pick an infrastructure preference when applying Canon and get a w
 
 ## How it should work
 
-`apply.sh --infra=aws-free|none` (default `aws-free` when prompted; asks interactively in a TTY, and `ADOPT.md` tells agents to ask). Choosing `aws-free` copies a self-contained `infra/` directory, a deploy workflow and a PR check workflow, and records the choice in `infra/canon-infra.env`.
+`apply.sh --infra=aws-free|none` (default `none`; no interactive prompt yet). Choosing `aws-free` copies a self-contained `infra/` directory and adds an infrastructure section to `CANON_NEXT_STEPS.md`.
+
+**Not shipped yet:** the deploy, PR check, manual, tag and destroy workflow templates described below, and the `ADOPT.md` question. Until they land, deploy by hand.
 
 **Stack (fixed defaults):** Lambda + API Gateway, DynamoDB, S3, SSM Parameter Store for secrets (not Secrets Manager), an AWS Budgets alert. No NAT gateway, no load balancer, no RDS.
 
