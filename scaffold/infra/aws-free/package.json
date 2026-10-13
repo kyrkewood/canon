@@ -6,6 +6,7 @@
   "description": "Canon starter: AWS free-tier stack (CDK, TypeScript). Verify against current AWS free-tier terms.",
   "scripts": {
     "synth": "cdk synth",
+    "deploy-role": "cdk deploy --app \"npx tsx bin/deploy-role.ts\" --require-approval never",
     "deploy": "cdk deploy --require-approval never",
     "destroy": "cdk destroy --force",
     "typecheck": "tsc --noEmit",

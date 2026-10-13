@@ -31,7 +31,7 @@ Database and compute are not selectable in v1; changing them means editing the C
 **Deploy (default `merge`):**
 
 - Pull request: `cdk synth` + `cdk-nag` (AWS Solutions pack) + a custom free-tier rule (fails on NAT gateways, non-micro instances, RDS, load balancers unless `CANON_INFRA_ALLOW_PAID`). No AWS credentials; fork PRs never get any.
-- Merge to `main`: `cdk deploy` via GitHub OIDC (no long-lived keys). Trust is scoped to a GitHub `environment` so required reviewers can be added later. The workflow role may only assume the CDK bootstrap roles; broad permissions sit in the CloudFormation execution role. Deploys run serially in one `concurrency` group and are never cancelled mid-flight.
+- Merge to `main`: `cdk deploy` via GitHub OIDC (no long-lived keys), from the `scaffold/ci/deploy.yml` template (`id-token: write`, role from `AWS_DEPLOY_ROLE_ARN`). Trust is scoped to a GitHub `environment` so required reviewers can be added later. The workflow role may only assume the CDK bootstrap roles; broad permissions sit in the CloudFormation execution role. Deploys run serially in one `concurrency` group and are never cancelled mid-flight.
 - `scaffold/ci/no-static-aws-keys.yml` (copied for every project) fails any workflow that names an AWS access key, secret key or session token, so key-based deploys cannot slip back in.
 - Other modes ship as separate workflow templates (`deploy-manual.yml`, `deploy-on-tag.yml`); `apply.sh` copies the one selected.
 
@@ -40,8 +40,8 @@ Database and compute are not selectable in v1; changing them means editing the C
 **Human steps** (listed in `CANON_NEXT_STEPS`, never run by Canon):
 
 1. Confirm the account baseline exists (see below): the GitHub OIDC provider and CDK bootstrap, in every region the stack uses.
-2. Deploy the one-time per-repo deploy role stack locally, passing it the provider ARN. The stack references the provider and never creates it.
-3. Set the role ARN as a GitHub repo variable.
+2. Deploy the one-time per-repo deploy role stack locally (`npm run deploy-role -- -c githubRepo=<owner>/<repo> -c oidcProviderArn=<arn>`). The stack references the provider and never creates it.
+3. Set the role ARN (stack output `DeployRoleArn`) as the variable `AWS_DEPLOY_ROLE_ARN` on the GitHub environment named by `CANON_INFRA_ENV_NAME`.
 4. Confirm the new `infra/` dependencies (`aws-cdk-lib`, `constructs`, `cdk-nag`). Choosing `--infra=aws-free` counts as approval for these, listed as one checklist line.
 
 ## Account-baseline interface
@@ -115,6 +115,6 @@ Canon ships no such role; this rule only permits one. The account-baseline repo'
 
 1. This doc, plus the `product-conventions.md` non-goals amendment and a `SECURITY.md`/`ARCHITECTURE.md` link.
 2. `infra/` CDK example (stack + config reader + guardrail rule) with synth and `cdk-nag` in CI.
-3. PR check and merge-deploy workflows, OIDC role stack, `CANON_NEXT_STEPS` entries.
+3. PR check and merge-deploy workflows, OIDC role stack, `CANON_NEXT_STEPS` entries. (Merge-deploy template and role stack shipped; PR check and `CANON_NEXT_STEPS` entries remain.)
 4. `apply.sh --infra`, prompt, smoke test, `ADOPT.md`.
 5. Destroy workflow and alternate deploy-mode templates.

@@ -13,6 +13,7 @@ See [`../PROJECT_CREATION.md`](../PROJECT_CREATION.md) for the full checklist.
 | `no-static-aws-keys.yml` | Yes | Fails workflows naming AWS access keys, secret keys or session tokens; use OIDC |
 | `quality.yml` | Yes | Prefill via apply.sh, or replace placeholders |
 | `accessibility.yml` | Yes if UI | Use `apply.sh --with-ui`; AA automated floor |
+| `deploy.yml` | No | **Opt-in**, for `--infra=aws-free`: deploy on merge via OIDC; needs `AWS_DEPLOY_ROLE_ARN` on the GitHub environment |
 | `dast.yml` | Yes once enabled | **Opt-in** — copy manually; needs running URL (`ZAP_TARGET_URL`) |
 
 Failures should cite rule IDs (Semgrep/axe logs, SARIF). Waivers: see [`SECURITY.md`](../../SECURITY.md) — no silent `continue-on-error` on required gates.

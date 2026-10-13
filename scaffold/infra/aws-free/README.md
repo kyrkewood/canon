@@ -22,4 +22,6 @@ CANON_INFRA_PLACEHOLDER_OK=1 npx cdk synth   # offline; no AWS credentials neede
 
 You run `cdk bootstrap`, `deploy` and `destroy` yourself with your own credentials. Canon does not. `destroy` removes the stack (except the retained `prod` table); the bootstrap bucket, repository and roles stay until you delete them. The assets bucket must be empty to be deleted.
 
-CI wiring (PR check, OIDC deploy on merge, destroy workflow) is a later step; see `docs/features/infrastructure.md`.
+**Deploy role:** `npm run deploy-role -- -c githubRepo=<owner>/<repo> -c oidcProviderArn=<arn>` creates a role that trusts one GitHub environment and may only assume the CDK bootstrap roles. It references the account's existing OIDC provider and never creates it. Set its `DeployRoleArn` output as `AWS_DEPLOY_ROLE_ARN` on that environment, then copy `scaffold/ci/deploy.yml` into `.github/workflows/`.
+
+The PR check and destroy workflows are a later step; see `docs/features/infrastructure.md`.
