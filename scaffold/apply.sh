@@ -200,6 +200,7 @@ count_force_candidates() {
     .github/workflows/secrets-scan.yml \
     .github/workflows/dependency-review.yml \
     .github/workflows/sast.yml \
+    .github/workflows/no-static-aws-keys.yml \
     .github/workflows/quality.yml \
     .github/workflows/accessibility.yml \
     CANON_CHECKLIST.md
@@ -360,7 +361,7 @@ echo "CI workflows"
 WF_DEST="$TARGET/.github/workflows"
 mkdir -p "$WF_DEST"
 
-for wf in secrets-scan.yml dependency-review.yml sast.yml; do
+for wf in secrets-scan.yml dependency-review.yml sast.yml no-static-aws-keys.yml; do
   copy_file "$CANON_ROOT/scaffold/ci/$wf" "$WF_DEST/$wf"
 done
 

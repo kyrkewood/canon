@@ -32,6 +32,7 @@ Database and compute are not selectable in v1; changing them means editing the C
 
 - Pull request: `cdk synth` + `cdk-nag` (AWS Solutions pack) + a custom free-tier rule (fails on NAT gateways, non-micro instances, RDS, load balancers unless `CANON_INFRA_ALLOW_PAID`). No AWS credentials; fork PRs never get any.
 - Merge to `main`: `cdk deploy` via GitHub OIDC (no long-lived keys). Trust is scoped to a GitHub `environment` so required reviewers can be added later. The workflow role may only assume the CDK bootstrap roles; broad permissions sit in the CloudFormation execution role. `AdministratorAccess` (or any `*:*` grant) on the deploy role is not acceptable: it turns a leaked or hijacked workflow into full account control, and it bypasses the execution role that is meant to bound what a deploy can touch. Deploys run serially in one `concurrency` group and are never cancelled mid-flight.
+- `scaffold/ci/no-static-aws-keys.yml` (copied for every project) fails any workflow that names an AWS access key, secret key or session token, so key-based deploys cannot slip back in.
 - Other modes ship as separate workflow templates (`deploy-manual.yml`, `deploy-on-tag.yml`); `apply.sh` copies the one selected.
 
 **Teardown:** `npm run destroy` locally, and a `workflow_dispatch` destroy workflow that needs a typed confirmation and the same GitHub environment.
