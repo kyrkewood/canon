@@ -8,7 +8,9 @@ Keep pull requests easy to review: a short what/why, plus before/after screensho
 
 - The PR body is a **skim**. The code is the deep dive.
 - Default body: 1–3 bullets (what changed and why). Scale copy to the change.
-- When user-visible UI changes, attach before and after screenshots of the affected surfaces (cropped; one pair per distinct view).
+- State the problem the old version caused, not just the new behaviour.
+- When wording or behaviour changes, quote the old and new in one line each (before and after text).
+- When user-visible UI changes, including copy, attach before and after screenshots of the affected surfaces (cropped; one pair per distinct view).
 - Skip shots when there is no visual delta.
 - Literate walkthroughs and check questions stay for non-obvious work. Put them in a comment or linked doc if they would bloat the body.
 
@@ -23,7 +25,8 @@ See `docs/agent/pull-requests.md`.
 ## Edge cases & failure modes
 
 - Screenshot galleries of every breakpoint when one pair would do.
-- Omitting shots because "the CSS is in the diff".
+- Omitting shots because "the CSS is in the diff" or "it's only copy".
+- A why that restates the change ("clearer wording") instead of the problem.
 - Restating the file list in prose.
 - Putting a literate walkthrough in the body of a small change.
 
@@ -33,6 +36,7 @@ See `docs/agent/pull-requests.md`.
 |------|----------|-----|--------------|
 | 2026-09-08 | Skim body + UI before/after in `AGENTS.md` | Reviewers need orientation, then the diff | Agents still dump essays or skip UI shots |
 | 2026-09-08 | No PR template in the scaffold | Templates pad; the rule is proportional copy | Teams keep shipping empty template sections anyway |
+| 2026-10-13 | Before/after text and a problem-statement why; copy counts as visible | A copy-only PR followed the skim rule but gave reviewers neither the strings nor the reason, and skipped shots | Before/after lines turn into restated diffs |
 
 ## Open questions
 
