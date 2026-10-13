@@ -38,10 +38,22 @@ Database and compute are not selectable in v1; changing them means editing the C
 
 **Human steps** (listed in `CANON_NEXT_STEPS`, never run by Canon):
 
-1. `cdk bootstrap` with the adopter's own credentials.
-2. Deploy the one-time OIDC role stack locally.
+1. Confirm the account baseline exists (see below): the GitHub OIDC provider and CDK bootstrap, in every region the stack uses.
+2. Deploy the one-time per-repo deploy role stack locally, passing it the provider ARN. The stack references the provider and never creates it.
 3. Set the role ARN as a GitHub repo variable.
 4. Confirm the new `infra/` dependencies (`aws-cdk-lib`, `constructs`, `cdk-nag`). Choosing `--infra=aws-free` counts as approval for these, listed as one checklist line.
+
+## Account-baseline interface
+
+A GitHub OIDC provider is an account singleton (one per issuer URL), so a product repo cannot own it: a second `create` fails, and deleting it breaks every other repo in the account. Account-level setup lives in a separate account-baseline repo. This repo only consumes it.
+
+| Account baseline provides | Product repo owns |
+|---------------------------|-------------------|
+| The GitHub OIDC provider (`token.actions.githubusercontent.com`, audience `sts.amazonaws.com`), and its ARN | A deploy role that references that ARN (`OpenIdConnectProvider.fromOpenIdConnectProviderArn`, or a stack parameter) |
+| `cdk bootstrap` in every region used, including `us-east-1` when the stack needs CloudFront certificates | A trust policy scoped to `repo:<owner>/<repo>:environment:<env>`, never `repo:<owner>/<repo>:*` |
+| Org and account creation, and any read-only session role (see below) | Permission to assume only the CDK bootstrap roles (deploy, file-publishing, image-publishing, lookup) |
+
+Canon does not create accounts, manage organisations or hold multi-account logic.
 
 ## Non-goals
 
@@ -69,6 +81,8 @@ Canon ships no such role; this rule only permits one. If the role grants more th
 - **Free-tier terms change.** AWS reworked its free tier in 2025 (credits-based plans for new accounts, to be verified). Files carry a "last checked" date and say "verify against current AWS terms". No CI job tracks pricing.
 - **Deploy happens after merge**, so a failed deploy leaves `main` ahead of production. The failure must show as a failing run.
 - **Cancelling a CloudFormation update mid-way** can strand a stack in `UPDATE_ROLLBACK_FAILED`; hence no cancel-in-progress.
+- **Second OIDC provider.** Creating the provider in a product repo fails when the account already has one (or, worse, succeeds and later breaks other repos on delete). The role stack takes the ARN as input.
+- **Missing bootstrap in a region.** A deploy to a region (or `us-east-1` for CloudFront certificates) that was never bootstrapped fails at the assume-role step. Bootstrap every region first.
 - **Over-broad OIDC trust** (`repo:owner/name:*`) would let any branch or PR deploy. Trust is scoped to the environment/`main`.
 - **Config with credentials-looking values** fails the secrets test.
 - **Overriding the guardrail** with `CANON_INFRA_ALLOW_PAID` is allowed but must be visible in review.
@@ -87,6 +101,7 @@ Canon ships no such role; this rule only permits one. If the role grants more th
 | 2026-10-10 | Canon and its sessions hold no AWS credentials by default | Verification is offline; humans apply | Never expected |
 | 2026-10-10 | Allow one human-granted, read-only, metadata-only role as a strict exception | Some questions (what is deployed, what it costs) cannot be answered offline; the role is defined outside this repo and never writes | If a session ever needs more than metadata reads |
 | 2026-10-10 | Default is opt-in (`none` remains first class) | Existing adopters see no change; minimal-change rule | — |
+| 2026-10-13 | Role stack references the OIDC provider ARN; the provider and bootstrap belong to the account-baseline repo | The provider is an account singleton; creating it per repo collides across repos | If an account hosts only one repo and no baseline repo exists |
 
 ## Open questions
 
