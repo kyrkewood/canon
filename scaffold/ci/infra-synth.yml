@@ -1,0 +1,39 @@
+# Infra synth — opt-in (apply.sh --infra=aws-free). Offline check of infra/: cdk synth + cdk-nag + free-tier guardrail.
+# No AWS credentials, and no id-token permission: fork PRs get nothing to steal.
+name: Infra synth
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  synth:
+    name: Infra synth
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra
+    env:
+      # Tolerate the placeholder budget email until deploys are switched on, so the baseline PR is not red.
+      # Once DEPLOY_ENABLED is "true" the placeholder fails synth here, before merge.
+      CANON_INFRA_PLACEHOLDER_OK: ${{ vars.DEPLOY_ENABLED != 'true' && '1' || '' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: infra/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Synth (cdk-nag + free-tier guardrail run as aspects)
+        run: npx cdk synth --quiet
