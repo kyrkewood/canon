@@ -1,0 +1,31 @@
+# No static AWS keys in workflows (required, merge-blocking). See SECURITY.md section 1.
+# Fails any workflow that names an AWS access key input or secret; use OIDC (role-to-assume) instead.
+# This file is skipped by the scan so its own patterns do not trip it.
+name: No static AWS keys
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    name: Workflows use OIDC, not AWS keys
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fail on static AWS credentials in workflows
+        run: |
+          hits=$(grep -rniE 'aws[-_](access[-_]key[-_]id|secret[-_]access[-_]key|session[-_]token)' \
+            --include='*.yml' --include='*.yaml' \
+            --exclude='no-static-aws-keys.yml' .github || true)
+          if [ -n "$hits" ]; then
+            echo "$hits"
+            echo "::error::Static AWS credentials in workflows. Use aws-actions/configure-aws-credentials with role-to-assume (OIDC); see SECURITY.md."
+            exit 1
+          fi

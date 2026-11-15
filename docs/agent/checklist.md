@@ -7,7 +7,7 @@ Loaded from [`AGENTS.md`](../../AGENTS.md) before calling work done. If any answ
 - Blind user can complete core flow? → [`ACCESSIBILITY.md`](../../ACCESSIBILITY.md)
 - Violating PR blocked by CI today? Local verify mirrors gates? → `scaffold/ci/` / `scripts/verify.sh` (or product umbrella)
 - Last capability on its own branch with an open PR (not pile-on); no merge without 'merge …'? → [`git-delivery.md`](git-delivery.md)
-- Last PR copy skim-sized; UI changes have before/after shots? → [`pull-requests.md`](pull-requests.md)
+- Last PR copy skim-sized, with before/after text and the problem as the why; UI or copy changes have before/after shots? → [`pull-requests.md`](pull-requests.md)
 - New prose follows [`HOUSE_STYLE.md`](../../HOUSE_STYLE.md) without renaming identifiers or APIs?
 - Last eval smoke/scenario still honest? → `evals/`
 - API OpenAPI linted if published? Plan and feature docs current? → [`AI_INTEGRATION.md`](../../AI_INTEGRATION.md) / README / `docs/features/`

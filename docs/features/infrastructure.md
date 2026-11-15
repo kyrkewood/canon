@@ -32,6 +32,7 @@ Database and compute are not selectable in v1; changing them means editing the C
 
 - Pull request and push to `main` (`infra-synth.yml`): `cdk synth` + `cdk-nag` (AWS Solutions pack) + a custom free-tier rule (fails on NAT gateways, non-micro instances, RDS, load balancers, KMS keys, EIPs unless `CANON_INFRA_ALLOW_PAID`). No AWS credentials and no `id-token` permission; fork PRs never get any. Lint, typecheck and tests run in an `infra` job in `quality.yml`.
 - Merge to `main`, or `workflow_dispatch` (`infra-deploy.yml`): `cdk deploy` via GitHub OIDC (no long-lived keys, `aws-actions/configure-aws-credentials`). `id-token: write` is set on the job only. The job runs in a GitHub `environment` that holds `AWS_DEPLOY_ROLE_ARN`, so required reviewers can be added; the role trusts exactly `repo:<owner>/<repo>:environment:<env>` and may only assume the four CDK bootstrap roles (`lib/github-oidc-stack.ts`); broad permissions sit in the CloudFormation execution role. The job is gated by the repo variable `DEPLOY_ENABLED == 'true'`, so a fresh adopter's first merge does not fail before OIDC exists. Deploys run serially in one `concurrency` group (`deploy`) and are never cancelled mid-flight.
+- `scaffold/ci/no-static-aws-keys.yml` (copied for every project) fails any workflow that names an AWS access key, secret key or session token, so key-based deploys cannot slip back in.
 - Other modes ship as separate workflow templates (`deploy-manual.yml`, `deploy-on-tag.yml`); `apply.sh` copies the one selected.
 
 **Teardown:** `npm run destroy` locally, and a `workflow_dispatch` destroy workflow that needs a typed confirmation and the same GitHub environment.
@@ -45,6 +46,18 @@ Database and compute are not selectable in v1; changing them means editing the C
 5. Protect `main` and require Infra synth and Quality.
 6. Set the repo variable `DEPLOY_ENABLED=true`, last.
 7. Confirm the new `infra/` dependencies (`aws-cdk-lib`, `constructs`, `cdk-nag`, `eslint`, `typescript-eslint`). Choosing `--infra=aws-free` counts as approval for these, listed as one checklist line.
+
+## Account-baseline interface
+
+A GitHub OIDC provider is an account singleton (one per issuer URL), so a product repo cannot own it: a second `create` fails, and deleting it breaks every other repo in the account. Account-level setup lives in a separate account-baseline repo. This repo only consumes it.
+
+| Account baseline provides | Product repo owns |
+|---------------------------|-------------------|
+| The GitHub OIDC provider (`token.actions.githubusercontent.com`, audience `sts.amazonaws.com`), and its ARN | A deploy role that references that ARN (`OpenIdConnectProvider.fromOpenIdConnectProviderArn`, or a stack parameter) |
+| `cdk bootstrap` in every region used, including `us-east-1` when the stack needs CloudFront certificates | A trust policy scoped to `repo:<owner>/<repo>:environment:<env>`, never `repo:<owner>/<repo>:*` |
+| Org and account creation, and any read-only session role (see below) | Permission to assume only the CDK bootstrap roles (deploy, file-publishing, image-publishing, lookup) |
+
+Canon does not create accounts, manage organisations or hold multi-account logic.
 
 ## Non-goals
 
@@ -65,13 +78,15 @@ Default is no credentials. A human may grant a session one AWS role, only when o
 - Its use is declared in the session or PR, and results show resource names and states, never secret values.
 - Deploy, bootstrap, destroy and any mutating call stay human-only, whatever the role allows. If a call would write, stop and hand it to the human.
 
-Canon ships no such role; this rule only permits one. If the role grants more than read-only metadata, the exception does not apply and the default rule stands.
+Canon ships no such role; this rule only permits one. The account-baseline repo's read-only session role is the reference implementation to copy the shape from: AWS-managed `SecurityAudit` and `ViewOnlyAccess` plus a short list of named metadata reads, one trusted principal, and a session duration of a few hours. Organisation and billing reads are added only in the management account. Link to that repo's role from your own baseline docs; do not copy its policy into a product repo. If the role grants more than read-only metadata, the exception does not apply and the default rule stands.
 
 ## Edge cases & failure modes
 
 - **Free-tier terms change.** AWS reworked its free tier in 2025 (credits-based plans for new accounts, to be verified). Files carry a "last checked" date and say "verify against current AWS terms". No CI job tracks pricing.
 - **Deploy happens after merge**, so a failed deploy leaves `main` ahead of production. The failure must show as a failing run.
 - **Cancelling a CloudFormation update mid-way** can strand a stack in `UPDATE_ROLLBACK_FAILED`; hence no cancel-in-progress.
+- **Second OIDC provider.** Creating the provider in a product repo fails when the account already has one (or, worse, succeeds and later breaks other repos on delete). The role stack takes the ARN as input.
+- **Missing bootstrap in a region.** A deploy to a region (or `us-east-1` for CloudFront certificates) that was never bootstrapped fails at the assume-role step. Bootstrap every region first.
 - **Over-broad OIDC trust** (`repo:owner/name:*`) would let any branch or PR deploy. Trust is scoped to the environment/`main`.
 - **Config with credentials-looking values** fails the secrets test.
 - **Overriding the guardrail** with `CANON_INFRA_ALLOW_PAID` is allowed but must be visible in review.
@@ -99,6 +114,7 @@ Canon ships no such role; this rule only permits one. If the role grants more th
 | 2026-10-10 | Deploy runs only for changes under `infra/` (plus `workflow_dispatch`) | Avoids a reviewer approval on every unrelated merge | If infra depends on files outside `infra/` |
 | 2026-10-10 | `infra/canon-infra.env` is never overwritten by `apply.sh`, even with `--force` | It holds the adopter's account, region and email | — |
 | 2026-10-10 | Infra synth tolerates the placeholder budget email until `DEPLOY_ENABLED` is true | The baseline PR stays green; once deploys are on, the placeholder fails before merge | — |
+| 2026-10-13 | Role stack references the OIDC provider ARN; the provider and bootstrap belong to the account-baseline repo | The provider is an account singleton; creating it per repo collides across repos | If an account hosts only one repo and no baseline repo exists |
 
 ## Open questions
 

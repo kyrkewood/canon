@@ -35,6 +35,7 @@ required=(
   .github/workflows/secrets-scan.yml
   .github/workflows/dependency-review.yml
   .github/workflows/sast.yml
+  .github/workflows/no-static-aws-keys.yml
   .github/workflows/quality.yml
 )
 

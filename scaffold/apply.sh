@@ -78,8 +78,8 @@ for arg in "$@"; do
       GITHUB_REPO="${arg#*=}"
       ;;
     --stack=*) STACK="${arg#*=}" ;;
-    --house-style=*) HOUSE_STYLE_PROFILE="${arg#*=}" ;;
     --infra=*) INFRA="${arg#*=}" ;;
+    --house-style=*) HOUSE_STYLE_PROFILE="${arg#*=}" ;;
     -*)
       echo "Unknown option: $arg" >&2
       usage >&2
@@ -186,6 +186,13 @@ fi
 # List of existing paths that --force would clobber (for confirm). Returns count via stdout last line... use global.
 FORCE_CANDIDATES=0
 
+INFRA_SRC="$CANON_ROOT/scaffold/infra/aws-free"
+
+# Starter files to copy (skips installed deps and build output).
+infra_files() {
+  find "$INFRA_SRC" -type f -not -path '*/node_modules/*' -not -path '*/cdk.out/*' | sort
+}
+
 count_force_candidates() {
   FORCE_CANDIDATES=0
   local dest rel src
@@ -200,6 +207,7 @@ count_force_candidates() {
     .github/workflows/secrets-scan.yml \
     .github/workflows/dependency-review.yml \
     .github/workflows/sast.yml \
+    .github/workflows/no-static-aws-keys.yml \
     .github/workflows/quality.yml \
     .github/workflows/accessibility.yml \
     CANON_CHECKLIST.md \
@@ -258,6 +266,17 @@ count_force_candidates() {
         ;;
     esac
   done
+
+  if [[ "$INFRA" == "aws-free" ]]; then
+    while IFS= read -r src; do
+      rel="infra/${src#"$INFRA_SRC"/}"
+      dest="$TARGET/$rel"
+      if [[ -e "$dest" ]] && ! cmp -s "$src" "$dest" 2>/dev/null; then
+        FORCE_CANDIDATES=$((FORCE_CANDIDATES + 1))
+        show_file_diff "$dest" "$src"
+      fi
+    done < <(infra_files)
+  fi
 }
 
 confirm_force() {
@@ -350,7 +369,7 @@ echo "CI workflows"
 WF_DEST="$TARGET/.github/workflows"
 mkdir -p "$WF_DEST"
 
-for wf in secrets-scan.yml dependency-review.yml sast.yml; do
+for wf in secrets-scan.yml dependency-review.yml sast.yml no-static-aws-keys.yml; do
   copy_file "$CANON_ROOT/scaffold/ci/$wf" "$WF_DEST/$wf"
 done
 
@@ -768,6 +787,22 @@ cat >> "$NEXT_STEPS" <<EOF
 - \`ACCESSIBILITY.md\` / \`AI_INTEGRATION.md\` — if those apply
 
 EOF
+
+if [[ "$INFRA" == "aws-free" ]]; then
+  cat >> "$NEXT_STEPS" <<'EOF'
+## 5b. Infrastructure (AWS free-tier starter in `infra/`)
+
+Not authoritative: check current AWS free-tier terms. Canon never runs these for you.
+
+1. Set `CANON_INFRA_BUDGET_EMAIL` (and ideally `CANON_INFRA_ACCOUNT_ID`) in `infra/canon-infra.env`; synth refuses the placeholder.
+2. In `infra/`: `npm ci && npm run typecheck && npm test`.
+3. Review the new dependencies (`aws-cdk-lib`, `constructs`, `cdk-nag`) in the baseline PR.
+4. Deploy by hand with your own credentials (`cdk bootstrap`, `cdk deploy`). Deploy-on-merge workflows are not shipped yet.
+
+See `infra/README.md`.
+
+EOF
+fi
 
 cat >> "$NEXT_STEPS" <<'EOF'
 ## 6. Protect main (before feature work)

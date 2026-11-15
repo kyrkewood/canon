@@ -10,6 +10,7 @@ See [`../PROJECT_CREATION.md`](../PROJECT_CREATION.md) for the full checklist.
 | `secrets-scan.yml` | Yes | Gitleaks; stack-agnostic |
 | `dependency-review.yml` | Yes (PRs) | Needs GitHub Dependency graph; high+ fails |
 | `sast.yml` | Yes | Semgrep OWASP Top 10 + security-audit; SARIF upload |
+| `no-static-aws-keys.yml` | Yes | Fails workflows naming AWS access keys, secret keys or session tokens; use OIDC |
 | `quality.yml` | Yes | Prefill via apply.sh, or replace placeholders |
 | `accessibility.yml` | Yes if UI | Use `apply.sh --with-ui`; AA automated floor |
 | `infra-synth.yml` | Yes once required | **Opt-in** (`apply.sh --infra=aws-free`). `cdk synth` + cdk-nag + free-tier guardrail; no credentials |
