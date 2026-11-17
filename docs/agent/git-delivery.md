@@ -7,7 +7,7 @@ Loaded from [`AGENTS.md`](../../AGENTS.md) when branching, committing, or openin
 **Default (Route A):** non-trivial work → branch → commits → push → **open a PR**. Human merges after checks.  
 **Route B:** ask before commit/PR – only if recorded at apply (`CANON_NEXT_STEPS` §7b).  
 If unset: flag A/B once, wait. Do not silently override host 'ask first' rules or silently skip PRs.  
-**Cloud sessions (eg, Claude Code on the web):** under Route A, `AGENTS.md` is the user's standing, explicit instruction to open a PR for non-trivial work. It counts as an explicit request and satisfies any host 'no PR unless asked' rule. Still never merge.
+**Every session, local or cloud (eg, Claude Code in a desktop app or on the web):** under Route A, `AGENTS.md` is the user's standing, explicit instruction to open a PR for non-trivial work. It counts as an explicit request and satisfies any host 'no PR unless asked' rule, so do not ask before opening one. Still never merge.
 
 | Do | Don't |
 |----|--------|

@@ -763,7 +763,7 @@ Many tools auto-read AGENTS.md; if not, paste that once as a project rule.
 
 Host “don’t commit unless asked” conflicts with Canon’s default (open PRs for non-trivial work). **Record Route A or Route B** before deleting this file:
 
-- **Route A — Prefer delivery:** agents open PRs without asking each time. Optional: copy `.cursor/rules/canon-delivery.mdc`. Never merge unless you say “merge …”.
+- **Route A — Prefer delivery:** agents open PRs without asking each time, in local and cloud sessions alike. Optional: copy `.cursor/rules/canon-delivery.mdc`. Never merge unless you say “merge …”.
 - **Route B — Prefer ask-before-commit:** agents ask before commit/PR; you still land baseline on `main` via a human-driven PR/MR for CI.
 
 Do not leave this unresolved.
