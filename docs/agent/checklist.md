@@ -6,6 +6,7 @@ Loaded from [`AGENTS.md`](../../AGENTS.md) before calling work done. If any answ
 - LLM can orient in one page? → [`AI_INTEGRATION.md`](../../AI_INTEGRATION.md) / [`ARCHITECTURE.md`](../../ARCHITECTURE.md)
 - Blind user can complete core flow? → [`ACCESSIBILITY.md`](../../ACCESSIBILITY.md)
 - Violating PR blocked by CI today? Local verify mirrors gates? → `scaffold/ci/` / `scripts/verify.sh` (or product umbrella)
+- Anything waiting on the human ends the message with a `Needs you: …` line, and nothing else does? → [`AGENTS.md`](../../AGENTS.md)
 - Last capability on its own branch with an open PR (not pile-on); no merge without 'merge …'? → [`git-delivery.md`](git-delivery.md)
 - Last PR copy skim-sized, with before/after text and the problem as the why; UI or copy changes have before/after shots? → [`pull-requests.md`](pull-requests.md)
 - New prose follows [`HOUSE_STYLE.md`](../../HOUSE_STYLE.md) without renaming identifiers or APIs?

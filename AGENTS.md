@@ -11,6 +11,7 @@ Standing instructions for coding agents. This is the master doc: short rules her
 - **Clean up in the same task.** Remove dead code, unused imports, debug prints, and temp files. Tighten before calling it done.
 - **Hand back the wheel.** After a few failed attempts at the same approach, stop and ask. Roll back a tangled branch rather than stacking patches. Never force-push shared branches or rewrite shared history.
 - **Session boundaries.** At a boundary (PR just opened, user switches to an unrelated capability, or you catch yourself re-asking settled questions or contradicting an earlier decision), recommend a fresh session once, with one sentence of why. Raise it only between tasks, and once. Offer the resume prompt in [`docs/session-handoff.md`](docs/session-handoff.md).
+- **Say what you need from the human.** If the turn ends waiting on them (a decision, a review, a merge, something outside the repo), finish the last message with one line per ask, starting `Needs you:` and naming the specific ask, e.g. `Needs you: merge #12?` or `Needs you: pick A or B for the retry policy`. Put it last, as its own line, so a person or a tool can find it without rereading the message. Nothing needed, no line.
 - **Conflicting rules.** Follow the stricter one and call out the conflict.
 - **Commit each step** on a feature branch. Non-trivial work ends in an open PR, in every session (local or cloud). Do not ask first: this file is the explicit request for it. **Merge only when told 'merge …'** – ship, fix, land, and green CI are not permission.
 
