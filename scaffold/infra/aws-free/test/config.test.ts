@@ -21,7 +21,7 @@ test('shipped canon-infra.env parses (placeholder email allowed only when asked)
 
 test('accepts a valid config', () => {
   assert.deepEqual(loadConfig(good), {
-    region: 'us-east-1', account: undefined, appName: 'CanonApp', deploy: 'merge', budgetUsd: 5, budgetEmail: 'me@corp.test', envName: 'prod', allowPaid: false,
+    region: 'us-east-1', account: undefined, appName: 'CanonApp', deploy: 'merge', budgetUsd: 5, budgetEmail: 'me@corp.test', envName: 'prod', allowPaid: false, githubRepo: undefined, oidcProviderArn: undefined,
   });
 });
 
@@ -52,4 +52,19 @@ test('accepts an account id and app name', () => {
   const cfg = loadConfig({ ...good, CANON_INFRA_ACCOUNT_ID: '123456789012', CANON_INFRA_APP_NAME: 'Shop' });
   assert.equal(cfg.account, '123456789012');
   assert.equal(cfg.appName, 'Shop');
+});
+
+test('accepts a GitHub repo and an existing OIDC provider arn', () => {
+  const arn = 'arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com';
+  const cfg = loadConfig({ ...good, CANON_INFRA_GITHUB_REPO: 'me/app', CANON_INFRA_OIDC_PROVIDER_ARN: arn });
+  assert.equal(cfg.githubRepo, 'me/app');
+  assert.equal(cfg.oidcProviderArn, arn);
+});
+
+for (const repo of ['me/*', '*', 'me', 'me/app:*']) {
+  test(`rejects GitHub repo ${repo}`, () => assert.throws(() => loadConfig({ ...good, CANON_INFRA_GITHUB_REPO: repo }), /GITHUB_REPO/));
+}
+
+test('rejects an OIDC provider arn that is not the GitHub provider', () => {
+  assert.throws(() => loadConfig({ ...good, CANON_INFRA_OIDC_PROVIDER_ARN: 'arn:aws:iam::123456789012:oidc-provider/evil.example.com' }), /OIDC_PROVIDER_ARN/);
 });
