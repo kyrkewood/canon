@@ -7,6 +7,6 @@ alwaysApply: true
 
 Follow [`AGENTS.md`](AGENTS.md) **Git authority**.
 
-Non-trivial work: branch → commits → push → **open a PR**. Do not merge unless told “merge …” (e.g. merge #12). Fix / ship / land / green CI ≠ merge permission.
+Non-trivial work: branch → commits → push → **open a PR**, without asking first (this rule is the explicit request). Do not merge unless told “merge …” (e.g. merge #12). Fix / ship / land / green CI ≠ merge permission.
 
 Route B products: do not copy this file.
